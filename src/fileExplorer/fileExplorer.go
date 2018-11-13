@@ -1,9 +1,7 @@
 package fileExplorer
 
 import (
-	"fmt"
 	"io/ioutil"
-	"log"
 )
 
 func (contents *FileContents) UpdateDir(rootDir string) {
@@ -21,9 +19,9 @@ func (contents *FileContents) UpdateDir(rootDir string) {
 
 	for _, file := range files {
 		if file.IsDir() == true {
-			contents.DirNames = append(contents.DirNames, file)
+			contents.DirNames = append(contents.DirNames, file.Name())
 		} else {
-			contents.FileNames = append(contents.FileNames, file)
+			contents.FileNames = append(contents.FileNames, file.Name())
 		}
 	}
 	return
@@ -31,6 +29,6 @@ func (contents *FileContents) UpdateDir(rootDir string) {
 
 func NewExplorer(rootDir string) *FileContents {
 	contents := new(FileContents)
-	contents.UpdateDir(".")
-	return
+	contents.UpdateDir(rootDir)
+	return contents
 }
