@@ -5,25 +5,29 @@ import (
 )
 
 func (contents *FileContents) UpdateDir(rootDir string) {
-	contents.Root = rootDir
-	contents.DirNames = []string{}
-	contents.FileNames = []string{}
-	contents.Selected = []string{}
-	contents.Error = nil
+	var dirNames []string = []string{}
+	var fileNames []string = []string{}
 
 	files, err := ioutil.ReadDir(rootDir)
 	if err != nil {
-		contents.Error = err
+		return
+	}
+	if len(files) == 0 {
 		return
 	}
 
 	for _, file := range files {
 		if file.IsDir() == true {
-			contents.DirNames = append(contents.DirNames, file.Name())
+			dirNames = append(dirNames, file.Name())
 		} else {
-			contents.FileNames = append(contents.FileNames, file.Name())
+			fileNames = append(fileNames, file.Name())
 		}
 	}
+	contents.Root = rootDir
+	contents.DirNames = dirNames
+	contents.FileNames = fileNames
+	contents.Selected = []string{}
+	contents.Error = nil
 	return
 }
 

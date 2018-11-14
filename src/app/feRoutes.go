@@ -16,18 +16,20 @@ func fileExplorerHandler(contents *fe.FileContents) {
 			return
 		}
 
-		newRoot := r.Form["Root"][0]
 		var rootPath string
-		if newRoot == ".." {
-			rootPath, _ = path.Split(contents.Root)
-			if rootPath == "" {
-				rootPath = "."
-			} else {
-				rootPath = rootPath[0 : len(rootPath)-1]
+		switch newRoot := r.Form["Root"][0]; newRoot {
+			case ".":
+				rootPath = contents.Root
+			case "..":
+				rootPath, _ = path.Split(contents.Root)
+				if rootPath == "" {
+					rootPath = contents.Root
+				} else {
+					rootPath = rootPath[0 : len(rootPath)-1]
+				}
+			default:
+				rootPath = path.Join(contents.Root, newRoot)
 			}
-		} else {
-			rootPath = path.Join(contents.Root, newRoot)
-		}
 
 		contents.UpdateDir(rootPath)
 		dataJSON, errJSON := json.Marshal(contents)
