@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	fe "fileExplorer"
 	"net/http"
+	"path"
 )
 
 func fileExplorerHandler(contents *fe.FileContents) {
@@ -14,10 +15,21 @@ func fileExplorerHandler(contents *fe.FileContents) {
 			w.Write(resp)
 			return
 		}
+
 		newRoot := r.Form["Root"][0]
-		if newRoot != contents.Root {
-			contents.UpdateDir(newRoot)
+		var rootPath string
+		if newRoot == ".." {
+			rootPath, _ = path.Split(contents.Root)
+			if rootPath == "" {
+				rootPath = "."
+			} else {
+				rootPath = rootPath[0 : len(rootPath)-1]
+			}
+		} else {
+			rootPath = path.Join(contents.Root, newRoot)
 		}
+
+		contents.UpdateDir(rootPath)
 		dataJSON, errJSON := json.Marshal(contents)
 		if errJSON != nil {
 			w.Write(resp)
