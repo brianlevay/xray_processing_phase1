@@ -55,8 +55,11 @@ function addDirElements(sectionName, dirNames) {
     let section = document.getElementById(sectionName);
     for (var i = 0; i < dirNames.length; i++) {
         let container = document.createElement('div');
+        let symb = document.createElement('span');
         let text = document.createTextNode(dirNames[i]); 
         container.className = "dir";
+        symb.innerHTML = '&#128193;';
+        container.appendChild(symb);
         container.appendChild(text);
         container.onclick = dirClickHandler(dirNames[i]);
         section.appendChild(container);
@@ -68,8 +71,11 @@ function addFileElements(sectionName, fileNames) {
     let section = document.getElementById(sectionName);
     for (var i = 0; i < fileNames.length; i++) {
         let container = document.createElement('div');
+        let symb = document.createElement('span');
         let text = document.createTextNode(fileNames[i]); 
         container.className = "file";
+        symb.innerHTML = '&#128462;';
+        container.appendChild(symb);
         container.appendChild(text);
         section.appendChild(container);
     }
