@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	contents := fe.NewExplorer(cwd)
+	contents := fe.NewExplorer(cwd, ".tif")
 
 	port := ":8080"
 	fs := http.FileServer(http.Dir("static"))

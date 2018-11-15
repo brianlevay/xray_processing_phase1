@@ -41,8 +41,11 @@ function removeClassElements(className) {
 function addRootElement(sectionName, rootName) {
     let section = document.getElementById(sectionName);
     let container = document.createElement('div');
+    let symb = document.createElement('span');
     let text = document.createTextNode(rootName); 
     container.className = "root";
+    symb.innerHTML = '&#8617';
+    container.appendChild(symb);
     container.appendChild(text);
     container.onclick = function() {
         fileExplorerAPI("..");

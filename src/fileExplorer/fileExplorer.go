@@ -2,6 +2,7 @@ package fileExplorer
 
 import (
 	"io/ioutil"
+	"path/filepath"
 )
 
 func (contents *FileContents) UpdateDir(rootDir string) {
@@ -12,15 +13,14 @@ func (contents *FileContents) UpdateDir(rootDir string) {
 	if err != nil {
 		return
 	}
-	if len(files) == 0 {
-		return
-	}
 
 	for _, file := range files {
 		if file.IsDir() == true {
 			dirNames = append(dirNames, file.Name())
 		} else {
-			fileNames = append(fileNames, file.Name())
+			if filepath.Ext(file.Name()) == contents.Extension {
+				fileNames = append(fileNames, file.Name())
+			}
 		}
 	}
 	contents.Root = rootDir
@@ -31,8 +31,9 @@ func (contents *FileContents) UpdateDir(rootDir string) {
 	return
 }
 
-func NewExplorer(rootDir string) *FileContents {
+func NewExplorer(rootDir string, extension string) *FileContents {
 	contents := new(FileContents)
+	contents.Extension = extension
 	contents.UpdateDir(rootDir)
 	return contents
 }
