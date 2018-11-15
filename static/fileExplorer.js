@@ -15,10 +15,12 @@ function fileExplorerAPI(newRoot) {
 
 function updateFileList(xhttp) {
     let response = JSON.parse(xhttp.response);
+    let selectAll = document.getElementById('selectAll');
     let rootName = response['Root'];
     let dirNames = response['Dirs'];
     let fileNames = response['Files'];
     
+    selectAll.checked = false;
     removeClassElements('root');
     removeClassElements('dir');
     removeClassElements('file');
@@ -74,10 +76,15 @@ function addFileElements(sectionName, fileNames) {
     let section = document.getElementById(sectionName);
     for (var i = 0; i < fileNames.length; i++) {
         let container = document.createElement('div');
+        let check = document.createElement('input');
         let symb = document.createElement('span');
         let text = document.createTextNode(fileNames[i]); 
         container.className = "file";
+        check.setAttribute("type", "checkbox");
+        check.setAttribute("class", "fileCheckbox");
+        check.setAttribute("value", fileNames[i]);
         symb.innerHTML = '&#128462;';
+        container.appendChild(check);
         container.appendChild(symb);
         container.appendChild(text);
         section.appendChild(container);
@@ -87,14 +94,27 @@ function addFileElements(sectionName, fileNames) {
 
 
 let dirClickHandler = function(arg) {
-  return function() { 
-      fileExplorerAPI(arg);
-  };
+    return function() {
+        fileExplorerAPI(arg);
+    };
 };
+
+function toggleAll(source) {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i] != source) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+}
 
 
 //// Initial calls on page load ////
 
 document.addEventListener('DOMContentLoaded', function(){ 
     fileExplorerAPI(".");
+    let selectAll = document.getElementById('selectAll');
+    selectAll.onclick = function() {
+        toggleAll(this);
+    };
 }, false);
