@@ -10,6 +10,7 @@ function fileExplorerAPI(newRoot) {
     xhttp.open("POST", "/filesystem", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send("Root=" + newRoot);
+    return;
 }
 
 
@@ -106,6 +107,19 @@ function toggleAll(source) {
             checkboxes[i].checked = source.checked;
         }
     }
+    return;
+}
+
+function getSelected() {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    var selected = [];
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked == true) {
+            selected.push(checkboxes[i].value);
+        }
+    }
+    console.log(selected);
+    return;
 }
 
 
