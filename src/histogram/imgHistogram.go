@@ -8,11 +8,15 @@ import (
 	"math"
 	"os"
 	"path"
+	"sync"
 )
 
 func ImageHistogram(contents *fe.FileContents, bits int, nbins int) *Histogram {
-	hist := newHistogram(bits, nbins)
-	for i := 0; i < len(contents.Selected); i++ {
+    var wg sync.WaitGroup
+    nfiles := len(contents.Selected)
+	histSet := make([]Histogram, nfiles)
+	
+	for i := 0; i < nfiles; i++ {
 		pathtofile := path.Join(contents.Root, contents.Selected[i])
 		infile, errF := os.Open(pathtofile)
 		if errF != nil {
@@ -23,10 +27,15 @@ func ImageHistogram(contents *fe.FileContents, bits int, nbins int) *Histogram {
 			if errD != nil {
 			    log.Println(errD)
 			} else {
-			    countPixels(&img, hist)
+			    wg.Add(1)
+			    out := &histSet[i]
+			    go countPixels(&img, bits, nbins, out, &wg)
 			}
 		}
 	}
+	wg.Wait()
+	log.Println(histSet[0].Cts)
+	hist := mergeHistograms(histSet, bits, nbins)
 	return hist
 }
 
@@ -42,12 +51,12 @@ func newHistogram(bits int, nbins int) *Histogram {
 	return hist
 }
 
-func countPixels(img *image.Image, hist *Histogram) {
+func countPixels(img *image.Image, bits int, nbins int, out *Histogram, wg *sync.WaitGroup) {
+    hist := newHistogram(bits, nbins)
     x_min := (*img).Bounds().Min.X
     y_min := (*img).Bounds().Min.Y
     x_max := (*img).Bounds().Max.X
     y_max := (*img).Bounds().Max.Y
-    nbins := len(hist.Bins)
     var i_act float64
     var i_int int
     for x := x_min; x < x_max; x++ {
@@ -61,5 +70,22 @@ func countPixels(img *image.Image, hist *Histogram) {
             }
         }
     }
+    out = hist
+    wg.Done()
     return
 }
+
+func mergeHistograms(histSet []Histogram, bits int, nbins int) *Histogram {
+    hist := newHistogram(bits, nbins)
+    nhists := len(histSet)
+    for i := 0; i < nhists; i++ {
+        if len(histSet[i].Cts) == nbins {
+            for b := 0; b < nbins; b++ {
+                hist.Cts[b] += histSet[i].Cts[b]
+            }
+        }
+    }
+    return hist
+}
+
+
