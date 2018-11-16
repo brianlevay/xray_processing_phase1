@@ -2,18 +2,18 @@ package fileExplorer
 
 import (
 	"io/ioutil"
+	"log"
 	"path/filepath"
 )
 
 func (contents *FileContents) UpdateDir(rootDir string) {
 	var dirNames []string = []string{}
 	var fileNames []string = []string{}
-
 	files, err := ioutil.ReadDir(rootDir)
 	if err != nil {
+		log.Println(err)
 		return
 	}
-
 	for _, file := range files {
 		if file.IsDir() == true {
 			dirNames = append(dirNames, file.Name())
@@ -27,7 +27,6 @@ func (contents *FileContents) UpdateDir(rootDir string) {
 	contents.DirNames = dirNames
 	contents.FileNames = fileNames
 	contents.Selected = []string{}
-	contents.Error = nil
 	return
 }
 

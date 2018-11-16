@@ -112,9 +112,10 @@ function toggleAll(source) {
 
 function getSelected() {
     var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let selectAll = document.getElementById('selectAll');
     var selected = [];
     for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked == true) {
+        if ((checkboxes[i].checked == true) && (checkboxes[i] != selectAll)) {
             selected.push(checkboxes[i].value);
         }
     }

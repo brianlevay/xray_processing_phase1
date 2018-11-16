@@ -8,5 +8,4 @@ type FileContents struct {
 	FileNames []string `json:"Files"`
 	Selected  []string `json:"Selected"`
 	Extension string   `json:"-"`
-	Error     error    `json:"Error"`
 }

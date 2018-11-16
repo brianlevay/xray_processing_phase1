@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	fe "fileExplorer"
 	hist "histogram"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -13,18 +15,25 @@ func histogramHandler(contents *fe.FileContents) {
 		errP := r.ParseForm()
 		if errP != nil {
 			w.Write(resp)
+			log.Println(errP)
 			return
 		}
 		contents.Selected = stringToSlice(r.Form["Selected"][0])
-		hist.ImageHistogram(contents, 16, 20)
-		w.Write(resp)
+		histogram := hist.ImageHistogram(contents, 14, 1000)
+		dataJSON, errJSON := json.Marshal(histogram)
+		if errJSON != nil {
+			w.Write(resp)
+			log.Println(errJSON)
+			return
+		}
+		w.Write(dataJSON)
 		return
 	})
 }
 
 func stringToSlice(valString string) []string {
-	noBrackets := strings.Replace(valString, "[", "", -1)
-	noBrackets = strings.Replace(noBrackets, "]", "", -1)
-	values := strings.Split(noBrackets, ",")
+	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
+	cleaned := replacer.Replace(valString)
+	values := strings.Split(cleaned, ",")
 	return values
 }
