@@ -118,8 +118,7 @@ function getSelected() {
             selected.push(checkboxes[i].value);
         }
     }
-    console.log(selected);
-    return;
+    return selected;
 }
 
 

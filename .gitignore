@@ -1,4 +1,5 @@
 bin
 pkg
+src/golang.org
 xray_img
 xray-processing-linux

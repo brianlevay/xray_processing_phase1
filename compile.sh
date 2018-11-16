@@ -2,6 +2,7 @@
 
 echo "BASH: Started build at: $(date)"
 go install fileExplorer
+go install histogram
 go install app
 
 export GOOS=linux

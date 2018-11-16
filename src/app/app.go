@@ -18,6 +18,6 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
 	fileExplorerHandler(contents)
-
+	histogramHandler(contents)
 	http.ListenAndServe(port, nil)
 }
