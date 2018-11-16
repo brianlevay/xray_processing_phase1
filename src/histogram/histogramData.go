@@ -1,6 +1,8 @@
 package histogram
 
-import ()
+import (
+	"sync"
+)
 
 type Histogram struct {
 	Min  float64   `json:"Min"`
@@ -8,4 +10,9 @@ type Histogram struct {
 	Step float64   `json:"Step"`
 	Bins []float64 `json:"Bins"`
 	Cts  []float64 `json:"Cts"`
+}
+
+type HistogramSet struct {
+	Set []*Histogram
+	Mtx sync.Mutex
 }
