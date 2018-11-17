@@ -13,6 +13,8 @@ type Histogram struct {
 }
 
 type HistogramSet struct {
-	Set []*Histogram
-	Mtx sync.Mutex
+	Mtx   sync.Mutex
+	Bits  int
+	Nbins int
+	Set   []*Histogram
 }

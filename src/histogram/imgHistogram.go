@@ -14,7 +14,7 @@ import (
 func ImageHistogram(contents *fe.FileContents, bits int, nbins int) *Histogram {
 	var wg sync.WaitGroup
 	nfiles := len(contents.Selected)
-	histSet := new(HistogramSet)
+	histSet := newHistogramSet(bits, nbins)
 	for i := 0; i < nfiles; i++ {
 		pathtofile := path.Join(contents.Root, contents.Selected[i])
 		infile, errF := os.Open(pathtofile)
@@ -27,12 +27,12 @@ func ImageHistogram(contents *fe.FileContents, bits int, nbins int) *Histogram {
 				log.Println(errD)
 			} else {
 				wg.Add(1)
-				go countPixels(&img, bits, nbins, histSet, &wg)
+				go countPixels(&img, histSet, &wg)
 			}
 		}
 	}
 	wg.Wait()
-	hist := mergeHistograms(histSet, bits, nbins)
+	hist := mergeHistograms(histSet)
 	return hist
 }
 
@@ -48,8 +48,15 @@ func newHistogram(bits int, nbins int) *Histogram {
 	return hist
 }
 
-func countPixels(img *image.Image, bits int, nbins int, hset *HistogramSet, wg *sync.WaitGroup) {
-	hist := newHistogram(bits, nbins)
+func newHistogramSet(bits int, nbins int) *HistogramSet {
+	histSet := new(HistogramSet)
+	histSet.Bits = bits
+	histSet.Nbins = nbins
+	return histSet
+}
+
+func countPixels(img *image.Image, hset *HistogramSet, wg *sync.WaitGroup) {
+	hist := newHistogram(hset.Bits, hset.Nbins)
 	x_min := (*img).Bounds().Min.X
 	y_min := (*img).Bounds().Min.Y
 	x_max := (*img).Bounds().Max.X
@@ -62,7 +69,7 @@ func countPixels(img *image.Image, bits int, nbins int, hset *HistogramSet, wg *
 			r, _, _, _ := px.RGBA()
 			i_act = (float64(r) - hist.Min) / hist.Step
 			i_int = int(math.Floor(i_act))
-			if (i_int >= 0) && (i_int <= nbins) {
+			if (i_int >= 0) && (i_int <= hset.Nbins) {
 				hist.Cts[i_int] += 1
 			}
 		}
@@ -74,14 +81,12 @@ func countPixels(img *image.Image, bits int, nbins int, hset *HistogramSet, wg *
 	return
 }
 
-func mergeHistograms(histSet *HistogramSet, bits int, nbins int) *Histogram {
-	hist := newHistogram(bits, nbins)
-	nhists := len(histSet.Set)
+func mergeHistograms(hset *HistogramSet) *Histogram {
+	hist := newHistogram(hset.Bits, hset.Nbins)
+	nhists := len(hset.Set)
 	for i := 0; i < nhists; i++ {
-		if len(histSet.Set[i].Cts) == nbins {
-			for b := 0; b < nbins; b++ {
-				hist.Cts[b] += histSet.Set[i].Cts[b]
-			}
+		for b := 0; b < hset.Nbins; b++ {
+			hist.Cts[b] += hset.Set[i].Cts[b]
 		}
 	}
 	return hist
