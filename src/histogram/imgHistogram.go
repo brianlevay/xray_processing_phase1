@@ -69,8 +69,10 @@ func countPixels(img *image.Image, hset *HistogramSet, wg *sync.WaitGroup) {
 			r, _, _, _ := px.RGBA()
 			i_act = (float64(r) - hist.Min) / hist.Step
 			i_int = int(math.Floor(i_act))
-			if (i_int >= 0) && (i_int <= hset.Nbins) {
+			if (i_int >= 0) && (i_int < hset.Nbins) {
 				hist.Cts[i_int] += 1
+			} else if i_int == hset.Nbins {
+				hist.Cts[i_int-1] += 1
 			}
 		}
 	}
