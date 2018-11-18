@@ -13,6 +13,6 @@ type FileContents struct {
 	Extension string   `json:"-"`
 }
 
-type Processer interface {
+type Processor interface {
 	ProcessImage(img *image.Image, wg *sync.WaitGroup)
 }

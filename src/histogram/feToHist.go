@@ -6,7 +6,7 @@ import (
 
 func ImageHistogram(contents *fe.FileContents, bits int, nbins int) *Histogram {
 	histSet := newHistogramSet(bits, nbins)
-	contents.ProcessTiffs(histSet)
+	fe.ProcessTiffs(contents, histSet)
 	hist := mergeHistograms(histSet)
 	return hist
 }
