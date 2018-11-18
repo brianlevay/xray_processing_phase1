@@ -11,7 +11,7 @@ function histogramAPI() {
     xhttp.open("POST", "/histogram", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var selected = getSelected();
-    xhttp.send("Selected=" + JSON.stringify(selected));
+    xhttp.send("Selected=" + JSON.stringify(selected) + "&Bits=14&Nbins=1000");
     return;
 }
 

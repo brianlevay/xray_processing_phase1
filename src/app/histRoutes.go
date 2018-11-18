@@ -4,28 +4,23 @@ import (
 	"encoding/json"
 	fe "fileExplorer"
 	hist "histogram"
-	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
 func histogramHandler(contents *fe.FileContents) {
 	http.HandleFunc("/histogram", func(w http.ResponseWriter, r *http.Request) {
-		var resp []byte
 		errP := r.ParseForm()
-		if errP != nil {
-			w.Write(resp)
-			log.Println(errP)
-			return
-		}
+		errorResponse(errP, &w)
 		contents.Selected = stringToSlice(r.Form["Selected"][0])
-		histogram := hist.ImageHistogram(contents, 14, 1000)
+		bits, errBits := strconv.Atoi(r.Form["Bits"][0])
+		errorResponse(errBits, &w)
+		nbins, errNbins := strconv.Atoi(r.Form["Nbins"][0])
+		errorResponse(errNbins, &w)
+		histogram := hist.ImageHistogram(contents, bits, nbins)
 		dataJSON, errJSON := json.Marshal(histogram)
-		if errJSON != nil {
-			w.Write(resp)
-			log.Println(errJSON)
-			return
-		}
+		errorResponse(errJSON, &w)
 		w.Write(dataJSON)
 		return
 	})
