@@ -1,0 +1,19 @@
+.pageSection {
+    margin: 10px;
+}
+
+.appTitle {
+    font-size: 1.5em;
+}
+
+.sectionTitle {
+    font-size: 1.2em;
+}
+
+#fileList {
+    margin: 5px;
+}
+
+img {
+    border: 1px solid black;
+}

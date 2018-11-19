@@ -25,9 +25,9 @@ function updateFileList(xhttp) {
     removeClassElements('root');
     removeClassElements('dir');
     removeClassElements('file');
-    addRootElement('fileExplorer', rootName);
-    addDirElements('fileExplorer', dirNames);
-    addFileElements('fileExplorer', fileNames);
+    addRootElement('fileList', rootName);
+    addDirElements('fileList', dirNames);
+    addFileElements('fileList', fileNames);
     return;
 }
 

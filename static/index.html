@@ -6,16 +6,23 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <section id="appHeader">
-            <div id="appTitle">X-Ray Image Processing for Cores</div>
+        <section id='appHeader' class='pageSection'>
+            <div class='appTitle'>X-Ray Image Processing for Cores</div>
         </section>
-        <section id='fileExplorer'>
-            <input id='selectAll' type='checkbox'></input><label>Select all</label>
+        <section id='fileExplorer' class='pageSection'>
+            <div class='sectionTitle'>Select Tiffs for Processing</div>
+            <div id="fileList" class='pageSubsection'>
+                <input id='selectAll' type='checkbox'></input><label>Select all</label>
+            </div>
         </section>
-        <section id='histogramSect'>
-            <button id='process' onclick='histogramAPI()'>Process</button>
-            <div>
-                <img id='histogram_img'></img>
+        <section id='histogramSect' class='pageSection'>
+            <div class='sectionTitle'>Generate Histogram for Images</div>
+            <button id='get_histogram' onclick='histogramAPI()'>Get Histogram</button>
+            <div class='pageSubsection'>
+                <div><img id='histogramImg'></img></div>
+                <div><input id="leftBounds" type="range" class="slider" min="0"><span id="leftBoundsVal"></span></div>
+                <div><input id="center" type="range" class="slider" min="0"><span id="centerVal"></span></div>
+                <div><input id="rightBounds" type="range" class="slider" min="0"><span id="rightBoundsVal"></span></div>
             </div>
         </section>
         <script src="fileExplorer.js"></script>

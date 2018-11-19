@@ -18,7 +18,7 @@ func errorResponse(err error, w *http.ResponseWriter) {
 func checkAndConvertToInt(variable string, form map[string][]string) (int, error) {
 	var err error = nil
 	varSlice, varPresent := form[variable]
-	if (varPresent == false) || len(varSlice) == 0 {
+	if (varPresent == false) || (len(varSlice) == 0) {
 		err = errors.New(variable + " not defined")
 		return 0, err
 	}
