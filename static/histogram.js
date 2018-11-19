@@ -10,14 +10,14 @@ function histogramAPI() {
     };
     xhttp.open("POST", "/histogram", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    var selected = getSelected();
-    xhttp.send("Selected=" + JSON.stringify(selected) + "&Bits=14&Nbins=1000");
+    let selected = getSelected();
+    xhttp.send("Selected=" + JSON.stringify(selected) + "&Bits=14&Nbins=1000&Width=800&Height=600");
     return;
 }
 
 
 function updateHistogram(xhttp) {
-    let response = JSON.parse(xhttp.response);
-    console.log(response);
+    let hist_img = document.getElementById('histogram_img');
+    hist_img.src = "data:image/png;base64," + xhttp.response;
     return;
 }

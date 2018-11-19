@@ -57,9 +57,10 @@ function addRootElement(sectionName, rootName) {
     return;
 }
 
+
 function addDirElements(sectionName, dirNames) {
     let section = document.getElementById(sectionName);
-    for (var i = 0; i < dirNames.length; i++) {
+    for (let i = 0; i < dirNames.length; i++) {
         let container = document.createElement('div');
         let symb = document.createElement('span');
         let text = document.createTextNode(dirNames[i]); 
@@ -73,9 +74,10 @@ function addDirElements(sectionName, dirNames) {
     return;
 }
 
+
 function addFileElements(sectionName, fileNames) {
     let section = document.getElementById(sectionName);
-    for (var i = 0; i < fileNames.length; i++) {
+    for (let i = 0; i < fileNames.length; i++) {
         let container = document.createElement('div');
         let check = document.createElement('input');
         let symb = document.createElement('span');
@@ -100,9 +102,10 @@ let dirClickHandler = function(arg) {
     };
 };
 
+
 function toggleAll(source) {
-    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    for (var i = 0; i < checkboxes.length; i++) {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (let i = 0; i < checkboxes.length; i++) {
         if (checkboxes[i] != source) {
             checkboxes[i].checked = source.checked;
         }
@@ -110,11 +113,12 @@ function toggleAll(source) {
     return;
 }
 
+
 function getSelected() {
-    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
     let selectAll = document.getElementById('selectAll');
     var selected = [];
-    for (var i = 0; i < checkboxes.length; i++) {
+    for (let i = 0; i < checkboxes.length; i++) {
         if ((checkboxes[i].checked == true) && (checkboxes[i] != selectAll)) {
             selected.push(checkboxes[i].value);
         }

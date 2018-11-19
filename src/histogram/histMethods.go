@@ -33,3 +33,13 @@ func (hset *HistogramSet) ProcessImage(img *image.Image, wg *sync.WaitGroup) {
 	wg.Done()
 	return
 }
+
+func (hist *Histogram) MaxCts() float64 {
+	var maxVal float64 = 0
+	for i := 0; i < (len(hist.Cts) - 1); i++ {
+		if hist.Cts[i] > maxVal {
+			maxVal = hist.Cts[i]
+		}
+	}
+	return maxVal
+}

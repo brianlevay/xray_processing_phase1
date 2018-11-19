@@ -1,27 +1,43 @@
 package main
 
 import (
-	"encoding/json"
+	"encoding/base64"
+	"errors"
 	fe "fileExplorer"
 	hist "histogram"
+	"log"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
 func histogramHandler(contents *fe.FileContents) {
 	http.HandleFunc("/histogram", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Started generating histogram...")
+
 		errP := r.ParseForm()
 		errorResponse(errP, &w)
-		contents.Selected = stringToSlice(r.Form["Selected"][0])
-		bits, errBits := strconv.Atoi(r.Form["Bits"][0])
+
+		selectedS, selPresent := r.Form["Selected"]
+		if selPresent == false {
+			errSelected := errors.New("Selected variable is not present")
+			errorResponse(errSelected, &w)
+		}
+		contents.Selected = stringToSlice(selectedS[0])
+
+		bits, errBits := checkAndConvertToInt("Bits", r.Form)
 		errorResponse(errBits, &w)
-		nbins, errNbins := strconv.Atoi(r.Form["Nbins"][0])
+		nbins, errNbins := checkAndConvertToInt("Nbins", r.Form)
 		errorResponse(errNbins, &w)
+		width, errWidth := checkAndConvertToInt("Width", r.Form)
+		errorResponse(errWidth, &w)
+		height, errHeight := checkAndConvertToInt("Height", r.Form)
+		errorResponse(errHeight, &w)
+
 		histogram := hist.ImageHistogram(contents, bits, nbins)
-		dataJSON, errJSON := json.Marshal(histogram)
-		errorResponse(errJSON, &w)
-		w.Write(dataJSON)
+		buffer := hist.DrawHistogram(histogram, width, height)
+		sEnc := base64.StdEncoding.EncodeToString(buffer.Bytes())
+		log.Println("Sending histogram...")
+		w.Write([]byte(sEnc))
 		return
 	})
 }
