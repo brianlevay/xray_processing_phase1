@@ -79,15 +79,15 @@
                 <div class='title2'>Instrument Geometry</div>
                 <div class='lvl3'>
                     <div>
-                        <input id='srcHeight' type='number' name='srcHeight' step=0.1>
+                        <input id='srcHeight' type='number' name='srcHeight' min=0.0 step=0.1>
                         <label>Height of source above detector (cm)</label>
                     </div>
                     <div>
-                        <input id='coreHeight' type='number' name='coreHeight' step=0.1>
+                        <input id='coreHeight' type='number' name='coreHeight' min=0.0 step=0.1>
                         <label>Height of core base above detector (cm)</label>
                     </div>
                     <div>
-                        <input id='coreDiameter' type='number' name='coreDiameter' step=0.1>
+                        <input id='coreDiameter' type='number' name='coreDiameter' min=0.0 step=0.1>
                         <label>Diameter of core (cm)</label>
                     </div>
                     <div>
@@ -117,7 +117,7 @@
                 <div class='title2'>Image Overlays</div>
                 <div class='lvl3'>
                     <div>
-                        <input id='roiSize' type='number' name='roiSize' step=0.1>
+                        <input id='roiSize' type='number' name='roiSize' min='0.0', max='15.0', step='0.1'>
                         <label>ROI size (cm) - Usually, this is the distance the core is moved between images</label>
                     </div>
                     <div>
@@ -147,10 +147,11 @@
         
         <section class='lvl1'>
             <div class='title1'>Process Files</div>
-            <div><button id='processFiles'>Process Files</button></div>
+            <div><button id='processFiles' onclick='processAPI()'>Process Files</button></div>
         </section>
         
         <script src='fileExplorer.js'></script>
         <script src='histogram.js'></script>
+        <script src='process.js'></script>
     </body>
 </html>

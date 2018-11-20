@@ -14,6 +14,7 @@ function histogramAPI() {
         if (this.readyState == 4 && this.status == 200) {
             updateHistogram(this);
         }
+        return;
     };
     xhttp.open('POST', '/histogram', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -28,7 +29,7 @@ function histogramAPI() {
             sizeStr += '&' + key + '=' + hist[key];
         }
     }
-    xhttp.send('Selected=' + JSON.stringify(selected) + '&Bits=' + bitsStr + sizeStr);
+    xhttp.send('Selected=' + JSON.stringify(selected) + bitsStr + sizeStr);
     return;
 }
 
@@ -38,8 +39,12 @@ function updateHistogram(xhttp) {
     let leftBounds = document.getElementById('leftBounds');
     let center = document.getElementById('center');
     let rightBounds = document.getElementById('rightBounds');
+    let bits = 14;
+    if (document.getElementById('radio16b').checked) {
+        bits = 16;
+    }
     histogramImg.src = 'data:image/png;base64,' + xhttp.response;
-    leftBounds.max = (2**hist['Bits']) - 1;
+    leftBounds.max = (2**bits) - 1;
     leftBounds.value = 0;
     leftBounds.style.width = hist['Width'] + 'px';
     center.max = leftBounds.max;

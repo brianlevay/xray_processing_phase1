@@ -12,8 +12,6 @@ import (
 
 func histogramHandler(contents *fe.FileContents) {
 	http.HandleFunc("/histogram", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Started generating histogram...")
-
 		errP := r.ParseForm()
 		errorResponse(errP, &w)
 
@@ -23,21 +21,28 @@ func histogramHandler(contents *fe.FileContents) {
 			errorResponse(errSelected, &w)
 		}
 		contents.Selected = stringToSlice(selectedS[0])
+		nImages := len(contents.Selected)
 
-		bits, errBits := checkAndConvertToInt("Bits", r.Form)
-		errorResponse(errBits, &w)
-		nbins, errNbins := checkAndConvertToInt("Nbins", r.Form)
-		errorResponse(errNbins, &w)
-		width, errWidth := checkAndConvertToInt("Width", r.Form)
-		errorResponse(errWidth, &w)
-		height, errHeight := checkAndConvertToInt("Height", r.Form)
-		errorResponse(errHeight, &w)
+		if nImages > 0 {
+			bits, errBits := checkAndConvertToInt("Bits", r.Form)
+			errorResponse(errBits, &w)
+			nbins, errNbins := checkAndConvertToInt("Nbins", r.Form)
+			errorResponse(errNbins, &w)
+			width, errWidth := checkAndConvertToInt("Width", r.Form)
+			errorResponse(errWidth, &w)
+			height, errHeight := checkAndConvertToInt("Height", r.Form)
+			errorResponse(errHeight, &w)
 
-		histogram := hist.ImageHistogram(contents, bits, nbins)
-		buffer := hist.DrawHistogram(histogram, width, height)
-		sEnc := base64.StdEncoding.EncodeToString(buffer.Bytes())
-		log.Println("Sending histogram...")
-		w.Write([]byte(sEnc))
+			log.Println("Started generating histogram...")
+			histogram := hist.ImageHistogram(contents, bits, nbins)
+			buffer := hist.DrawHistogram(histogram, width, height)
+			sEnc := base64.StdEncoding.EncodeToString(buffer.Bytes())
+			log.Println("Sending histogram...")
+			w.Write([]byte(sEnc))
+		} else {
+			log.Println("No images selected.")
+			w.Write([]byte(""))
+		}
 		return
 	})
 }
@@ -46,5 +51,8 @@ func stringToSlice(valString string) []string {
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
 	cleaned := replacer.Replace(valString)
 	values := strings.Split(cleaned, ",")
-	return values
+	if (len(values) == 1) && (strings.Compare(values[0], "") != 0) {
+		return values
+	}
+	return []string{}
 }

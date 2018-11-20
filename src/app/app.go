@@ -19,5 +19,6 @@ func main() {
 	http.Handle("/", fs)
 	fileExplorerHandler(contents)
 	histogramHandler(contents)
+	processingHandler(contents)
 	http.ListenAndServe(port, nil)
 }
