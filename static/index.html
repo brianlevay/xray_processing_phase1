@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset='UTF-8'>
         <title>X-Ray Image Processing for Cores</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel='stylesheet' href='style.css'>
     </head>
     <body>
         <section id='appHeader' class='lvl1'>
@@ -23,8 +23,8 @@
                 <div class='title2'>Data Type for Tiffs</div>
                 <div class='lvl3'>
                     <div>
-                        <input id='radio14b' type='radio' name='nbits' value='14b' checked></input><label>14 bit ("_base")</label>
-                        <input id='radio16b' type='radio' name='nbits' value='16b'></input><label>16 bit</label>
+                        <input id='radio14b' type='radio' name='nbits' value='14' checked></input><label>14 bit ('_base')</label>
+                        <input id='radio16b' type='radio' name='nbits' value='16'></input><label>16 bit</label>
                     </div>
                 </div>
             </section>
@@ -39,19 +39,19 @@
                     <img id='histogramImg'></img>
                 </div>
                 <div>
-                    <input id="leftBounds" type="range" class="slider" min="0">
+                    <input id='leftBounds' type='range' class='slider' min='0'>
                     <label>Left edge &nbsp</label>
-                    <span id="leftBoundsVal"></span>
+                    <span id='leftBoundsVal'></span>
                 </div>
                 <div>
-                    <input id="center" type="range" class="slider" min="0">
+                    <input id='center' type='range' class='slider' min='0'>
                     <label>Peak position &nbsp</label>
-                    <span id="centerVal"></span>
+                    <span id='centerVal'></span>
                 </div>
                 <div>
-                    <input id="rightBounds" type="range" class="slider" min="0">
+                    <input id='rightBounds' type='range' class='slider' min='0'>
                     <label>Right edge &nbsp</label>
-                    <span id="rightBoundsVal"></span>
+                    <span id='rightBoundsVal'></span>
                 </div>
             </div>
         </section>
@@ -150,7 +150,7 @@
             <div><button id='processFiles'>Process Files</button></div>
         </section>
         
-        <script src="fileExplorer.js"></script>
-        <script src="histogram.js"></script>
+        <script src='fileExplorer.js'></script>
+        <script src='histogram.js'></script>
     </body>
 </html>
