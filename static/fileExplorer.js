@@ -116,10 +116,9 @@ function toggleAll(source) {
 
 function getSelected() {
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    let selectAll = document.getElementById('selectAll');
     var selected = [];
     for (let i = 0; i < checkboxes.length; i++) {
-        if ((checkboxes[i].checked == true) && (checkboxes[i] != selectAll)) {
+        if ((checkboxes[i].checked == true) && (checkboxes[i].className == "fileCheckbox")) {
             selected.push(checkboxes[i].value);
         }
     }
