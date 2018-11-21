@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	fe "fileExplorer"
 	"log"
 	"net/http"
+	proc "processImgs"
 	"strconv"
 )
 
@@ -20,6 +22,17 @@ func processingHandler(contents *fe.FileContents) {
 		}
 		contents.Selected = stringToSlice(selectedS[0])
 		nImages := len(contents.Selected)
+
+		settingsS, setPresent := r.Form["Settings"]
+		if setPresent == false {
+			errSettings := errors.New("Settings are not present")
+			errorResponse(errSettings, &w)
+		}
+		imgProcessor := new(proc.ImgProcessor)
+		errJSON := json.Unmarshal(settingsS[0], imgProcessor)
+		if errJSON != nil {
+			errorResponse(errJSON, &w)
+		}
 
 		if nImages > 0 {
 			log.Println("Started processing " + strconv.Itoa(nImages) + " images...")
