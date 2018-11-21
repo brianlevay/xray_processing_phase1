@@ -28,7 +28,7 @@ function processAPI() {
         }
         return;
     };
-    xhttp.open('POST', '/filesystem', true);
+    xhttp.open('POST', '/processing', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let selected = getSelected();
     updateSettings();

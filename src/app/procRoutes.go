@@ -29,7 +29,7 @@ func processingHandler(contents *fe.FileContents) {
 			errorResponse(errSettings, &w)
 		}
 		imgProcessor := new(proc.ImgProcessor)
-		errJSON := json.Unmarshal(settingsS[0], imgProcessor)
+		errJSON := json.Unmarshal([]byte(settingsS[0]), imgProcessor)
 		if errJSON != nil {
 			errorResponse(errJSON, &w)
 		}
