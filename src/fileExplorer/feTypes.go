@@ -1,7 +1,6 @@
 package fileExplorer
 
 import (
-	"image"
 	"sync"
 )
 
@@ -14,5 +13,5 @@ type FileContents struct {
 }
 
 type Processor interface {
-	ProcessImage(img *image.Image, wg *sync.WaitGroup)
+	ProcessImage(root string, filename string, wg *sync.WaitGroup)
 }

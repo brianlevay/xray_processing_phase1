@@ -1,12 +1,17 @@
 package histogram
 
 import (
-	"image"
+	fe "fileExplorer"
 	"math"
 	"sync"
 )
 
-func (hset *HistogramSet) ProcessImage(img *image.Image, wg *sync.WaitGroup) {
+func (hset *HistogramSet) ProcessImage(root string, filename string, wg *sync.WaitGroup) {
+	img, errImg := fe.OpenTiff(root, filename)
+	if errImg != nil {
+		wg.Done()
+		return
+	}
 	hist := newHistogram(hset.Bits, hset.Nbins)
 	x_min := (*img).Bounds().Min.X
 	y_min := (*img).Bounds().Min.Y
