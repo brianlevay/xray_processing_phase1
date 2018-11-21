@@ -43,9 +43,9 @@ function updateSettings() {
    } else {
        settings.Bits = 14;
    }
-   settings.Low = document.getElementById('leftBounds').value;
-   settings.Mid = document.getElementById('center').value;
-   settings.High = document.getElementById('rightBounds').value;
+   settings.Low = parseFloat(document.getElementById('leftBounds').value);
+   settings.Mid = parseFloat(document.getElementById('center').value);
+   settings.High = parseFloat(document.getElementById('rightBounds').value);
    if (document.getElementById('radioConvert16b').checked) {
        settings.Method = 'convert16b';
    } else if (document.getElementById('radioMurhot').checked) {
@@ -53,9 +53,9 @@ function updateSettings() {
    } else {
        settings.Method = 'compensation';
    }
-   settings.SrcHeight = document.getElementById('srcHeight').value;
-   settings.CoreHeight = document.getElementById('coreHeight').value;
-   settings.CoreDiameter = document.getElementById('coreDiameter').value;
+   settings.SrcHeight = parseFloat(document.getElementById('srcHeight').value);
+   settings.CoreHeight = parseFloat(document.getElementById('coreHeight').value);
+   settings.CoreDiameter = parseFloat(document.getElementById('coreDiameter').value);
    if (document.getElementById('halfRound').checked) {
        settings.CoreType = 'HR';
    } else {
@@ -68,7 +68,7 @@ function updateSettings() {
    } else {
        settings.Contrast = 'skewScale';
    }
-   settings.ROISize = document.getElementById('roiSize').value;
+   settings.ROISize = parseFloat(document.getElementById('roiSize').value);
    if (document.getElementById('includeScale').checked) {
        settings.IncludeScale = true;
    } else {
