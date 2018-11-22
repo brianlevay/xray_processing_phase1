@@ -2,6 +2,7 @@ package histogram
 
 import (
 	fe "fileExplorer"
+	"log"
 	"math"
 	"sync"
 )
@@ -9,19 +10,20 @@ import (
 func (hset *HistogramSet) ProcessImage(root string, filename string, wg *sync.WaitGroup) {
 	img, errImg := fe.OpenTiff(root, filename)
 	if errImg != nil {
+		log.Println("Error opening " + filename)
 		wg.Done()
 		return
 	}
 	hist := newHistogram(hset.Bits, hset.Nbins)
-	x_min := (*img).Bounds().Min.X
-	y_min := (*img).Bounds().Min.Y
-	x_max := (*img).Bounds().Max.X
-	y_max := (*img).Bounds().Max.Y
+	x_min := img.Bounds().Min.X
+	y_min := img.Bounds().Min.Y
+	x_max := img.Bounds().Max.X
+	y_max := img.Bounds().Max.Y
 	var i_act float64
 	var i_int int
 	for x := x_min; x < x_max; x++ {
 		for y := y_min; y < y_max; y++ {
-			px := (*img).At(x, y)
+			px := img.At(x, y)
 			r, _, _, _ := px.RGBA()
 			i_act = (float64(r) - hist.Min) / hist.Step
 			i_int = int(math.Floor(i_act))
