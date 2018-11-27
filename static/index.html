@@ -53,6 +53,14 @@
                 <div class='title2'>Instrument Geometry</div>
                 <div class='lvl3'>
                     <div>
+                        <input id='wholeRound' type='radio' name='coreType' value='WR' checked><label>Whole round</label>
+                        <input id='halfRound' type='radio' name='coreType' value='HR'><label>Half round</label>
+                    </div>
+                    <div>
+                        <input id='coreDiameter' type='number' name='coreDiameter' min=0.0 step=0.1>
+                        <label>Diameter of core (cm)</label>
+                    </div>
+                    <div>
                         <input id='srcHeight' type='number' name='srcHeight' min=0.0 step=0.1>
                         <label>Height of source above detector (cm)</label>
                     </div>
@@ -61,16 +69,20 @@
                         <label>Height of core base above detector (cm)</label>
                     </div>
                     <div>
-                        <input id='coreDiameter' type='number' name='coreDiameter' min=0.0 step=0.1>
-                        <label>Diameter of core (cm)</label>
-                    </div>
-                    <div>
                         <input id='motion' type='number' name='motion' min='0.0' max='15.0' step='0.1'>
                         <label>Distance the core is moved between images (cm)</label>
                     </div>
                     <div>
-                        <input id='wholeRound' type='radio' name='coreType' value='WR' checked><label>Whole round</label>
-                        <input id='halfRound' type='radio' name='coreType' value='HR'><label>Half round</label>
+                        <input id='autoDetect' type='radio' name='axisMethod' value='autoDetec' checked><label>Auto-detect core axis</label>
+                        <input id='setAxis' type='radio' name='axisMethod' value='setAxis'><label>Set core axis</label>
+                    </div>
+                    <div class='axisInput'>
+                        <input id='axisAngle' type='number' name='axisAngle' min=-10.0 max=10.0 step=0.1>
+                        <label>Angle of core axis, counter-clockwise (&deg;)</label>
+                    </div>
+                    <div class='axisInput'>
+                        <input id='axisOffset' type='number' name='axisOffset' min='-2.0' max='2.0' step='0.1'>
+                        <label>Core axis offset from center of image (cm)</label>
                     </div>
                 </div>
             </section>
