@@ -1,7 +1,6 @@
 /* global getSelected */
 
 var hist = {
-    Nbins: 400,
     Width: 800,
     Height: 600
 };
@@ -19,17 +18,8 @@ function histogramAPI() {
     xhttp.open('POST', '/histogram', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let selected = getSelected();
-    let bitsStr = '&Bits=14';
-    if (document.getElementById('radio16b').checked) {
-        bitsStr = '&Bits=16';
-    }
-    let sizeStr = '';
-    for (var key in hist) {
-        if (hist.hasOwnProperty(key)) {
-            sizeStr += '&' + key + '=' + hist[key];
-        }
-    }
-    xhttp.send('Selected=' + JSON.stringify(selected) + bitsStr + sizeStr);
+    let sizeStr = '&Width=' + hist['Width'] + '&Height=' + hist['Height'];
+    xhttp.send('Selected=' + JSON.stringify(selected) + sizeStr);
     return;
 }
 
@@ -39,12 +29,8 @@ function updateHistogram(xhttp) {
     let leftBounds = document.getElementById('leftBounds');
     let center = document.getElementById('center');
     let rightBounds = document.getElementById('rightBounds');
-    let bits = 14;
-    if (document.getElementById('radio16b').checked) {
-        bits = 16;
-    }
     histogramImg.src = 'data:image/png;base64,' + xhttp.response;
-    leftBounds.max = (2**bits) - 1;
+    leftBounds.max = (2**14) - 1;
     leftBounds.value = 0;
     leftBounds.style.width = hist['Width'] + 'px';
     center.max = leftBounds.max;

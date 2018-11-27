@@ -25,11 +25,11 @@ func (hset *HistogramSet) ProcessImage(root string, filename string, wg *sync.Wa
 		for y := y_min; y < y_max; y++ {
 			px := img.At(x, y)
 			r, _, _, _ := px.RGBA()
-			i_act = (float64(r) - hist.Min) / hist.Step
+			i_act = float64(r) / hist.Step
 			i_int = int(math.Floor(i_act))
 			if (i_int >= 0) && (i_int < hset.Nbins) {
 				hist.Cts[i_int] += 1
-			} else if i_int == hset.Nbins {
+			} else if i_int >= hset.Nbins {
 				hist.Cts[i_int-1] += 1
 			}
 		}

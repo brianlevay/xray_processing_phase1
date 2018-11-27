@@ -15,18 +15,9 @@
             <section class='lvl2'>
                 <div class='title2'>Select Tiffs for Processing</div>
                 <div class='lvl3'>
-                    <input id='selectAll' type='checkbox'></input><label>Select all</label>
+                    <input id='selectAll' type='checkbox'><label>Select all</label>
                 </div>
                 <div id='fileList'></div>
-            </section>
-            <section class='lvl2'>
-                <div class='title2'>Data Type for Tiffs</div>
-                <div class='lvl3'>
-                    <div>
-                        <input id='radio14b' type='radio' name='nbits' value='14' checked></input><label>14 bit ('_base')</label>
-                        <input id='radio16b' type='radio' name='nbits' value='16'></input><label>16 bit</label>
-                    </div>
-                </div>
             </section>
         </section>
         
@@ -36,21 +27,21 @@
             <div class='lvl2'>
                 <div class='title2'>Histogram Results</div>
                 <div>
-                    <img id='histogramImg'></img>
+                    <img id='histogramImg'>
                 </div>
                 <div>
                     <input id='leftBounds' type='range' class='slider' min='0'>
-                    <label>Left edge &nbsp</label>
+                    <label>Left edge &nbsp;</label>
                     <span id='leftBoundsVal'></span>
                 </div>
                 <div>
                     <input id='center' type='range' class='slider' min='0'>
-                    <label>Peak position &nbsp</label>
+                    <label>Peak position &nbsp;</label>
                     <span id='centerVal'></span>
                 </div>
                 <div>
                     <input id='rightBounds' type='range' class='slider' min='0'>
-                    <label>Right edge &nbsp</label>
+                    <label>Right edge &nbsp;</label>
                     <span id='rightBoundsVal'></span>
                 </div>
             </div>
@@ -58,23 +49,6 @@
         
         <section class='lvl1'>
             <div class='title1'>Processing Settings</div>
-            <section class='lvl2'>
-                <div class='title2'>Type of Processing</div>
-                <div class='lvl3'>
-                    <div>
-                        <input id='radioConvert16b' type='radio' name='procMethod' value='convert16b'>
-                        <label>Convert to 16 bits</label>
-                    </div>
-                    <div>
-                        <input id='radioMurhot' type='radio' name='procMethod' value='murhot'>
-                        <label>Convert to &mu;&rho;t</label>
-                    </div>
-                    <div>
-                        <input id='radioCompensation' type='radio' name='procMethod' value='compensation' checked>
-                        <label>Convert to &mu;&rho;t<sub>ref</sub> (thickness compensation)</label>
-                    </div>
-                </div>
-            </section>
             <section class='lvl2'>
                 <div class='title2'>Instrument Geometry</div>
                 <div class='lvl3'>
@@ -91,6 +65,10 @@
                         <label>Diameter of core (cm)</label>
                     </div>
                     <div>
+                        <input id='motion' type='number' name='motion' min='0.0' max='15.0' step='0.1'>
+                        <label>Distance the core is moved between images (cm)</label>
+                    </div>
+                    <div>
                         <input id='wholeRound' type='radio' name='coreType' value='WR' checked><label>Whole round</label>
                         <input id='halfRound' type='radio' name='coreType' value='HR'><label>Half round</label>
                     </div>
@@ -100,33 +78,12 @@
                 <div class='title2'>Contrast Enhancement</div>
                 <div class='lvl3'>
                     <div>
-                        <input id='defaultScale' type='radio' name='defaultScale' value='defaultScale'>
-                        <label>Use default scale (no clipping or skew correction)</label>
-                    </div>
-                    <div>
                         <input id='clipScale' type='radio' name='clipScale' value='clipScale'>
                         <label>Clip values outside left and right histogram bounds (specified above by sliders)</label>
                     </div>
                     <div>
                         <input id='skewScale' type='radio' name='skewScale' value='skewScale' checked>
                         <label>Clip values, reduce skew, and enhance contrast around peak</label>
-                    </div>
-                </div>
-            </section>
-            <section class='lvl2'>
-                <div class='title2'>Image Overlays</div>
-                <div class='lvl3'>
-                    <div>
-                        <input id='roiSize' type='number' name='roiSize' min='0.0', max='15.0', step='0.1'>
-                        <label>ROI size (cm) - Usually, this is the distance the core is moved between images</label>
-                    </div>
-                    <div>
-                        <input id='includeScale' type='checkbox' name='includeScale' value='includeScale' checked>
-                        <label>Include scale bar for mid-core height</label>
-                    </div>
-                    <div>
-                        <input id='includeROI' type='checkbox' name='includeROI' value='includeROI' checked>
-                        <label>Include region of interest bar (used to help with image stitching)</label>
                     </div>
                 </div>
             </section>

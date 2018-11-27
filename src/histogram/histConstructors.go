@@ -6,11 +6,8 @@ import (
 
 func newHistogram(bits int, nbins int) *Histogram {
 	hist := new(Histogram)
-	hist.Min = 0
-	hist.Max = math.Pow(2, float64(bits)) - 1
-	hist.Step = (hist.Max - hist.Min) / float64(nbins)
+	hist.Step = math.Pow(2, float64(bits)) / float64(nbins)
 	for i := 0; i < nbins; i++ {
-		hist.Bins = append(hist.Bins, float64(i)*hist.Step+hist.Min)
 		hist.Cts = append(hist.Cts, 0)
 	}
 	return hist
