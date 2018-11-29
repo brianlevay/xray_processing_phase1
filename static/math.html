@@ -9,6 +9,29 @@
 	<body>
 	<section>
 		<h1>Core Axis Determination</h1>
+		
+		<section>
+			<h2>Binary Image</h2>
+			<h3>Define core presence or absence based on threshold</h3>
+			<p>if I<sub>raw</sub> &le; I<sub>threshold</sub></p>
+			<p>I<sub>bin</sub> = 1.0</p>
+			<p>if I<sub>raw</sub> &gt; I<sub>threshold</sub></p>
+			<p>I<sub>bin</sub> = 0.0</p>
+		</section>
+		
+		<section>
+			<h2>Lateral Edge Detection</h2>
+			<h3>Find where the core presence changes in the x-direction</h3>
+			<p>I<sub>edge</sub>(i, j) = I<sub>bin</sub>(i, j+1) − I<sub>bin</sub>(i, j)</p>
+		
+			<h3>Determining the core edges</h3>
+			<p>When I<sub>edge</sub>(i, j) = 1.0, you have the left edge of a feature. When I<sub>edge</sub>(i, j) = -1.0, you have the right edge of a feature. To determine the core edges, find all edges in a pixel row (fixed y). The edge points that give the largest gap from +1.0 (left edge) to -1.0 (right edge) are assumed to represent the edges of the core in that row, as long as the gap is exceeds a reasonable threshold.</p>
+		</section>
+		
+		<section>
+			<h2>Core Axis Estimation</h2>
+			<p>The midpoint between the left and right core edge in each row is determined, and the points are fit using linear regression. The vertical pixel position (y) is used as the independent variable, and the horizontal pixel position (x) is used as the dependent variable. The regression line is compared against some limits to determine if it is reasonable, otherwise the axis is assumed to be vertical and centered.</p>
+		</section>
 	</section>
 	
 	<section>
@@ -88,6 +111,39 @@
 	<section>
 		<h1>Primary Calculations</h1>
 	
+		<section>
+			<h2>Theoretical Background</h2>
+			<h3>Fundamental material properties</h3>
+			<p>&mu;(E) = mass attenuation coefficient of a material at a particular x-ray energy, based on the chemical composition</p>
+			<p>&rho; = material density</p>
+			<p>t = material thickness along the x-ray path</p>
+			
+			<h3>Basic equation for monochromatic x-ray transmission</h3>
+			<p>I<sub>trans</sub>(E) = I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup></p>
+			
+			<h3>Equation for total x-ray transmission</h3>
+			<p>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</p>
+		</section>
+		
+		<section>
+			<h2>Polychromatic X-Ray Approximation</h2>
+			<h3>Approximated x-ray transmission</h3>
+			<p>Based on numerical simulations, for a given material composition and source spectrum, a single effective mass attenuation coefficent can be used to approximate attenuation behavior for polychromatic x-rays.</p>
+			<p>I<sub>trans</sub> = &sum; I<sub>trans</sub>(E)</p>
+			<p>I<sub>0</sub> = &sum; I<sub>0</sub>(E)</p>
+			<p>I<sub>trans</sub> &approx; I<sub>0</sub> * e<sup>-&mu;<sub>eff</sub>*&rho;*t</sup></p>
+		
+			<h3>Estimating effective material properties</h3>
+			<p>If our detector is over-saturated, we don't know I<sub>0</sub> (the total number of x-rays from the source), we only know I<sub>max</sub>, the value at which the detector saturates. The impact of using I<sub>max</sub> instead of I<sub>0</sub> is that all of our &mu;<sub>eff</sub>*&rho;*t values will be shifted by a constant value. </p>
+			<p>&mu;<sub>eff</sub>*&rho;*t &approx; ln(I<sub>max</sub> + 1.0) - ln(I<sub>trans</sub> + 1.0)</p>
+			<p>We add 1.0 to I<sub>trans</sub> to prevent undefined behavior when I<sub>trans</sub> = 0, and we add 1.0 to I<sub>max</sub> to preserve the fact that &mu;<sub>eff</sub>*&rho;*t = 0 when I<sub>trans</sub> is equal to I<sub>max</sub>.</p>
+		
+			<h3>Compensating for thickness</h3>
+			<p>We can remove the impact of thickness variations by normalizing to a constant reference thickness (in this case, the maximum core thickness). Outside the modelled footprint of the core, we leave the &mu;<sub>eff</sub>*&rho;*t values unchanged. The reason that we adjust to a constant thickness rather than just dividing by the thickness is that it better preserves the relationships between pixel values within the core footprint and pixel values outside of the core, if other objects are present (such as references or standards).</p>
+			<p>&mu;<sub>eff</sub>*&rho;*t<sub>max</sub> &approx; (&mu;<sub>eff</sub>*&rho;*t) * (t<sub>max</sub> / t<sub>model</sub>)
+			<p>t<sub>model</sub> = distances through the core that x-rays have to travel to reach each pixel</p>
+			<p>t<sub>max</sub> = maximum x-ray distance through core</p>
+		</section>
 	</section>
 	
 	<section>
@@ -101,10 +157,10 @@
 		<section>
 			<h2>Histogram Stretching and Centering</h2>
 			<h3>Values</h3>
-			<p>O<sub>val</sub> = &mu;&rho;t<sub>ref</sub></p>
-			<p>O<sub>min</sub> = ln(I<sub>max</sub>) - ln(I<sub>high</sub> + 1.0)</p>
-			<p>O<sub>peak</sub> = ln(I<sub>max</sub>) - ln(I<sub>peak</sub> + 1.0)</p>
-			<p>O<sub>max</sub> = ln(I<sub>max</sub>) - ln(I<sub>low</sub> + 1.0)</p>
+			<p>O<sub>val</sub> = &mu;<sub>eff</sub>*&rho;*t<sub>ref</sub></p>
+			<p>O<sub>min</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>high</sub> + 1.0)</p>
+			<p>O<sub>peak</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>peak</sub> + 1.0)</p>
+			<p>O<sub>max</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>low</sub> + 1.0)</p>
 			
 			<h3>Normalization</h3>
 			<p>if O<sub>min</sub> &le; O<sub>val</sub> &le; O<sub>max</sub></p>
