@@ -9,7 +9,6 @@ let settings = {
     AxisMethod: 'autoDetect',
     AxisAngle: 0.0,
     AxisOffset: 0.0,
-    Contrast: 'skewScale',
     Low: 0,
     Mid: (2**14-1)/2,
     High: (2**14-1),
@@ -53,11 +52,6 @@ function updateSettings() {
    }
    settings.AxisAngle = parseFloat(document.getElementById('axisAngle').value);
    settings.AxisOffset = parseFloat(document.getElementById('axisOffset').value);
-   if (document.getElementById('clipScale').checked) {
-       settings.Contrast = 'clipScale';
-   } else {
-       settings.Contrast = 'skewScale';
-   }
    settings.Low = parseFloat(document.getElementById('leftBounds').value);
    settings.Mid = parseFloat(document.getElementById('center').value);
    settings.High = parseFloat(document.getElementById('rightBounds').value);

@@ -11,7 +11,6 @@ type ImgProcessor struct {
 	AxisMethod   string  `json:"AxisMethod"`
 	AxisAngle    float64 `json:"AxisAngle"`
 	AxisOffset   float64 `json:"AxisOffset"`
-	Contrast     string  `json:"Contrast"`
 	Low          float64 `json:"Low"`
 	Mid          float64 `json:"Mid"`
 	High         float64 `json:"High"`
