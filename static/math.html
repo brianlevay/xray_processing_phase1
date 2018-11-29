@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='UTF-8'>
+        <title>Math Behind the Image Processing</title>
+        <link rel='stylesheet' href='math.css'>
+    </head>
+    <html>
+	<body>
+	<section>
+		<h1>Core Axis Determination</h1>
+	</section>
+	
+	<section>
+		<h1>Thickness Modelling</h1>
+	
+		<section>
+			<h2>Assumptions</h2>
+			<p>The primary assumptions are that the cylinder axis is always at the same z and is aligned with the y axis. If it's not aligned with y, a simple xy axis rotation can be performed so that y' is aligned with the axis. This will keep the math the same (and simple).</p>
+		</section>
+	
+		<section>
+			<h2>Coordinate Systems</h2>
+			<h3>Convert from initial coordinates to rotated coordinates, where y' is aligned with cylinder axis</h3>
+			<p>x' = x cos&Theta; - y sin&Theta;</p>
+			<p>y' = x sin&Theta; - y cos&Theta;</p>
+			<p>z' = z</p>
+		</section>
+	
+		<section>
+			<h2>Fundamental Equations</h2>
+			<h3>Equation of a cylinder, aligned with y' axis</h3>
+			<p>(x' - x'<sub>a</sub>)<sup>2</sup> + (z' - z'<sub>a</sub>)<sup>2</sup> = r<sup>2</sup></p>
+			
+			<h3>Parametric equations of a ray</h3>
+			<p>x' = x'<sub>p</sub> + u<sub>x'</sub>t</p>
+			<p>y' = y'<sub>p</sub> + u<sub>y'</sub>t</p>
+			<p>z' = z'<sub>p</sub> + u<sub>z'</sub>t</p>
+			<p>&#10216; u<sub>x'</sub>, u<sub>y'</sub>, u<sub>z'</sub> &#10217; = unit vector for ray</p>
+		</section>
+	
+		<section>
+			<h2>Intersections Between a Ray and a Horizontal Plane</h2>
+			<p>if u<sub>z'</sub> &ne; 0</p>
+			<p>t<sub>h</sub> = (z'<sub>h</sub> - z'<sub>p</sub>) / u<sub>z'</sub></p>
+			<p>else</p>
+			<p>t<sub>h</sub> = undefined</p>
+		</section>
+	
+		<section>
+			<h2>Intersections Between a Ray and a Cylinder</h2>
+			<h3>Substitution</h3>
+			<p>(x'<sub>p</sub> + u<sub>x'</sub>t - x'<sub>a</sub>)<sup>2</sup> + (z'<sub>p</sub> + u<sub>z'</sub>t - z'<sub>a</sub>)<sup>2</sup> = r<sup>2</sup></p>
+			
+			<h3>Expand the full equation</h3>
+			<p>At<sup>2</sup> + Bt + C = 0</p>
+			<p>A = u<sub>x'</sub><sup>2</sup> + u<sub>z'</sub><sup>2</sup></p>
+			<p>B = 2u<sub>x'</sub>(x'<sub>p</sub> - x'<sub>a</sub>) + 2u<sub>z'</sub>(z'<sub>p</sub> - z'<sub>a</sub>)</p>
+			<p>C = x'<sub>p</sub><sup>2</sup> - 2x'<sub>p</sub>x'<sub>a</sub> + x'<sub>a</sub><sup>2</sup> + z'<sub>p</sub><sup>2</sup> - 2z'<sub>p</sub>z'<sub>a</sub> + z'<sub>a</sub><sup>2</sup> - r<sup>2</sup></p>
+			
+			<h3>Solve using the quadratic formula</h3>
+			<p>det = B<sup>2</sup> - 4AC</p>
+			<p>if det &gt; 0</p>
+			<p>t<sub>c1</sub> = (-B - &radic;det) / 2A</p>
+			<p>t<sub>c2</sub> = (-B + &radic;det) / 2A</p>
+			<p>else</p>
+			<p>t<sub>c1</sub>, t<sub>c2</sub> = 0</p>
+		</section>
+	
+		<section>
+			<h2>Path Lengths Through Whole Round and Half Round</h2>
+			<h3>Whole round</h3>
+			<p>if det &gt; 0</p>
+			<p>thickness = t<sub>c2</sub> - t<sub>c1</sub>
+			<p>else</p>
+			<p>thickness = 0
+			
+			<h3>Half round</h3>
+			<p>if det &gt; 0 and t<sub>h</sub> &lt; t<sub>c1</sub></p>
+			<p>thickness = t<sub>c2</sub> - t<sub>c1</sub></p>
+			<p>if det &gt; 0 and t<sub>c2</sub> &gt; t<sub>h</sub> &gt; t<sub>c1</sub></p>
+			<p>thickness = t<sub>c2</sub> - t<sub>h</sub></p>
+			<p>if det &le; 0 or t<sub>h</sub> &gt; t<sub>c2</sub></p>
+			<p>thickness = 0</p>
+		</section>
+	</section>
+	
+	<section>
+		<h1>Primary Calculations</h1>
+	
+	</section>
+	
+	<section>
+		<h1>Contrast Enhancement</h1>
+		
+		<section>
+			<h2>Requirements</h2>
+			<p>Must be a function that is continuous over the input range and through the peak! Using two different functions around the peak leads to strong anomalies and unstable behavior at the peak itself, which creates artifacts over large swaths of the images.</p>
+		</section>
+		
+		<section>
+			<h2>Histogram Stretching and Centering</h2>
+			<h3>Values</h3>
+			<p>O<sub>val</sub> = &mu;&rho;t<sub>ref</sub></p>
+			<p>O<sub>min</sub> = ln(I<sub>max</sub>) - ln(I<sub>high</sub> + 1.0)</p>
+			<p>O<sub>peak</sub> = ln(I<sub>max</sub>) - ln(I<sub>peak</sub> + 1.0)</p>
+			<p>O<sub>max</sub> = ln(I<sub>max</sub>) - ln(I<sub>low</sub> + 1.0)</p>
+			
+			<h3>Normalization</h3>
+			<p>if O<sub>min</sub> &le; O<sub>val</sub> &le; O<sub>max</sub></p>
+			<p>X = (O<sub>val</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
+			<p>if O<sub>val</sub> &lt; O<sub>min</sub></p>
+			<p>X = 0.0</p>
+			<p>if O<sub>val</sub> &gt; O<sub>max</sub></p>
+			<p>X = 1.0</p>
+			
+			<h3>Using a polynomial to stretch the X values and center the peak at 0.5</h3>
+			<p>X<sub>peak</sub> = (O<sub>peak</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
+			<p>0.5 = X<sub>peak</sub><sup>n</sup></p>
+			<p>n = ln(0.5) / ln(X<sub>peak</sub>)</p>
+			<p>P = X<sup>n</sup></p>
+			
+			<h3>Using a sine function to stretch central values and compress edge values</h3>
+			<p>S(X) = 0.5 * sin(&pi; * (X − 0.5)) + 0.5</p>
+			<p>S(P) = 0.5 * sin(&pi; * (P − 0.5)) + 0.5</p>
+			
+			<h3>Avoiding too much distortion</h3>
+			<p>When X<sub>peak</sub> is far from 0.5, using S(P) can distort the spectrum too much and cause spectral artifacts. Using S(X) will not shift the peak at all, however, leaving too much original skew. Using a weighted mixture of S(P) and S(X) allows us to shift the peak and stretch the histogram without causing poor behavior under extreme skew.</p>
+			<p>w = 1.0 − abs(2.0 * (X<sub>peak</sub> − 0.5))<sup>2</sup></p>
+			<p>Y = w * S(P) + (1 − w) * S(X)</p>
+			
+			<h3>Converting to pixel values and reversing greyscale</h3>
+			<p>I<sub>proc</sub> = I<sub>max</sub> * (1 - Y)</p>
+		</section>
+		
+	</section>
+	
+	</body>
+</html>
