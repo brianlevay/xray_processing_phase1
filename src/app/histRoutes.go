@@ -23,6 +23,8 @@ func histogramHandler(contents *fe.FileContents) {
 		contents.Selected = stringToSlice(selectedS[0])
 		nImages := len(contents.Selected)
 
+		bits := 14
+		nbins := 256
 		if nImages > 0 {
 			width, errWidth := checkAndConvertToInt("Width", r.Form)
 			errorResponse(errWidth, &w)
@@ -30,7 +32,7 @@ func histogramHandler(contents *fe.FileContents) {
 			errorResponse(errHeight, &w)
 
 			log.Println("Started generating histogram...")
-			histogram := hist.ImageHistogram(contents, 14, 256)
+			histogram := hist.ImageHistogram(contents, bits, nbins)
 			buffer := hist.DrawHistogram(histogram, width, height)
 			sEnc := base64.StdEncoding.EncodeToString(buffer.Bytes())
 			log.Println("Sending histogram...")

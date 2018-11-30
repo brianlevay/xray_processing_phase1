@@ -16,8 +16,22 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 		return
 	}
 
+	bits := 14
+	pxcm := 0.0099
+	tmin := 0.5
+
 	raw := Gray16ToFloat(imgOrig)
-	imgNew := FloatToGray16(raw)
+	theta := proc.AxisAngle
+	offset := proc.AxisOffset
+	if proc.AxisMethod == "autoDetect" {
+		theta, offset = FindCoreAxis(raw)
+	}
+	tmodel := CalculateTmodel(theta, offset, pxcm, proc.CoreType, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight)
+	murhot := CalculateMuRhoT(raw, bits)
+	compensated := Compensation(murhot, tmodel, tmin)
+	low, peak, high := CalculateMuRhoTbounds(proc.Low, proc.Mid, proc.High, bits)
+	processed := AdjustedAndScaled(compensated, low, peak, high)
+	imgNew := FloatToGray16(processed)
 
 	rootOut := root
 	if proc.FolderName != "" {
