@@ -20,18 +20,19 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	pxcm := 0.0099
 	tmin := 0.5
 
-	raw := Gray16ToFloat(imgOrig)
+	Iraw := Gray16ToFloat(imgOrig)
 	theta := proc.AxisAngle
 	offset := proc.AxisOffset
 	if proc.AxisMethod == "autoDetect" {
-		theta, offset = FindCoreAxis(raw)
+		theta, offset = FindCoreAxis(Iraw)
 	}
-	tmodel := CalculateTmodel(theta, offset, pxcm, proc.CoreType, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight)
-	murhot := CalculateMuRhoT(raw, bits)
-	compensated := Compensation(murhot, tmodel, tmin)
-	low, peak, high := CalculateMuRhoTbounds(proc.Low, proc.Mid, proc.High, bits)
-	processed := AdjustedAndScaled(compensated, low, peak, high)
-	imgNew := FloatToGray16(processed)
+	tmodel := Tmodel(theta, offset, pxcm, proc.CoreType, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight)
+	murhot := MuRhoT(Iraw, bits)
+	murhotref := Compensation(murhot, tmodel, tmin)
+	low, peak, high := MuRhoTbounds(proc.Low, proc.Mid, proc.High, bits)
+	Iproc := ContrastAdjustment(murhotref, low, peak, high)
+	Iout := AddScaleBars(Iproc, pxcm, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight, proc.Motion)
+	imgOut := FloatToGray16(Iout)
 
 	rootOut := root
 	if proc.FolderName != "" {
@@ -42,7 +43,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	if proc.FileAppend != "" {
 		filenameOut = filenamePts[0] + proc.FileAppend + ".tif"
 	}
-	errSave := fe.SaveTiff(imgNew, rootOut, filenameOut)
+	errSave := fe.SaveTiff(imgOut, rootOut, filenameOut)
 	if errSave != nil {
 		log.Println(errSave)
 	}
