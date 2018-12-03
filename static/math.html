@@ -140,9 +140,9 @@
 		
 			<h3>Compensating for thickness</h3>
 			<p>We can remove the impact of thickness variations by normalizing to a constant reference thickness (in this case, the maximum core thickness). Outside the modelled footprint of the core, we leave the &mu;<sub>eff</sub>*&rho;*t values unchanged. The reason that we adjust to a constant thickness rather than just dividing by the thickness is that it better preserves the relationships between pixel values within the core footprint and pixel values outside of the core, if other objects are present (such as references or standards).</p>
-			<p>&mu;<sub>eff</sub>*&rho;*t<sub>max</sub> &approx; (&mu;<sub>eff</sub>*&rho;*t) * (t<sub>max</sub> / t<sub>model</sub>)
+			<p>&mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> &approx; (&mu;<sub>eff</sub>*&rho;*t) * (t<sub>ref</sub> / t<sub>model</sub>)
 			<p>t<sub>model</sub> = distances through the core that x-rays have to travel to reach each pixel</p>
-			<p>t<sub>max</sub> = maximum x-ray distance through core</p>
+			<p>t<sub>ref</sub> = maximum vertical distance through core (diameter or radius)</p>
 		</section>
 	</section>
 	

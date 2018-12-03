@@ -17,17 +17,16 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	}
 
 	Iraw := Gray16ToFloat(imgOrig)
-	//theta := proc.AxisAngle
-	//offset := proc.AxisOffset
+	theta := proc.AxisAngle
+	offset := proc.AxisOffset
 	//if proc.AxisMethod == "autoDetect" {
 	//	theta, offset = FindCoreAxis(Iraw)
 	//}
-	//tmodel := Tmodel(proc, theta, offset)
+	tmodel := Tmodel(proc, Iraw, theta, offset)
 	murhot := MuRhoT(proc, Iraw)
-	murhotref := murhot /////////////////
-	//murhotref := Compensation(proc, murhot, tmodel)
+	murhotref := Compensation(proc, murhot, tmodel)
 	Iproc := ContrastAdjustment(proc, murhotref)
-	Iout := Iproc //////////////////
+	Iout := Iproc //////////////////////////////
 	//Iout := AddScaleBars(proc, Iproc)
 	imgOut := FloatToGray16(Iout)
 
