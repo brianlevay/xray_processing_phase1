@@ -28,11 +28,13 @@ func processingHandler(contents *fe.FileContents) {
 			errSettings := errors.New("Settings are not present")
 			errorResponse(errSettings, &w)
 		}
+
 		imgProcessor := new(proc.ImgProcessor)
 		errJSON := json.Unmarshal([]byte(settingsS[0]), imgProcessor)
 		if errJSON != nil {
 			errorResponse(errJSON, &w)
 		}
+		imgProcessor.Initialize()
 
 		if nImages > 0 {
 			log.Println("Started processing " + strconv.Itoa(nImages) + " images...")

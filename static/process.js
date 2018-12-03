@@ -9,9 +9,9 @@ let settings = {
     AxisMethod: 'autoDetect',
     AxisAngle: 0.0,
     AxisOffset: 0.0,
-    Low: 0,
-    Mid: (2**14-1)/2,
-    High: (2**14-1),
+    Ilow: 0,
+    Ipeak: (2**14-1)/2,
+    Ihigh: (2**14-1),
     FolderName: 'processed',
     FileAppend: '_processed'
 };
@@ -52,9 +52,9 @@ function updateSettings() {
    }
    settings.AxisAngle = parseFloat(document.getElementById('axisAngle').value);
    settings.AxisOffset = parseFloat(document.getElementById('axisOffset').value);
-   settings.Low = parseFloat(document.getElementById('leftBounds').value);
-   settings.Mid = parseFloat(document.getElementById('center').value);
-   settings.High = parseFloat(document.getElementById('rightBounds').value);
+   settings.Ilow = parseFloat(document.getElementById('leftBounds').value);
+   settings.Ipeak = parseFloat(document.getElementById('center').value);
+   settings.Ihigh = parseFloat(document.getElementById('rightBounds').value);
    settings.FolderName = document.getElementById('folderName').value;
    settings.FileAppend = document.getElementById('fileAppend').value;
    return;
