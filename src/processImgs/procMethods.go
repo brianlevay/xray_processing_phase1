@@ -17,21 +17,23 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	}
 
 	bits := 14
-	pxcm := 0.0099
-	tmin := 0.5
+	//pxcm := 0.0099
+	//tmin := 0.5
 
 	Iraw := Gray16ToFloat(imgOrig)
-	theta := proc.AxisAngle
-	offset := proc.AxisOffset
-	if proc.AxisMethod == "autoDetect" {
-		theta, offset = FindCoreAxis(Iraw)
-	}
-	tmodel := Tmodel(theta, offset, pxcm, proc.CoreType, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight)
+	//theta := proc.AxisAngle
+	//offset := proc.AxisOffset
+	//if proc.AxisMethod == "autoDetect" {
+	//	theta, offset = FindCoreAxis(Iraw)
+	//}
+	//tmodel := Tmodel(theta, offset, pxcm, proc.CoreType, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight)
 	murhot := MuRhoT(Iraw, bits)
-	murhotref := Compensation(murhot, tmodel, tmin)
+	murhotref := murhot
+	//murhotref := Compensation(murhot, tmodel, tmin)
 	low, peak, high := MuRhoTbounds(proc.Low, proc.Mid, proc.High, bits)
-	Iproc := ContrastAdjustment(murhotref, low, peak, high)
-	Iout := AddScaleBars(Iproc, pxcm, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight, proc.Motion)
+	Iproc := ContrastAdjustment(murhotref, low, peak, high, bits)
+	Iout := Iproc
+	//Iout := AddScaleBars(Iproc, pxcm, proc.CoreDiameter, proc.SrcHeight, proc.CoreHeight, proc.Motion)
 	imgOut := FloatToGray16(Iout)
 
 	rootOut := root
