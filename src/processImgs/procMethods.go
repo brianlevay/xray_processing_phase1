@@ -26,8 +26,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	murhot := MuRhoT(proc, Iraw)
 	murhotref := Compensation(proc, murhot, tmodel)
 	Iproc := ContrastAdjustment(proc, murhotref)
-	Iout := Iproc //////////////////////////////
-	//Iout := AddScaleBars(proc, Iproc)
+	Iout := AddScaleBars(proc, Iproc)
 	imgOut := FloatToGray16(Iout)
 
 	rootOut := root
