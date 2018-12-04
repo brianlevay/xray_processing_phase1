@@ -19,9 +19,9 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	Iraw := Gray16ToFloat(imgOrig)
 	theta := proc.AxisAngle
 	offset := proc.AxisOffset
-	//if proc.AxisMethod == "autoDetect" {
-	//	theta, offset = FindCoreAxis(Iraw)
-	//}
+	if proc.AxisMethod == "autoDetect" {
+		theta, offset = FindCoreAxis(proc, Iraw)
+	}
 	tmodel := Tmodel(proc, Iraw, theta, offset)
 	murhot := MuRhoT(proc, Iraw)
 	murhotref := Compensation(proc, murhot, tmodel)
