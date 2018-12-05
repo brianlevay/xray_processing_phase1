@@ -36,7 +36,7 @@ func AddScaleBars(proc *ImgProcessor, Iproc [][]float64) [][]float64 {
 				if evenCm(i, cmPxHeight) {
 					Iout[i][j] = 0.0
 				} else {
-					Iout[i][j] = proc.Imax
+					Iout[i][j] = proc.ImaxOut
 				}
 			}
 			if isInside(i, j, iLn, jLn) {

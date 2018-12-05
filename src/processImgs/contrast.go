@@ -23,7 +23,7 @@ func ContrastAdjustment(proc *ImgProcessor, murhotref [][]float64) [][]float64 {
 			SX = 0.5*math.Sin(math.Pi*(X-0.5)) + 0.5
 			SP = 0.5*math.Sin(math.Pi*(P-0.5)) + 0.5
 			Y = proc.W*SP + (1-proc.W)*SX
-			Iproc[i][j] = proc.Imax * (1 - Y)
+			Iproc[i][j] = proc.ImaxOut * (1 - Y)
 		}
 	}
 	return Iproc

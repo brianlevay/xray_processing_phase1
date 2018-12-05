@@ -8,7 +8,7 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]float64) (float64, float64) {
 	height := len(Iraw)
 	width := len(Iraw[0])
 
-	Ithresh := 0.8 * proc.Imax
+	Ithresh := 0.8 * proc.ImaxIn
 	maxTheta := 5.0
 	minWidthPx := int(0.8 * (proc.CoreDiameter / proc.CmPx))
 	minPts := int(0.5 * float64(height))

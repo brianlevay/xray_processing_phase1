@@ -10,13 +10,14 @@ func (proc *ImgProcessor) Initialize() {
 	tmin := 0.5
 
 	proc.Bits = bits
-	proc.Imax = math.Pow(2, float64(bits)) - 1.0
+	proc.ImaxIn = math.Pow(2, float64(bits)) - 1.0
+	proc.ImaxOut = math.Pow(2, 16.0) - 1.0
 	proc.CmPx = cmpx
 	proc.Tmin = tmin
 
-	proc.Omin = math.Log(proc.Imax+1.0) - math.Log(proc.Ihigh+1.0)
-	proc.Opeak = math.Log(proc.Imax+1.0) - math.Log(proc.Ipeak+1.0)
-	proc.Omax = math.Log(proc.Imax+1.0) - math.Log(proc.Ilow+1.0)
+	proc.Omin = math.Log(proc.ImaxIn+1.0) - math.Log(proc.Ihigh+1.0)
+	proc.Opeak = math.Log(proc.ImaxIn+1.0) - math.Log(proc.Ipeak+1.0)
+	proc.Omax = math.Log(proc.ImaxIn+1.0) - math.Log(proc.Ilow+1.0)
 
 	proc.Xpeak = (proc.Opeak - proc.Omin) / (proc.Omax - proc.Omin)
 	proc.N = math.Log(0.5) / math.Log(proc.Xpeak)

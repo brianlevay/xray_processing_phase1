@@ -17,7 +17,8 @@ type ImgProcessor struct {
 	FolderName   string  `json:"FolderName"`
 	FileAppend   string  `json:"FileAppend"`
 	Bits         int     `json:"-"`
-	Imax         float64 `json:"-"`
+	ImaxIn       float64 `json:"-"`
+	ImaxOut      float64 `json:"-"`
 	CmPx         float64 `json:"-"`
 	Tmin         float64 `json:"-"`
 	Omin         float64 `json:"-"`
