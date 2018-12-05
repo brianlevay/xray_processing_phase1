@@ -8,6 +8,17 @@ import (
 	"sync"
 )
 
+func ProcessTiffs(contents *fe.FileContents, proc *ImgProcessor) {
+	var wg sync.WaitGroup
+	nfiles := len(contents.Selected)
+	for i := 0; i < nfiles; i++ {
+		wg.Add(1)
+		go proc.ProcessImage(contents.Root, contents.Selected[i], &wg)
+	}
+	wg.Wait()
+	return
+}
+
 func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.WaitGroup) {
 	imgOrig, errOpen := fe.OpenTiff(root, filename)
 	if errOpen != nil {
@@ -22,10 +33,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	if proc.AxisMethod == "autoDetect" {
 		theta, offset = FindCoreAxis(proc, Iraw)
 	}
-	tmodel := Tmodel(proc, Iraw, theta, offset)
-	murhot := MuRhoT(proc, Iraw)
-	murhotref := Compensation(proc, murhot, tmodel)
-	Iproc := ContrastAdjustment(proc, murhotref)
+	Iproc := ProcessByPixel(proc, Iraw, theta, offset)
 	Iout := AddScaleBars(proc, Iproc)
 	imgOut := FloatToGray16(Iout)
 

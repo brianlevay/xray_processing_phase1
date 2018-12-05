@@ -4,11 +4,7 @@ import (
 	"math"
 )
 
-func Tmodel(proc *ImgProcessor, Iraw [][]float64, theta float64, offset float64) [][]float64 {
-	var x, y float64
-	var pt, ptR []float64
-	height := len(Iraw)
-	width := len(Iraw[0])
+func Tmodel(proc *ImgProcessor, i int, j int, height int, width int, theta float64, offset float64) float64 {
 	r := (proc.CoreDiameter / 2.0)
 	xc := (float64(width) * proc.CmPx) / 2.0
 	yc := (float64(height) * proc.CmPx) / 2.0
@@ -17,17 +13,12 @@ func Tmodel(proc *ImgProcessor, Iraw [][]float64, theta float64, offset float64)
 	thetaRad := radians(theta)
 	axisR := rotate(axis, thetaRad)
 	srcR := rotate(src, thetaRad)
-	tmodel := make([][]float64, height)
-	for i := 0; i < height; i++ {
-		tmodel[i] = make([]float64, width)
-		for j := 0; j < width; j++ {
-			x = float64(j)*proc.CmPx + (proc.CmPx / 2.0)
-			y = float64(i)*proc.CmPx + (proc.CmPx / 2.0)
-			pt = []float64{x, y, 0}
-			ptR = rotate(pt, thetaRad)
-			tmodel[i][j] = thickness(ptR, axisR, srcR, r, proc.CoreType)
-		}
-	}
+
+	x := float64(j)*proc.CmPx + (proc.CmPx / 2.0)
+	y := float64(i)*proc.CmPx + (proc.CmPx / 2.0)
+	pt := []float64{x, y, 0}
+	ptR := rotate(pt, thetaRad)
+	tmodel := thickness(ptR, axisR, srcR, r, proc.CoreType)
 	return tmodel
 }
 
@@ -51,14 +42,13 @@ func unitVector(ptR []float64, srcR []float64) []float64 {
 	delY := ptR[1] - srcR[1]
 	delZ := ptR[2] - srcR[2]
 	dist := math.Sqrt(math.Pow(delX, 2) + math.Pow(delY, 2) + math.Pow(delZ, 2))
-	if dist != 0.0 {
-		ux := delX / dist
-		uy := delY / dist
-		uz := delZ / dist
-		return []float64{ux, uy, uz}
-	} else {
+	if dist == 0.0 {
 		return []float64{0.0, 0.0, 0.0}
 	}
+	ux := delX / dist
+	uy := delY / dist
+	uz := delZ / dist
+	return []float64{ux, uy, uz}
 }
 
 func thickness(ptR []float64, axisR []float64, srcR []float64, r float64, coreType string) float64 {
@@ -87,7 +77,6 @@ func thickness(ptR []float64, axisR []float64, srcR []float64, r float64, coreTy
 		} else {
 			return 0.0
 		}
-	} else {
-		return tc2 - tc1
 	}
+	return tc2 - tc1
 }

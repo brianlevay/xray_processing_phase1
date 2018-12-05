@@ -6,7 +6,7 @@ import (
 	fe "fileExplorer"
 	"log"
 	"net/http"
-	proc "processImgs"
+	img "processImgs"
 	"strconv"
 )
 
@@ -42,7 +42,7 @@ func processingHandler(contents *fe.FileContents) {
 
 		if nImages > 0 {
 			log.Println("Started processing " + strconv.Itoa(nImages) + " images...")
-			fe.ProcessTiffs(contents, imgProcessor)
+			img.ProcessTiffs(contents, imgProcessor)
 			log.Println("Finished processing images.")
 		} else {
 			log.Println("No images selected.")

@@ -1,8 +1,6 @@
 package fileExplorer
 
-import (
-	"sync"
-)
+import ()
 
 type FileContents struct {
 	Root      string   `json:"Root"`
@@ -10,8 +8,4 @@ type FileContents struct {
 	FileNames []string `json:"Files"`
 	Selected  []string `json:"Selected"`
 	Extension string   `json:"-"`
-}
-
-type Processor interface {
-	ProcessImage(root string, filename string, wg *sync.WaitGroup)
 }
