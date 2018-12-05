@@ -10,8 +10,8 @@ func Tmodel(proc *ImgProcessor, Iraw [][]float64, theta float64, offset float64)
 	height := len(Iraw)
 	width := len(Iraw[0])
 	r := (proc.CoreDiameter / 2.0)
-	xc := (float64(width) * proc.Pxcm) / 2.0
-	yc := (float64(height) * proc.Pxcm) / 2.0
+	xc := (float64(width) * proc.CmPx) / 2.0
+	yc := (float64(height) * proc.CmPx) / 2.0
 	axis := []float64{(xc + offset), yc, (proc.CoreHeight + r)}
 	src := []float64{xc, yc, proc.SrcHeight}
 	thetaRad := radians(theta)
@@ -21,8 +21,8 @@ func Tmodel(proc *ImgProcessor, Iraw [][]float64, theta float64, offset float64)
 	for i := 0; i < height; i++ {
 		tmodel[i] = make([]float64, width)
 		for j := 0; j < width; j++ {
-			x = float64(j)*proc.Pxcm + (proc.Pxcm / 2.0)
-			y = float64(i)*proc.Pxcm + (proc.Pxcm / 2.0)
+			x = float64(j)*proc.CmPx + (proc.CmPx / 2.0)
+			y = float64(i)*proc.CmPx + (proc.CmPx / 2.0)
 			pt = []float64{x, y, 0}
 			ptR = rotate(pt, thetaRad)
 			tmodel[i][j] = thickness(ptR, axisR, srcR, r, proc.CoreType)

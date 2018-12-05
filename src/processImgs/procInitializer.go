@@ -6,12 +6,12 @@ import (
 
 func (proc *ImgProcessor) Initialize() {
 	bits := 14
-	pxcm := 0.0099
+	cmpx := 0.0099
 	tmin := 0.5
 
 	proc.Bits = bits
 	proc.Imax = math.Pow(2, float64(bits)) - 1.0
-	proc.Pxcm = pxcm
+	proc.CmPx = cmpx
 	proc.Tmin = tmin
 
 	proc.Omin = math.Log(proc.Imax+1.0) - math.Log(proc.Ihigh+1.0)

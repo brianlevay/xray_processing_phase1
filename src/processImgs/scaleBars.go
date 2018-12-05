@@ -49,7 +49,7 @@ func AddScaleBars(proc *ImgProcessor, Iproc [][]float64) [][]float64 {
 
 func pxDet(proc *ImgProcessor, cmCore float64) int {
 	cmDet := (cmCore / (proc.SrcHeight - proc.CoreHeight - (proc.CoreDiameter / 2.0))) * proc.SrcHeight
-	pxDet := int(cmDet / proc.Pxcm)
+	pxDet := int(cmDet / proc.CmPx)
 	return pxDet
 }
 
