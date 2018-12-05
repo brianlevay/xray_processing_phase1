@@ -35,6 +35,10 @@ func radians(degrees float64) float64 {
 	return degrees * (math.Pi / 180.0)
 }
 
+func degrees(radians float64) float64 {
+	return radians * (180.0 / math.Pi)
+}
+
 func rotate(pt []float64, thetaR float64) []float64 {
 	xr := pt[0]*math.Cos(thetaR) - pt[1]*math.Sin(thetaR)
 	yr := pt[0]*math.Sin(thetaR) - pt[1]*math.Cos(thetaR)
