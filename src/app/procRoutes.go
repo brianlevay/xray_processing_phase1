@@ -35,6 +35,10 @@ func processingHandler(contents *fe.FileContents) {
 			errorResponse(errJSON, &w)
 		}
 		imgProcessor.Initialize()
+		errSub := fe.CreateSubfolder(contents.Root, imgProcessor.FolderName)
+		if errSub != nil {
+			errorResponse(errSub, &w)
+		}
 
 		if nImages > 0 {
 			log.Println("Started processing " + strconv.Itoa(nImages) + " images...")
