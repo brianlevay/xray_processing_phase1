@@ -5,7 +5,7 @@ import (
 )
 
 func (proc *ImgProcessor) Initialize() {
-	proc.ImaxIn = math.Pow(2, 14.0) - 1.0
+	proc.ImaxIn = math.Pow(2, float64(proc.Bits)) - 1.0
 	proc.ImaxOut = math.Pow(2, 16.0) - 1.0
 	proc.CmPx = 0.0099
 	proc.Tmin = 0.5
@@ -17,4 +17,5 @@ func (proc *ImgProcessor) Initialize() {
 	proc.Xpeak = (proc.Opeak - proc.Omin) / (proc.Omax - proc.Omin)
 	proc.N = math.Log(0.5) / math.Log(proc.Xpeak)
 	proc.W = 1.0 - math.Pow(math.Abs(2.0*(proc.Xpeak-0.5)), 2)
+	return
 }

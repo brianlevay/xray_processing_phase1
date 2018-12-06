@@ -3,6 +3,9 @@ package processImgs
 import ()
 
 type ImgProcessor struct {
+	Height       int     `json:"Height"`
+	Width        int     `json:"Width"`
+	Bits         int     `json:"Bits"`
 	CoreType     string  `json:"CoreType"`
 	CoreDiameter float64 `json:"CoreDiameter"`
 	SrcHeight    float64 `json:"SrcHeight"`
@@ -16,6 +19,7 @@ type ImgProcessor struct {
 	Ihigh        float64 `json:"Ihigh"`
 	FolderName   string  `json:"FolderName"`
 	FileAppend   string  `json:"FileAppend"`
+	Iscale       [][]int `json:"-"`
 	ImaxIn       float64 `json:"-"`
 	ImaxOut      float64 `json:"-"`
 	CmPx         float64 `json:"-"`

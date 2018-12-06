@@ -2,11 +2,18 @@ package histogram
 
 import (
 	fe "fileExplorer"
+	"sync"
 )
 
 func ImageHistogram(contents *fe.FileContents, bits int, nbins int) *Histogram {
+	var wg sync.WaitGroup
 	histSet := newHistogramSet(bits, nbins)
-	fe.ProcessTiffs(contents, histSet)
+	nfiles := len(contents.Selected)
+	for i := 0; i < nfiles; i++ {
+		wg.Add(1)
+		go histSet.ProcessImage(contents.Root, contents.Selected[i], &wg)
+	}
+	wg.Wait()
 	hist := mergeHistograms(histSet)
 	return hist
 }

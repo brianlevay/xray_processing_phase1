@@ -5,21 +5,18 @@ import (
 )
 
 func FindCoreAxis(proc *ImgProcessor, Iraw [][]float64) (float64, float64) {
-	height := len(Iraw)
-	width := len(Iraw[0])
-
 	Ithresh := 0.8 * proc.ImaxIn
 	maxTheta := 5.0
 	minWidthPx := int(0.8 * (proc.CoreDiameter / proc.CmPx))
-	minPts := int(0.5 * float64(height))
+	minPts := int(0.5 * float64(proc.Height))
 
 	var edgeVals, edgeJs []int
 	iMid := []int{}
 	jMid := []int{}
-	for i := 0; i < height; i++ {
+	for i := 0; i < proc.Height; i++ {
 		edgeVals = []int{}
 		edgeJs = []int{}
-		for j := 0; j < (width - 1); j++ {
+		for j := 0; j < (proc.Width - 1); j++ {
 			if (Iraw[i][j] > Ithresh) && (Iraw[i][j+1] <= Ithresh) {
 				edgeVals = append(edgeVals, 1)
 				edgeJs = append(edgeJs, j)
@@ -38,7 +35,7 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]float64) (float64, float64) {
 	if len(iMid) < minPts {
 		return 0.0, 0.0
 	}
-	theta, offset := axisFit(proc, iMid, jMid, height, width)
+	theta, offset := axisFit(proc, iMid, jMid)
 	if math.Abs(theta) <= maxTheta {
 		return theta, offset
 	} else {
@@ -79,11 +76,11 @@ func linearRegressionInts(xVals []int, yVals []int) (float64, float64) {
 	return beta, alpha
 }
 
-func axisFit(proc *ImgProcessor, iMid []int, jMid []int, height int, width int) (float64, float64) {
+func axisFit(proc *ImgProcessor, iMid []int, jMid []int) (float64, float64) {
 	beta, alpha := linearRegressionInts(iMid, jMid)
 	theta := degrees(math.Atan(beta))
-	iCenter := (float64(height) / 2.0)
-	jCenter := (float64(width) / 2.0)
+	iCenter := (float64(proc.Height) / 2.0)
+	jCenter := (float64(proc.Width) / 2.0)
 	jLine := beta*iCenter + alpha
 	offset := jLine - jCenter
 	return theta, offset

@@ -4,10 +4,10 @@ import (
 	"math"
 )
 
-func Tmodel(proc *ImgProcessor, i int, j int, height int, width int, theta float64, offset float64) float64 {
+func Tmodel(proc *ImgProcessor, i int, j int, theta float64, offset float64) float64 {
 	r := (proc.CoreDiameter / 2.0)
-	xc := (float64(width) * proc.CmPx) / 2.0
-	yc := (float64(height) * proc.CmPx) / 2.0
+	xc := (float64(proc.Width) * proc.CmPx) / 2.0
+	yc := (float64(proc.Height) * proc.CmPx) / 2.0
 	axis := []float64{(xc + offset), yc, (proc.CoreHeight + r)}
 	src := []float64{xc, yc, proc.SrcHeight}
 	thetaRad := radians(theta)

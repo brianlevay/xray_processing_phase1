@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/base64"
-	"errors"
 	fe "fileExplorer"
 	hist "histogram"
 	"log"
@@ -14,15 +13,10 @@ func histogramHandler(contents *fe.FileContents) {
 	http.HandleFunc("/histogram", func(w http.ResponseWriter, r *http.Request) {
 		errP := r.ParseForm()
 		errorResponse(errP, &w)
-
-		selectedS, selPresent := r.Form["Selected"]
-		if selPresent == false {
-			errSelected := errors.New("Selected variable is not present")
-			errorResponse(errSelected, &w)
-		}
+		selectedS, selectedPres := r.Form["Selected"]
+		absenceResponse(selectedPres, "Selected", &w)
 		contents.Selected = stringToSlice(selectedS[0])
 		nImages := len(contents.Selected)
-
 		bits := 14
 		nbins := 256
 		if nImages > 0 {
@@ -30,7 +24,6 @@ func histogramHandler(contents *fe.FileContents) {
 			errorResponse(errWidth, &w)
 			height, errHeight := checkAndConvertToInt("Height", r.Form)
 			errorResponse(errHeight, &w)
-
 			log.Println("Started generating histogram...")
 			histogram := hist.ImageHistogram(contents, bits, nbins)
 			buffer := hist.DrawHistogram(histogram, width, height)

@@ -15,6 +15,14 @@ func errorResponse(err error, w *http.ResponseWriter) {
 	return
 }
 
+func absenceResponse(presence bool, ID string, w *http.ResponseWriter) {
+	if presence == false {
+		log.Println(ID + " not present in post request")
+		(*w).Write([]byte(""))
+	}
+	return
+}
+
 func checkAndConvertToInt(variable string, form map[string][]string) (int, error) {
 	var err error = nil
 	varSlice, varPresent := form[variable]

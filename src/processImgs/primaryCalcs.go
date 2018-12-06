@@ -33,3 +33,13 @@ func ContrastAdjustment(proc *ImgProcessor, murhotref float64) float64 {
 	Y := proc.W*SP + (1-proc.W)*SX
 	return proc.ImaxOut * (1 - Y)
 }
+
+func AddScaleBars(proc *ImgProcessor, i int, j int, Iproc float64) float64 {
+	if proc.Iscale[i][j] == 0 {
+		return 0.0
+	} else if proc.Iscale[i][j] == 1 {
+		return Iproc
+	} else {
+		return proc.ImaxOut
+	}
+}

@@ -10,6 +10,8 @@ import (
 
 func ProcessTiffs(contents *fe.FileContents, proc *ImgProcessor) {
 	var wg sync.WaitGroup
+	proc.Initialize()
+	proc.CreateScaleBars()
 	nfiles := len(contents.Selected)
 	for i := 0; i < nfiles; i++ {
 		wg.Add(1)
@@ -33,8 +35,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	if proc.AxisMethod == "autoDetect" {
 		theta, offset = FindCoreAxis(proc, Iraw)
 	}
-	Iproc := ProcessByPixel(proc, Iraw, theta, offset)
-	Iout := AddScaleBars(proc, Iproc)
+	Iout := ProcessByPixel(proc, Iraw, theta, offset)
 	imgOut := FloatToGray16(Iout)
 
 	rootOut := root
