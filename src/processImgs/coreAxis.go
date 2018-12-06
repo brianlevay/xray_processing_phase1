@@ -82,6 +82,6 @@ func axisFit(proc *ImgProcessor, iMid []int, jMid []int) (float64, float64) {
 	iCenter := (float64(proc.Height) / 2.0)
 	jCenter := (float64(proc.Width) / 2.0)
 	jLine := beta*iCenter + alpha
-	offset := jLine - jCenter
+	offset := proc.CmPx * (jLine - jCenter)
 	return theta, offset
 }

@@ -7,7 +7,19 @@ import (
 func (proc *ImgProcessor) Initialize() {
 	proc.ImaxIn = math.Pow(2, float64(proc.Bits)) - 1.0
 	proc.ImaxOut = math.Pow(2, 16.0) - 1.0
+
 	proc.CmPx = 0.0099
+	proc.Y = make([]float64, proc.Height)
+	for i := 0; i < proc.Height; i++ {
+		proc.Y[i] = float64(i)*proc.CmPx + (proc.CmPx / 2.0)
+	}
+	proc.X = make([]float64, proc.Width)
+	for j := 0; j < proc.Width; j++ {
+		proc.X[j] = float64(j)*proc.CmPx + (proc.CmPx / 2.0)
+	}
+	proc.Xc = (float64(proc.Width) * proc.CmPx) / 2.0
+	proc.Yc = (float64(proc.Height) * proc.CmPx) / 2.0
+
 	proc.Tref = proc.CoreDiameter
 	if proc.CoreType == "HR" {
 		proc.Tref = (proc.CoreDiameter / 2.0)

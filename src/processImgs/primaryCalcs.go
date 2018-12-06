@@ -47,5 +47,10 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw float64, tmodel float64, Iscale int) 
 		Iout = proc.ImaxOut
 	}
 
+	// Plot the modelled edges of the core
+	if (tmodel < proc.Tmin) && (tmodel > 0.0) {
+		Iout = 0.0
+	}
+
 	return Iout
 }

@@ -5,22 +5,18 @@ import (
 )
 
 func TModel(proc *ImgProcessor, theta float64, offset float64) [][]float64 {
-	var x, y, xrp, yrp, zrp, delX, delY, delZ, dist, ux, uz, th, A, B float64
+	var xrp, yrp, zrp, delX, delY, delZ, dist, ux, uz, th, A, B float64
 	r := (proc.CoreDiameter / 2.0)
-	xc := (float64(proc.Width) * proc.CmPx) / 2.0
-	yc := (float64(proc.Height) * proc.CmPx) / 2.0
 	thetaRad := theta * (math.Pi / 180.0)
-	xra, _, zra := rotate((xc + offset), yc, (proc.CoreHeight + r), thetaRad)
-	xrs, yrs, zrs := rotate(xc, yc, proc.SrcHeight, thetaRad)
+	xra, _, zra := rotate((proc.Xc + offset), proc.Yc, (proc.CoreHeight + r), thetaRad)
+	xrs, yrs, zrs := rotate(proc.Xc, proc.Yc, proc.SrcHeight, thetaRad)
 	C := math.Pow(xrs, 2) - 2*xrs*xra + math.Pow(xra, 2) + math.Pow(zrs, 2) - 2*zrs*zra + math.Pow(zra, 2) - math.Pow(r, 2)
 
 	tmodel := make([][]float64, proc.Height)
 	for i := 0; i < proc.Height; i++ {
 		tmodel[i] = make([]float64, proc.Width)
 		for j := 0; j < proc.Width; j++ {
-			x = float64(j)*proc.CmPx + (proc.CmPx / 2.0)
-			y = float64(i)*proc.CmPx + (proc.CmPx / 2.0)
-			xrp, yrp, zrp = rotate(x, y, 0.0, thetaRad)
+			xrp, yrp, zrp = rotate(proc.X[j], proc.Y[i], 0.0, thetaRad)
 			delX = xrp - xrs
 			delY = yrp - yrs
 			delZ = zrp - zrs
