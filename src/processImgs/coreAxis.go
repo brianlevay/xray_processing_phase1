@@ -78,7 +78,7 @@ func linearRegressionInts(xVals []int, yVals []int) (float64, float64) {
 
 func axisFit(proc *ImgProcessor, iMid []int, jMid []int) (float64, float64) {
 	beta, alpha := linearRegressionInts(iMid, jMid)
-	theta := degrees(math.Atan(beta))
+	theta := math.Atan(beta) * (180.0 / math.Pi)
 	iCenter := (float64(proc.Height) / 2.0)
 	jCenter := (float64(proc.Width) / 2.0)
 	jLine := beta*iCenter + alpha

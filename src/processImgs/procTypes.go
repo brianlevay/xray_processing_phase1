@@ -23,6 +23,7 @@ type ImgProcessor struct {
 	ImaxIn       float64 `json:"-"`
 	ImaxOut      float64 `json:"-"`
 	CmPx         float64 `json:"-"`
+	Tref         float64 `json:"-"`
 	Tmin         float64 `json:"-"`
 	Omin         float64 `json:"-"`
 	Opeak        float64 `json:"-"`

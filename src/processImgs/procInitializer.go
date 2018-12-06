@@ -8,6 +8,10 @@ func (proc *ImgProcessor) Initialize() {
 	proc.ImaxIn = math.Pow(2, float64(proc.Bits)) - 1.0
 	proc.ImaxOut = math.Pow(2, 16.0) - 1.0
 	proc.CmPx = 0.0099
+	proc.Tref = proc.CoreDiameter
+	if proc.CoreType == "HR" {
+		proc.Tref = (proc.CoreDiameter / 2.0)
+	}
 	proc.Tmin = 0.5
 
 	proc.Omin = math.Log(proc.ImaxIn+1.0) - math.Log(proc.Ihigh+1.0)
