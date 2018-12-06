@@ -20,13 +20,19 @@ func processingHandler(contents *fe.FileContents) {
 		if nImages > 0 {
 			settingsS, settingsPres := r.Form["Settings"]
 			absenceResponse(settingsPres, "Settings", &w)
-			imgProcessor := new(img.ImgProcessor)
-			errJSON := json.Unmarshal([]byte(settingsS[0]), imgProcessor)
+			proc := new(img.ImgProcessor)
+			errJSON := json.Unmarshal([]byte(settingsS[0]), proc)
 			errorResponse(errJSON, &w)
-			errSub := fe.CreateSubfolder(contents.Root, imgProcessor.FolderName)
+			if (proc.SrcHeight == 0.0) || (proc.CoreDiameter == 0.0) {
+				invalidValueResponse("Source and/or Core Diameter are invalid", &w)
+			}
+			if proc.SrcHeight < (proc.CoreHeight + proc.CoreDiameter) {
+				invalidValueResponse("Invalid geometry between source and core", &w)
+			}
+			errSub := fe.CreateSubfolder(contents.Root, proc.FolderName)
 			errorResponse(errSub, &w)
 			log.Println("Started processing " + strconv.Itoa(nImages) + " images...")
-			img.ProcessTiffs(contents, imgProcessor)
+			img.ProcessTiffs(contents, proc)
 			log.Println("Finished processing images.")
 		} else {
 			log.Println("No images selected.")

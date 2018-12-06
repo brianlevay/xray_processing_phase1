@@ -23,6 +23,12 @@ func absenceResponse(presence bool, ID string, w *http.ResponseWriter) {
 	return
 }
 
+func invalidValueResponse(warning string, w *http.ResponseWriter) {
+	log.Println(warning)
+	(*w).Write([]byte(""))
+	return
+}
+
 func checkAndConvertToInt(variable string, form map[string][]string) (int, error) {
 	var err error = nil
 	varSlice, varPresent := form[variable]

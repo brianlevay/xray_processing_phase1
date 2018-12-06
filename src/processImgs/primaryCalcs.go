@@ -4,20 +4,18 @@ import (
 	"math"
 )
 
-func ProcessByPixel(proc *ImgProcessor, Iraw [][]float64, theta float64, offset float64) [][]float64 {
-	var tmodel float64
+func ProcessByPixel(proc *ImgProcessor, Iraw [][]float64, tmodel [][]float64) [][]float64 {
 	Iout := make([][]float64, proc.Height)
 	for i := 0; i < proc.Height; i++ {
 		Iout[i] = make([]float64, proc.Width)
 		for j := 0; j < proc.Width; j++ {
-			tmodel = Tmodel(proc, i, j, theta, offset)
-			Iout[i][j] = PrimaryCalcs(proc, Iraw[i][j], tmodel, i, j)
+			Iout[i][j] = PrimaryCalcs(proc, Iraw[i][j], tmodel[i][j], proc.Iscale[i][j])
 		}
 	}
 	return Iout
 }
 
-func PrimaryCalcs(proc *ImgProcessor, Iraw float64, tmodel float64, i int, j int) float64 {
+func PrimaryCalcs(proc *ImgProcessor, Iraw float64, tmodel float64, Iscale int) float64 {
 	// Initial calculation
 	murhot := math.Log(proc.ImaxIn+1.0) - math.Log(Iraw+1.0)
 
@@ -43,9 +41,9 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw float64, tmodel float64, i int, j int
 
 	// Drawing the scale bars
 	Iout := Iproc
-	if proc.Iscale[i][j] == 0 {
+	if Iscale == 0 {
 		Iout = 0.0
-	} else if proc.Iscale[i][j] == 2 {
+	} else if Iscale == 2 {
 		Iout = proc.ImaxOut
 	}
 

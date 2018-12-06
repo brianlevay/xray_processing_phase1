@@ -35,7 +35,8 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	//if proc.AxisMethod == "autoDetect" {
 	//	theta, offset = FindCoreAxis(proc, Iraw)
 	//}
-	Iout := ProcessByPixel(proc, Iraw, theta, offset)
+	tmodel := TModel(proc, theta, offset)
+	Iout := ProcessByPixel(proc, Iraw, tmodel)
 	imgOut := FloatToGray16(Iout)
 
 	rootOut := root
