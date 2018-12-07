@@ -7,81 +7,69 @@ import (
 func FindCoreAxis(proc *ImgProcessor, Iraw [][]float64) (float64, float64) {
 	Ithresh := 0.8 * proc.ImaxIn
 	maxTheta := 5.0
-	minWidthPx := int(0.8 * (proc.CoreDiameter / proc.CmPx))
+	minWidth := 0.8 * proc.CoreDiameter
 	minPts := int(0.5 * float64(proc.Height))
 
-	var edgeVals, edgeJs []int
-	iMid := []int{}
-	jMid := []int{}
+	var leftEdge, rightEdge, leftMax, rightMax, maxGap float64
+	nPts := 0
+	Xmid := make([]float64, proc.Height)
+	Ymid := make([]float64, proc.Height)
 	for i := 0; i < proc.Height; i++ {
-		edgeVals = []int{}
-		edgeJs = []int{}
+		leftEdge, rightEdge, leftMax, rightMax, maxGap = 0.0, 0.0, 0.0, 0.0, 0.0
 		for j := 0; j < (proc.Width - 1); j++ {
 			if (Iraw[i][j] > Ithresh) && (Iraw[i][j+1] <= Ithresh) {
-				edgeVals = append(edgeVals, 1)
-				edgeJs = append(edgeJs, j)
+				leftEdge = proc.X[j]
 			}
 			if (Iraw[i][j] <= Ithresh) && (Iraw[i][j+1] > Ithresh) {
-				edgeVals = append(edgeVals, -1)
-				edgeJs = append(edgeJs, j)
+				rightEdge = proc.X[j+1]
+			}
+			if ((rightEdge - leftEdge) >= maxGap) && ((rightEdge - leftEdge) >= minWidth) {
+				maxGap = (rightEdge - leftEdge)
+				leftMax = leftEdge
+				rightMax = rightEdge
 			}
 		}
-		jLeft, jRight := farthestEdges(edgeVals, edgeJs)
-		if (jRight - jLeft) >= minWidthPx {
-			iMid = append(iMid, i)
-			jMid = append(jMid, int(float64(jRight+jLeft)/2.0))
+		if maxGap > 0.0 {
+			nPts += 1
+			Xmid[i] = (leftMax + rightMax) / 2.0
+			Ymid[i] = proc.Y[i]
+		} else {
+			Xmid[i] = -1.0
+			Ymid[i] = -1.0
 		}
 	}
-	if len(iMid) < minPts {
+	if nPts < minPts {
 		return 0.0, 0.0
 	}
-	theta, offset := axisFit(proc, iMid, jMid)
-	if math.Abs(theta) <= maxTheta {
-		return theta, offset
-	} else {
+	theta, offset := axisFit(proc, Xmid, Ymid)
+	if math.Abs(theta) > maxTheta {
 		return 0.0, 0.0
 	}
+	return theta, offset
 }
 
-func farthestEdges(edgeVals []int, edgeJs []int) (int, int) {
-	delta, maxDelta, jLeft, jRight := 0, 0, 0, 0
-	nEdges := len(edgeVals)
-	for k := 0; k < (nEdges - 1); k++ {
-		if (edgeVals[k] == 1) && (edgeVals[k+1] == -1) {
-			delta = edgeJs[k+1] - edgeJs[k]
-			if delta > maxDelta {
-				maxDelta = delta
-				jLeft = edgeJs[k]
-				jRight = edgeJs[k+1]
-			}
+func axisFit(proc *ImgProcessor, Xmid []float64, Ymid []float64) (float64, float64) {
+	// Regression using the Y values (i) as the independent variable //
+	x := Ymid
+	y := Xmid
+
+	nFlt, xsum, ysum, xxsum, xysum := 0.0, 0.0, 0.0, 0.0, 0.0
+	for i := 0; i < proc.Height; i++ {
+		if y[i] != -1.0 {
+			nFlt += 1
+			xsum += x[i]
+			ysum += y[i]
+			xxsum += x[i] * x[i]
+			xysum += x[i] * y[i]
 		}
-	}
-	return jLeft, jRight
-}
-
-func linearRegressionInts(xVals []int, yVals []int) (float64, float64) {
-	xsum, ysum, xxsum, xysum := 0.0, 0.0, 0.0, 0.0
-	nPts := len(xVals)
-	nFlt := float64(nPts)
-	for k := 0; k < nPts; k++ {
-		xsum += float64(xVals[k])
-		ysum += float64(yVals[k])
-		xxsum += (float64(xVals[k]) * float64(xVals[k]))
-		xysum += (float64(xVals[k]) * float64(yVals[k]))
 	}
 	beta := (xysum - (1/nFlt)*xsum*ysum) / (xxsum - (1/nFlt)*xsum*xsum)
 	xave := xsum / nFlt
 	yave := ysum / nFlt
 	alpha := yave - beta*xave
-	return beta, alpha
-}
 
-func axisFit(proc *ImgProcessor, iMid []int, jMid []int) (float64, float64) {
-	beta, alpha := linearRegressionInts(iMid, jMid)
 	theta := math.Atan(beta) * (180.0 / math.Pi)
-	iCenter := (float64(proc.Height) / 2.0)
-	jCenter := (float64(proc.Width) / 2.0)
-	jLine := beta*iCenter + alpha
-	offset := proc.CmPx * (jLine - jCenter)
-	return theta, offset
+	Xline := beta*proc.Yc + alpha
+	Xoffset := Xline - proc.Xc
+	return theta, Xoffset
 }
