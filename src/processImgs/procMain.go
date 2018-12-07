@@ -36,7 +36,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 		theta, offset = FindCoreAxis(proc, Iraw)
 	}
 	tmodel := TModel(proc, theta, offset)
-	Iout := ProcessByPixel(proc, Iraw, tmodel)
+	Iout := PrimaryCalcs(proc, Iraw, tmodel)
 	imgOut := FloatToGray16(Iout)
 
 	rootOut := root

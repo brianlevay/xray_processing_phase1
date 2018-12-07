@@ -5,58 +5,61 @@ import (
 )
 
 func TModel(proc *ImgProcessor, theta float64, offset float64) [][]float64 {
-	var xrp, yrp, zrp, delX, delY, delZ, dist, ux, uz, th, A, B float64
+	var xrp, yrp, zrp, delX, delY, delZ, dist, ux, uz, th, A, B, det, tc1, tc2 float64
+
+	thetaR := theta * (math.Pi / 180.0)
+	cos0 := math.Cos(thetaR)
+	sin0 := math.Sin(thetaR)
+
 	r := (proc.CoreDiameter / 2.0)
-	thetaRad := theta * (math.Pi / 180.0)
-	xra, _, zra := rotate((proc.Xc + offset), proc.Yc, (proc.CoreHeight + r), thetaRad)
-	xrs, yrs, zrs := rotate(proc.Xc, proc.Yc, proc.SrcHeight, thetaRad)
-	C := math.Pow(xrs, 2) - 2*xrs*xra + math.Pow(xra, 2) + math.Pow(zrs, 2) - 2*zrs*zra + math.Pow(zra, 2) - math.Pow(r, 2)
+
+	xra := (proc.Xc+offset)*cos0 - proc.Yc*sin0
+	zra := (proc.CoreHeight + r)
+
+	xrs := proc.Xc*cos0 - proc.Yc*sin0
+	yrs := proc.Xc*sin0 - proc.Yc*cos0
+	zrs := proc.SrcHeight
+
+	C := xrs*xrs - 2*xrs*xra + xra*xra + zrs*zrs - 2*zrs*zra + zra*zra - r*r
 
 	tmodel := make([][]float64, proc.Height)
 	for i := 0; i < proc.Height; i++ {
 		tmodel[i] = make([]float64, proc.Width)
 		for j := 0; j < proc.Width; j++ {
-			xrp, yrp, zrp = rotate(proc.X[j], proc.Y[i], 0.0, thetaRad)
+			xrp = proc.X[j]*cos0 - proc.Y[i]*sin0
+			yrp = proc.X[j]*sin0 - proc.Y[i]*cos0
+			zrp = 0.0
+
 			delX = xrp - xrs
 			delY = yrp - yrs
 			delZ = zrp - zrs
-			dist = math.Max(math.Sqrt(math.Pow(delX, 2)+math.Pow(delY, 2)+math.Pow(delZ, 2)), 0.1)
+			dist = math.Max(math.Sqrt((delX*delX)+(delY*delY)+(delZ*delZ)), 0.1)
 			ux = delX / dist
 			uz = delZ / dist
+
 			th = (zra - zrs) / uz
-			A = math.Pow(ux, 2) + math.Pow(uz, 2)
+			A = ux*ux + uz*uz
 			B = 2*ux*(xrs-xra) + 2*uz*(zrs-zra)
-			tmodel[i][j] = thickness(proc, th, A, B, C)
+			det = B*B - 4*A*C
+
+			if det <= 0.0 {
+				tmodel[i][j] = 0.0
+			} else {
+				tc1 = (-B - math.Sqrt(det)) / (2 * A)
+				tc2 = (-B + math.Sqrt(det)) / (2 * A)
+				if proc.CoreType == "HR" {
+					if th < tc1 {
+						tmodel[i][j] = tc2 - tc1
+					} else if (tc1 < th) && (th < tc2) {
+						tmodel[i][j] = tc2 - th
+					} else {
+						tmodel[i][j] = 0.0
+					}
+				} else {
+					tmodel[i][j] = tc2 - tc1
+				}
+			}
 		}
 	}
 	return tmodel
-}
-
-func thickness(proc *ImgProcessor, th float64, A float64, B float64, C float64) float64 {
-	det := math.Pow(B, 2) - 4*A*C
-	if det <= 0.0 {
-		return 0.0
-	}
-	tc1 := (-B - math.Sqrt(det)) / (2 * A)
-	tc2 := (-B + math.Sqrt(det)) / (2 * A)
-	if (tc1 <= 0.0) || (tc2 <= 0.0) || (th <= 0.0) {
-		return 0.0
-	}
-	if proc.CoreType == "HR" {
-		if th < tc1 {
-			return tc2 - tc1
-		} else if (tc1 < th) && (th < tc2) {
-			return tc2 - th
-		} else {
-			return 0.0
-		}
-	}
-	return tc2 - tc1
-}
-
-func rotate(x float64, y float64, z float64, thetaR float64) (float64, float64, float64) {
-	xr := x*math.Cos(thetaR) - y*math.Sin(thetaR)
-	yr := x*math.Sin(thetaR) - y*math.Cos(thetaR)
-	zr := z
-	return xr, yr, zr
 }
