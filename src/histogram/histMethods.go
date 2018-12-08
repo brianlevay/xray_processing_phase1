@@ -2,6 +2,7 @@ package histogram
 
 import (
 	fe "fileExplorer"
+	"image"
 	"log"
 	"math"
 	"sync"
@@ -14,23 +15,35 @@ func (hset *HistogramSet) ProcessImage(root string, filename string, wg *sync.Wa
 		wg.Done()
 		return
 	}
+	gray16, ok := img.(*image.Gray16)
+	if ok == false {
+		log.Println(filename + " not Gray16 format")
+		wg.Done()
+		return
+	}
 	hist := newHistogram(hset.Bits, hset.Nbins)
-	x_min := img.Bounds().Min.X
-	y_min := img.Bounds().Min.Y
-	x_max := img.Bounds().Max.X
-	y_max := img.Bounds().Max.Y
-	var i_act float64
-	var i_int int
-	for x := x_min; x < x_max; x++ {
-		for y := y_min; y < y_max; y++ {
-			px := img.At(x, y)
-			r, _, _, _ := px.RGBA()
-			i_act = float64(r) / hist.Step
-			i_int = int(math.Floor(i_act))
-			if (i_int >= 0) && (i_int < hset.Nbins) {
-				hist.Cts[i_int] += 1
-			} else if i_int >= hset.Nbins {
-				hist.Cts[i_int-1] += 1
+
+	// x_max and y_max aren't the maximum values, they're max+1 //
+	x_min := gray16.Rect.Min.X
+	x_max := gray16.Rect.Max.X
+	y_min := gray16.Rect.Min.Y
+	y_max := gray16.Rect.Max.Y
+	width := x_max - x_min
+	height := y_max - y_min
+
+	var pxVal uint16
+	var k, h_int int
+	var h_act float64
+	for i := 0; i < height; i++ {
+		for j := 0; j < width; j++ {
+			k = (i-y_min)*gray16.Stride + (j-x_min)*2
+			pxVal = uint16(gray16.Pix[k+0])<<8 | uint16(gray16.Pix[k+1])
+			h_act = float64(pxVal) / hist.Step
+			h_int = int(math.Floor(h_act))
+			if (h_int >= 0) && (h_int < hset.Nbins) {
+				hist.Cts[h_int] += 1
+			} else if h_int >= hset.Nbins {
+				hist.Cts[h_int-1] += 1
 			}
 		}
 	}

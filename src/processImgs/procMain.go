@@ -28,7 +28,12 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 		return
 	}
 
-	Iraw := Gray16ToUint16(imgOrig)
+	Iraw, errType := Gray16ToUint16(imgOrig)
+	if errType != nil {
+		log.Println(errType)
+		wg.Done()
+		return
+	}
 	theta := proc.AxisAngle
 	offset := proc.AxisOffset
 	if proc.AxisMethod == "autoDetect" {
