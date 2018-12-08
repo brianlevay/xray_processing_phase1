@@ -11,7 +11,6 @@ import (
 func ProcessTiffs(contents *fe.FileContents, proc *ImgProcessor) {
 	var wg sync.WaitGroup
 	proc.Initialize()
-	proc.CreateScaleBars()
 	nfiles := len(contents.Selected)
 	for i := 0; i < nfiles; i++ {
 		wg.Add(1)
@@ -29,7 +28,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 		return
 	}
 
-	Iraw := Gray16ToFloat(imgOrig)
+	Iraw := Gray16ToUint16(imgOrig)
 	theta := proc.AxisAngle
 	offset := proc.AxisOffset
 	if proc.AxisMethod == "autoDetect" {
@@ -37,7 +36,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	}
 	tmodel := TModel(proc, theta, offset)
 	Iout := PrimaryCalcs(proc, Iraw, tmodel)
-	imgOut := FloatToGray16(Iout)
+	imgOut := Uint16ToGray16(Iout)
 
 	rootOut := root
 	if proc.FolderName != "" {

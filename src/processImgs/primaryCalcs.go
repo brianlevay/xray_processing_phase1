@@ -1,17 +1,17 @@
 package processImgs
 
-import (
-	"math"
-)
+import ()
 
-func PrimaryCalcs(proc *ImgProcessor, Iraw [][]float64, tmodel [][]float64) [][]float64 {
-	var murhot, murhotref, X, P, SX, SP, Y, Iproc float64
-	Iout := make([][]float64, proc.Height)
+func PrimaryCalcs(proc *ImgProcessor, Iraw [][]uint16, tmodel [][]float64) [][]uint16 {
+	var murhot, murhotref, L float64
+	var Lindex uint16
+	var Icont uint16
+	Iout := make([][]uint16, proc.Height)
 	for i := 0; i < proc.Height; i++ {
-		Iout[i] = make([]float64, proc.Width)
+		Iout[i] = make([]uint16, proc.Width)
 		for j := 0; j < proc.Width; j++ {
 			// Initial calculation
-			murhot = math.Log(proc.ImaxIn+1.0) - math.Log(Iraw[i][j]+1.0)
+			murhot = proc.MurhotTable[Iraw[i][j]]
 
 			// Thickness compensation
 			murhotref = murhot
@@ -20,30 +20,27 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw [][]float64, tmodel [][]float64) [][]
 			}
 
 			// Contrast adjustment and rescaling
-			X = (murhotref - proc.Omin) / (proc.Omax - proc.Omin)
-			if X < 0.0 {
-				X = 0.0
+			L = (murhotref - proc.Omin) / (proc.Omax - proc.Omin)
+			if L < 0.0 {
+				L = 0.0
 			}
-			if X > 1.0 {
-				X = 1.0
+			if L > 1.0 {
+				L = 1.0
 			}
-			P = math.Pow(X, proc.N)
-			SX = 0.5*math.Sin(math.Pi*(X-0.5)) + 0.5
-			SP = 0.5*math.Sin(math.Pi*(P-0.5)) + 0.5
-			Y = proc.W*SP + (1-proc.W)*SX
-			Iproc = proc.ImaxOut * (1 - Y)
+			Lindex = uint16(L / proc.Lstep)
+			Icont = proc.IcontTable[Lindex]
 
 			// Drawing the scale bars
-			Iout[i][j] = Iproc
+			Iout[i][j] = Icont
 			if proc.Iscale[i][j] == 0 {
-				Iout[i][j] = 0.0
+				Iout[i][j] = 0
 			} else if proc.Iscale[i][j] == 2 {
-				Iout[i][j] = proc.ImaxOut
+				Iout[i][j] = proc.ImaxOutInt
 			}
 
 			// Drawing the modelled edges of the core
 			if (tmodel[i][j] < proc.Tmin) && (tmodel[i][j] > 0.0) {
-				Iout[i][j] = 0.0
+				Iout[i][j] = 0
 			}
 		}
 	}

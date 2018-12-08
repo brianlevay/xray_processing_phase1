@@ -4,6 +4,7 @@ import (
 	fe "fileExplorer"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"path/filepath"
 )
 

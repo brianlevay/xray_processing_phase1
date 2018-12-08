@@ -4,8 +4,8 @@ import (
 	"math"
 )
 
-func FindCoreAxis(proc *ImgProcessor, Iraw [][]float64) (float64, float64) {
-	Ithresh := 0.8 * proc.ImaxIn
+func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
+	Ithresh := uint16(0.8 * proc.ImaxInFlt)
 	maxTheta := 5.0
 	minWidth := 0.8 * proc.CoreDiameter
 	minPts := int(0.5 * float64(proc.Height))

@@ -22,9 +22,9 @@ func (proc *ImgProcessor) CreateScaleBars() {
 	iLn := []int{lnIstart, (lnIstart + lnPxHeight - 1)}
 	jLn := []int{(jBorder[1] + 1), (jBorder[1] + lnPxWidth)}
 
-	Iscale := make([][]int, proc.Height)
+	Iscale := make([][]uint16, proc.Height)
 	for i := 0; i < proc.Height; i++ {
-		Iscale[i] = make([]int, proc.Width)
+		Iscale[i] = make([]uint16, proc.Width)
 		for j := 0; j < proc.Width; j++ {
 			Iscale[i][j] = 1
 			if isInside(i, j, iBorder, jBorder) {
