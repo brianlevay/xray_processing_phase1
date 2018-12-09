@@ -4,9 +4,9 @@ import ()
 
 type TModel struct {
 	CoreType  string
-	r         float64
-	cos0      float64
-	sin0      float64
+	R         float64
+	Cos0      float64
+	Sin0      float64
 	Xra       float64
 	Yra       float64
 	Zra       float64

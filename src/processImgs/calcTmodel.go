@@ -16,8 +16,8 @@ func CalculateTModel(proc *ImgProcessor, theta float64, offset float64) [][]floa
 		tmodel[i] = make([]float64, proc.Width)
 		for j := 0; j < proc.Width; j++ {
 			tmodel[i][j] = 0.0
-			Xrd = proc.X[j]*t.cos0 - proc.Y[i]*t.sin0
-			Yrd = proc.X[j]*t.sin0 - proc.Y[i]*t.cos0
+			Xrd = proc.X[j]*t.Cos0 - proc.Y[i]*t.Sin0
+			Yrd = proc.X[j]*t.Sin0 - proc.Y[i]*t.Cos0
 			DelXr = (Xrd - t.Xrs)
 			DelYr = (Yrd - t.Yrs)
 			k = int((Xrd - t.XrMin) / t.XrStep)

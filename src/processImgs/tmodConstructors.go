@@ -6,31 +6,31 @@ import (
 
 func newTModel(proc *ImgProcessor, theta float64, offset float64) *TModel {
 	t := new(TModel)
-	
+
 	t.CoreType = proc.CoreType
-	t.r = (proc.CoreDiameter / 2.0)
+	t.R = (proc.CoreDiameter / 2.0)
 
 	thetaR := theta * (math.Pi / 180.0)
-	t.cos0 = math.Cos(thetaR)
-	t.sin0 = math.Sin(thetaR)
-	
-	t.Xra = (proc.Xc+offset)*t.cos0 - proc.Yc*t.sin0
-	t.Yra = proc.Xc*t.sin0 - proc.Yc*t.cos0
-	t.Zra = (proc.CoreHeight + t.r)
+	t.Cos0 = math.Cos(thetaR)
+	t.Sin0 = math.Sin(thetaR)
 
-	t.Xrs = proc.Xc*t.cos0 - proc.Yc*t.sin0
-	t.Yrs = proc.Xc*t.sin0 - proc.Yc*t.cos0
+	t.Xra = (proc.Xc+offset)*t.Cos0 - proc.Yc*t.Sin0
+	t.Yra = proc.Xc*t.Sin0 - proc.Yc*t.Cos0
+	t.Zra = (proc.CoreHeight + t.R)
+
+	t.Xrs = proc.Xc*t.Cos0 - proc.Yc*t.Sin0
+	t.Yrs = proc.Xc*t.Sin0 - proc.Yc*t.Cos0
 	t.Zrs = proc.SrcHeight
 
 	t.DelZr = (0.0 - t.Zrs)
 	t.DelZr2 = t.DelZr * t.DelZr
 
 	t.C = t.Xrs*t.Xrs - 2*t.Xrs*t.Xra + t.Xra*t.Xra
-	t.C += t.Zrs*t.Zrs - 2*t.Zrs*t.Zra + t.Zra*t.Zra - t.r*t.r
+	t.C += t.Zrs*t.Zrs - 2*t.Zrs*t.Zra + t.Zra*t.Zra - t.R*t.R
 
 	t.XrStep = proc.CmPx / 2.0
-	t.XrMin = t.DelZr*((t.Xra-t.r-t.Xrs)/(t.Zra+t.r-t.Zrs)) + t.Xrs
-	t.XrMax = t.DelZr*((t.Xra+t.r-t.Xrs)/(t.Zra+t.r-t.Zrs)) + t.Xrs
+	t.XrMin = t.DelZr*((t.Xra-t.R-t.Xrs)/(t.Zra+t.R-t.Zrs)) + t.Xrs
+	t.XrMax = t.DelZr*((t.Xra+t.R-t.Xrs)/(t.Zra+t.R-t.Zrs)) + t.Xrs
 
 	t.CalculateTxz2Table()
 	return t
@@ -71,6 +71,6 @@ func (t *TModel) CalculateTxz2Table() {
 				Txz = tc2 - tc1
 			}
 		}
-		t.Txz2Table[k] = Txz*Txz
+		t.Txz2Table[k] = Txz * Txz
 	}
 }
