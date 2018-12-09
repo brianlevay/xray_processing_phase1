@@ -8,6 +8,7 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	Ithresh := uint16(0.8 * proc.ImaxInFlt)
 	maxTheta := 5.0
 	minWidth := 0.8 * proc.CoreDiameter
+	maxWidth := 1.2 * proc.CoreDiameter
 	minPts := int(0.5 * float64(proc.Height))
 
 	var leftEdge, rightEdge, leftMax, rightMax, maxGap float64
@@ -23,7 +24,7 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 			if (Iraw[i][j] <= Ithresh) && (Iraw[i][j+1] > Ithresh) {
 				rightEdge = proc.X[j+1]
 			}
-			if ((rightEdge - leftEdge) >= maxGap) && ((rightEdge - leftEdge) >= minWidth) {
+			if ((rightEdge - leftEdge) >= maxGap) && ((rightEdge - leftEdge) >= minWidth) && ((rightEdge - leftEdge) <= maxWidth) {
 				maxGap = (rightEdge - leftEdge)
 				leftMax = leftEdge
 				rightMax = rightEdge
