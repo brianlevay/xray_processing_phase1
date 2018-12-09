@@ -164,26 +164,26 @@
 			
 			<h3>Normalization</h3>
 			<p>if O<sub>min</sub> &le; O<sub>val</sub> &le; O<sub>max</sub></p>
-			<p>X = (O<sub>val</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
+			<p>L = (O<sub>val</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
 			<p>if O<sub>val</sub> &lt; O<sub>min</sub></p>
-			<p>X = 0.0</p>
+			<p>L = 0.0</p>
 			<p>if O<sub>val</sub> &gt; O<sub>max</sub></p>
-			<p>X = 1.0</p>
+			<p>L = 1.0</p>
 			
-			<h3>Using a polynomial to stretch the X values and center the peak at 0.5</h3>
-			<p>X<sub>peak</sub> = (O<sub>peak</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
-			<p>0.5 = X<sub>peak</sub><sup>n</sup></p>
-			<p>n = ln(0.5) / ln(X<sub>peak</sub>)</p>
-			<p>P = X<sup>n</sup></p>
+			<h3>Using a polynomial to stretch the L values and center the peak at 0.5</h3>
+			<p>L<sub>peak</sub> = (O<sub>peak</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
+			<p>0.5 = L<sub>peak</sub><sup>n</sup></p>
+			<p>n = ln(0.5) / ln(L<sub>peak</sub>)</p>
+			<p>P = L<sup>n</sup></p>
 			
 			<h3>Using a sine function to stretch central values and compress edge values</h3>
-			<p>S(X) = 0.5 * sin(&pi; * (X − 0.5)) + 0.5</p>
+			<p>S(L) = 0.5 * sin(&pi; * (L − 0.5)) + 0.5</p>
 			<p>S(P) = 0.5 * sin(&pi; * (P − 0.5)) + 0.5</p>
 			
 			<h3>Avoiding too much distortion</h3>
-			<p>When X<sub>peak</sub> is far from 0.5, using S(P) can distort the spectrum too much and cause spectral artifacts. Using S(X) will not shift the peak at all, however, leaving too much original skew. Using a weighted mixture of S(P) and S(X) allows us to shift the peak and stretch the histogram without causing poor behavior under extreme skew.</p>
-			<p>w = 1.0 − abs(2.0 * (X<sub>peak</sub> − 0.5))<sup>2</sup></p>
-			<p>Y = w * S(P) + (1 − w) * S(X)</p>
+			<p>When L<sub>peak</sub> is far from 0.5, using S(P) can distort the spectrum too much and cause spectral artifacts. Using S(L) will not shift the peak at all, however, leaving too much original skew. Using a weighted mixture of S(P) and S(L) allows us to shift the peak and stretch the histogram without causing poor behavior under extreme skew.</p>
+			<p>w = 1.0 − abs(2.0 * (L<sub>peak</sub> − 0.5))<sup>2</sup></p>
+			<p>Y = w * S(P) + (1 − w) * S(L)</p>
 			
 			<h3>Converting to pixel values and reversing greyscale</h3>
 			<p>I<sub>proc</sub> = I<sub>max</sub> * (1 - Y)</p>

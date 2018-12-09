@@ -39,7 +39,7 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	if proc.AxisMethod == "autoDetect" {
 		theta, offset = FindCoreAxis(proc, Iraw)
 	}
-	tmodel := TModel(proc, theta, offset)
+	tmodel := CalculateTModel(proc, theta, offset)
 	Iout := PrimaryCalcs(proc, Iraw, tmodel)
 	imgOut := Uint16ToGray16(Iout)
 
