@@ -10,10 +10,10 @@ func (proc *ImgProcessor) CreateScaleBars() {
 	scaleWidthCm := 0.2
 	lineWidthCm := 0.1
 
-	cmPxHeight := int(1.0 / proc.CmPerPxProj)
-	cmPxWidth := int(scaleWidthCm / proc.CmPerPxProj)
-	lnPxHeight := int(proc.Motion / proc.CmPerPxProj)
-	lnPxWidth := int(lineWidthCm / proc.CmPerPxProj)
+	cmPxHeight := cmCoreToPx(proc, 1.0)
+	cmPxWidth := cmCoreToPx(proc, scaleWidthCm)
+	lnPxHeight := cmCoreToPx(proc, proc.Motion)
+	lnPxWidth := cmCoreToPx(proc, lineWidthCm)
 	lnIstart := int(float64(proc.Height-lnPxHeight) / 2.0)
 	iBorder := []int{0, (proc.Height - 1)}
 	jBorder := []int{0, (borderPx + cmPxWidth + borderPx - 1)}

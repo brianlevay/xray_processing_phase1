@@ -7,7 +7,6 @@ import (
 
 func Gray16ToUint16(img image.Image) ([][]uint16, error) {
 	var k int
-
 	gray16, ok := img.(*image.Gray16)
 	if ok == false {
 		return [][]uint16{}, errors.New("Image not Gray16 format")
@@ -33,7 +32,6 @@ func Gray16ToUint16(img image.Image) ([][]uint16, error) {
 
 func Uint16ToGray16(slice [][]uint16) *image.Gray16 {
 	var k int
-
 	x_min := 0
 	y_min := 0
 	height := len(slice)

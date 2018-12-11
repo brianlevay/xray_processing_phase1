@@ -6,7 +6,7 @@ import (
 
 func (proc *ImgProcessor) Initialize() {
 	// Configuration Variables //
-	proc.CmPerPxAct = 0.0099
+	proc.CmPerPx = 0.0099
 	proc.Tmin = 0.5
 	proc.Lstep = 0.001
 
@@ -16,13 +16,11 @@ func (proc *ImgProcessor) Initialize() {
 	proc.ImaxOutInt = uint16(proc.ImaxOutFlt)
 	proc.Omin = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ihigh+1.0)
 	proc.Omax = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ilow+1.0)
-
 	proc.Tref = proc.CoreDiameter
 	if proc.CoreType == "HR" {
 		proc.Tref = (proc.CoreDiameter / 2.0)
 	}
-	proc.CmPerPxProj = (proc.CmPerPxAct / (proc.SrcHeight - proc.CoreHeight - (proc.CoreDiameter / 2.0))) * proc.SrcHeight
-
+	proc.ProjMult = 1.0 * (proc.SrcHeight / (proc.SrcHeight - proc.CoreHeight - (proc.CoreDiameter / 2.0)))
 	proc.CalculateXYd()
 	proc.CalculateWtsGapTable()
 	proc.CalculateMurhotTable()
@@ -32,17 +30,15 @@ func (proc *ImgProcessor) Initialize() {
 }
 
 func (proc *ImgProcessor) CalculateXYd() {
-	Yc := (float64(proc.Height) * proc.CmPerPxAct) / 2.0
-	Xc := (float64(proc.Width) * proc.CmPerPxAct) / 2.0
-
+	Yc := (float64(proc.Height) * proc.CmPerPx) / 2.0
+	Xc := (float64(proc.Width) * proc.CmPerPx) / 2.0
 	Yd := make([]float64, proc.Height)
 	for i := 0; i < proc.Height; i++ {
-		Yd[i] = float64(i)*proc.CmPerPxAct + (proc.CmPerPxAct / 2.0)
+		Yd[i] = float64(i)*proc.CmPerPx + (proc.CmPerPx / 2.0)
 	}
-
 	Xd := make([]float64, proc.Width)
 	for j := 0; j < proc.Width; j++ {
-		Xd[j] = float64(j)*proc.CmPerPxAct + (proc.CmPerPxAct / 2.0)
+		Xd[j] = float64(j)*proc.CmPerPx + (proc.CmPerPx / 2.0)
 	}
 	proc.Xc = Xc
 	proc.Yc = Yc
@@ -52,24 +48,21 @@ func (proc *ImgProcessor) CalculateXYd() {
 
 func (proc *ImgProcessor) CalculateWtsGapTable() {
 	// Configuration Variables //
-	flatDelta := 0.4
-	gapMinF := 0.5
-	gapMaxF := 1.1
+	deltaGapMin := 3.0
+	deltaGapFlat := 0.5
+	deltaGapMax := 0.5
 
-	// This uses a bit of a simplification, because it uses a projected diameter,
-	// rather than the footprint of a projected cylinder, which is larger and
-	// involves a more complicated calculation //
+	// This uses a simplistic relationship between pixel width and core width, //
+	// not accounting for 3D projection of a cylinder //
 	var gap float64
-
-	projectedDiam := proc.CoreDiameter * (proc.CmPerPxProj / proc.CmPerPxAct)
-	ptLow0 := projectedDiam * gapMinF
-	ptLow1 := projectedDiam - flatDelta
-	ptHigh1 := projectedDiam
-	ptHigh0 := projectedDiam * gapMaxF
+	ptHigh1 := proc.CoreDiameter
+	ptHigh0 := ptHigh1 + deltaGapMax
+	ptLow1 := ptHigh1 - deltaGapFlat
+	ptLow0 := ptLow1 - deltaGapMin
 
 	wtsGap := make([]float64, proc.Width)
 	for k := 0; k < proc.Width; k++ {
-		gap = float64(k) * proc.CmPerPxProj
+		gap = pxToCmCore(proc, k)
 		if (gap <= ptLow0) || (gap >= ptHigh0) {
 			wtsGap[k] = 0.0
 		} else if (gap >= ptLow1) && (gap <= ptHigh1) {
@@ -94,7 +87,6 @@ func (proc *ImgProcessor) CalculateMurhotTable() {
 
 func (proc *ImgProcessor) CalculateIcontTable() {
 	var L, P, SF, SP, Y float64
-
 	Opeak := math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ipeak+1.0)
 	Lpeak := (Opeak - proc.Omin) / (proc.Omax - proc.Omin)
 	N := math.Log(0.5) / math.Log(Lpeak)

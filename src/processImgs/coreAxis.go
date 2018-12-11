@@ -7,7 +7,7 @@ import (
 func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	// Configuration Variables //
 	Ithresh := uint16(0.8 * proc.ImaxInFlt)
-	maxXdist := 3.0 * (proc.CmPerPxProj / proc.CmPerPxAct)
+	maxXdist := 3.0
 	maxTheta := 5.0
 
 	var leftEdge, rightEdge, leftMax, rightMax, maxGap int
@@ -51,7 +51,7 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	alpha := yave - beta*xave
 
 	offsetProj := (beta*proc.Yc + alpha) - proc.Xc
-	offsetAct := offsetProj * (proc.CmPerPxProj / proc.CmPerPxAct)
+	offsetAct := offsetProj / proc.ProjMult
 	theta := math.Atan(beta) * (180.0 / math.Pi)
 	if math.Abs(theta) > maxTheta {
 		return 0.0, 0.0

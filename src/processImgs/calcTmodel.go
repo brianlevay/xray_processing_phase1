@@ -7,7 +7,6 @@ import (
 func CalculateTModel(proc *ImgProcessor, theta float64, offset float64) [][]float64 {
 	var Xrd, Yrd, DelXr, DelYr float64
 	var k int
-
 	t := newTModel(proc, theta, offset)
 	nTxz2 := len(t.Txz2Table)
 
