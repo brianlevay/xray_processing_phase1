@@ -1,27 +1,18 @@
---------------------------------------------------------------------------------------------------------------------------------
-
 TO-DO LIST:
 
-*   FindCoreAxis
-    *   In second loop, search from j_model - j_maxoffset to j_model + j_maxoffset and find minimum in each row
-    *   Determine final shift based on mean delta j
-    
+*   Get FindCoreAxis to work more robustly
 *   Change drawHistogram to use Pix[] instead of Set()
-
 *   Add configuration during startup
     *   Create config file with detector parameters and thresholds
     *   Write file parser
     *   Add file parser to main(), add config struct to HistSet and ImgProcessor initialization, copy values accordingly
     *   Remove variables from JavaScript, remove checks from routes
-    
 *   Style the UI
 *   Add console info on startup, handle port selection (checking if available), clean up error logging
 *   Create packaging and deployment scripts for Windows
 *   Test on Windows, test on MacOS, run performance benchmarks
 *   Finish documentation for Math, style it
 *   Write User Guide
-
---------------------------------------------------------------------------------------------------------------------------------
 
 OPTIONAL:
 
