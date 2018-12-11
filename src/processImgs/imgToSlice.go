@@ -6,6 +6,8 @@ import (
 )
 
 func Gray16ToUint16(img image.Image) ([][]uint16, error) {
+	var k int
+
 	gray16, ok := img.(*image.Gray16)
 	if ok == false {
 		return [][]uint16{}, errors.New("Image not Gray16 format")
@@ -18,7 +20,6 @@ func Gray16ToUint16(img image.Image) ([][]uint16, error) {
 	width := x_max - x_min
 	height := y_max - y_min
 
-	var k int
 	slice := make([][]uint16, height)
 	for i := 0; i < height; i++ {
 		slice[i] = make([]uint16, width)
@@ -31,6 +32,8 @@ func Gray16ToUint16(img image.Image) ([][]uint16, error) {
 }
 
 func Uint16ToGray16(slice [][]uint16) *image.Gray16 {
+	var k int
+
 	x_min := 0
 	y_min := 0
 	height := len(slice)
@@ -39,7 +42,6 @@ func Uint16ToGray16(slice [][]uint16) *image.Gray16 {
 	bottomRight := image.Point{width + x_min, height + y_min}
 	gray16 := image.NewGray16(image.Rectangle{topLeft, bottomRight})
 
-	var k int
 	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
 			k = (i-y_min)*gray16.Stride + (j-x_min)*2

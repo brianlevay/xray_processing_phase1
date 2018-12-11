@@ -11,31 +11,8 @@
 		<h1>Core Axis Determination</h1>
 		
 		<section>
-			<h2>Binary Image</h2>
-			<h3>Define core presence or absence based on threshold</h3>
-			<p>if I<sub>raw</sub> &le; I<sub>threshold</sub></p>
-			<p>I<sub>bin</sub> = 1.0</p>
-			<p>if I<sub>raw</sub> &gt; I<sub>threshold</sub></p>
-			<p>I<sub>bin</sub> = 0.0</p>
-		</section>
-		
-		<section>
-			<h2>Lateral Edge Detection</h2>
-			<h3>Find where the core presence changes in the x-direction</h3>
-			<p>I<sub>edge</sub>(i, j) = I<sub>bin</sub>(i, j+1) − I<sub>bin</sub>(i, j)</p>
-		
-			<h3>Determining the core edges</h3>
-			<p>When I<sub>edge</sub>(i, j) = 1.0, you have the left edge of a feature. 
-			When I<sub>edge</sub>(i, j) = -1.0, you have the right edge of a feature. To determine the core edges, find all edges in a pixel row (fixed y). 
-			The edge points that give the largest gap from +1.0 (left edge) to -1.0 (right edge) are assumed to represent the edges of the core in that row, 
-			as long as the gap is exceeds a reasonable threshold.</p>
-		</section>
-		
-		<section>
-			<h2>Core Axis Estimation</h2>
-			<p>The midpoint between the left and right core edge in each row is determined, and the points are fit using linear regression. 
-			The vertical pixel position (y) is used as the independent variable, and the horizontal pixel position (x) is used as the dependent variable. 
-			The regression line is compared against some limits to determine if it is reasonable, otherwise the axis is assumed to be vertical and centered.</p>
+			<h2>Assumptions</h2>
+			<p>Coming soon!</p>
 		</section>
 	</section>
 	

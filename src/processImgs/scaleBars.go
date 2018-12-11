@@ -10,12 +10,11 @@ func (proc *ImgProcessor) CreateScaleBars() {
 	scaleWidthCm := 0.2
 	lineWidthCm := 0.1
 
-	cmPxHeight := pxDet(proc, 1.0)
-	cmPxWidth := pxDet(proc, scaleWidthCm)
-	lnPxHeight := pxDet(proc, proc.Motion)
-	lnPxWidth := pxDet(proc, lineWidthCm)
+	cmPxHeight := int(1.0 / proc.CmPerPxProj)
+	cmPxWidth := int(scaleWidthCm / proc.CmPerPxProj)
+	lnPxHeight := int(proc.Motion / proc.CmPerPxProj)
+	lnPxWidth := int(lineWidthCm / proc.CmPerPxProj)
 	lnIstart := int(float64(proc.Height-lnPxHeight) / 2.0)
-
 	iBorder := []int{0, (proc.Height - 1)}
 	jBorder := []int{0, (borderPx + cmPxWidth + borderPx - 1)}
 	iCms := []int{(iBorder[0] + borderPx), (iBorder[1] - borderPx)}
@@ -45,12 +44,6 @@ func (proc *ImgProcessor) CreateScaleBars() {
 	}
 	proc.Iscale = Iscale
 	return
-}
-
-func pxDet(proc *ImgProcessor, cmCore float64) int {
-	cmDet := (cmCore / (proc.SrcHeight - proc.CoreHeight - (proc.CoreDiameter / 2.0))) * proc.SrcHeight
-	pxDet := int(cmDet / proc.CmPx)
-	return pxDet
 }
 
 func isInside(i int, j int, iBounds []int, jBounds []int) bool {

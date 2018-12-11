@@ -23,9 +23,10 @@ type ImgProcessor struct {
 	ImaxInInt    uint16     `json:"-"`
 	ImaxOutFlt   float64    `json:"-"`
 	ImaxOutInt   uint16     `json:"-"`
-	CmPx         float64    `json:"-"`
-	X            []float64  `json:"-"`
-	Y            []float64  `json:"-"`
+	CmPerPxAct   float64    `json:"-"`
+	CmPerPxProj  float64    `json:"-"`
+	Xd           []float64  `json:"-"`
+	Yd           []float64  `json:"-"`
 	Xc           float64    `json:"-"`
 	Yc           float64    `json:"-"`
 	WtsGapTable  []float64  `json:"-"`

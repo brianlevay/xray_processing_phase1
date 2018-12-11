@@ -28,7 +28,7 @@ func newTModel(proc *ImgProcessor, theta float64, offset float64) *TModel {
 	t.C = t.Xrs*t.Xrs - 2*t.Xrs*t.Xra + t.Xra*t.Xra
 	t.C += t.Zrs*t.Zrs - 2*t.Zrs*t.Zra + t.Zra*t.Zra - t.R*t.R
 
-	t.XrStep = proc.CmPx / 2.0
+	t.XrStep = proc.CmPerPxAct / 2.0
 	t.XrMin = t.DelZr*((t.Xra-t.R-t.Xrs)/(t.Zra+t.R-t.Zrs)) + t.Xrs
 	t.XrMax = t.DelZr*((t.Xra+t.R-t.Xrs)/(t.Zra+t.R-t.Zrs)) + t.Xrs
 

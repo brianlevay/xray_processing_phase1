@@ -6,6 +6,7 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw [][]uint16, tmodel [][]float64) [][]u
 	var murhot, murhotref, L float64
 	var Lindex uint16
 	var Icont uint16
+
 	Iout := make([][]uint16, proc.Height)
 	for i := 0; i < proc.Height; i++ {
 		Iout[i] = make([]uint16, proc.Width)
