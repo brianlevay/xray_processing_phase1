@@ -5,6 +5,7 @@ import (
 )
 
 func (proc *ImgProcessor) CreateScaleBars() {
+	// Configuration Variables //
 	borderPx := 2
 	scaleWidthCm := 0.2
 	lineWidthCm := 0.1

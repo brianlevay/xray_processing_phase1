@@ -9,6 +9,9 @@ import (
 )
 
 func DrawHistogram(hist *Histogram, width int, height int) *bytes.Buffer {
+	// Configuration Variables //
+	blue := color.RGBA{66, 134, 244, 255}
+
 	nbins := len(hist.Cts)
 	maxcts := hist.MaxCts()
 	bins_per_px := float64(nbins) / float64(width)
@@ -18,7 +21,6 @@ func DrawHistogram(hist *Histogram, width int, height int) *bytes.Buffer {
 	bottomRight := image.Point{width, height}
 	img := image.NewRGBA(image.Rectangle{topLeft, bottomRight})
 
-	blue := color.RGBA{66, 134, 244, 255}
 	var index int
 	var value float64
 	var top int

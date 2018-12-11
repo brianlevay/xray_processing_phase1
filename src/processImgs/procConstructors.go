@@ -5,6 +5,7 @@ import (
 )
 
 func (proc *ImgProcessor) Initialize() {
+	// Configuration Variables //
 	proc.CmPx = 0.0099
 	proc.Tmin = 0.5
 	proc.Lstep = 0.001
@@ -22,6 +23,7 @@ func (proc *ImgProcessor) Initialize() {
 	}
 
 	proc.CalculateXY()
+	proc.CalculateWtsGapTable()
 	proc.CalculateMurhotTable()
 	proc.CalculateIcontTable()
 	proc.CreateScaleBars()
@@ -43,6 +45,33 @@ func (proc *ImgProcessor) CalculateXY() {
 	proc.Yc = Yc
 	proc.X = X
 	proc.Y = Y
+}
+
+func (proc *ImgProcessor) CalculateWtsGapTable() {
+	// Configuration Variables //
+	flatDelta := 0.4
+	gapMinF := 0.5
+	gapMaxF := 1.1
+
+	var gap float64
+	ptLow0 := proc.CoreDiameter * gapMinF
+	ptLow1 := proc.CoreDiameter - flatDelta
+	ptHigh1 := proc.CoreDiameter
+	ptHigh0 := proc.CoreDiameter * gapMaxF
+	wtsGap := make([]float64, proc.Width)
+	for k := 0; k < proc.Width; k++ {
+		gap = float64(k) * proc.CmPx
+		if (gap <= ptLow0) || (gap >= ptHigh0) {
+			wtsGap[k] = 0.0
+		} else if (gap >= ptLow1) && (gap <= ptHigh1) {
+			wtsGap[k] = 1.0
+		} else if (gap > ptLow0) && (gap < ptLow1) {
+			wtsGap[k] = ((1.0-0.0)/(ptLow1-ptLow0))*(gap-ptLow0) + 0.0
+		} else {
+			wtsGap[k] = ((0.0-1.0)/(ptHigh0-ptHigh1))*(gap-ptHigh1) + 1.0
+		}
+	}
+	proc.WtsGapTable = wtsGap
 }
 
 func (proc *ImgProcessor) CalculateMurhotTable() {

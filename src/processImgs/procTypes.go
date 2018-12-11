@@ -28,12 +28,13 @@ type ImgProcessor struct {
 	Y            []float64  `json:"-"`
 	Xc           float64    `json:"-"`
 	Yc           float64    `json:"-"`
+	WtsGapTable  []float64  `json:"-"`
+	MurhotTable  []float64  `json:"-"`
 	Tref         float64    `json:"-"`
 	Tmin         float64    `json:"-"`
 	Omin         float64    `json:"-"`
 	Omax         float64    `json:"-"`
 	Lstep        float64    `json:"-"`
-	MurhotTable  []float64  `json:"-"`
 	IcontTable   []uint16   `json:"-"`
 	Iscale       [][]uint16 `json:"-"`
 }
