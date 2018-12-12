@@ -20,13 +20,15 @@ type ImgProcessor struct {
 	Width        int        `json:"-"`
 	Bits         int        `json:"-"`
 	CmPerPx      float64    `json:"-"`
+	ProjMult     float64    `json:"-"`
 	ImaxInFlt    float64    `json:"-"`
 	ImaxInInt    uint16     `json:"-"`
 	ImaxOutFlt   float64    `json:"-"`
 	ImaxOutInt   uint16     `json:"-"`
 	IthreshInt   uint16     `json:"-"`
+	PxGapMin     int        `json:"-"`
+	PxGapMax     int        `json:"-"`
 	MaxTheta     float64    `json:"-"`
-	ProjMult     float64    `json:"-"`
 	Xd           []float64  `json:"-"`
 	Yd           []float64  `json:"-"`
 	Xc           float64    `json:"-"`
