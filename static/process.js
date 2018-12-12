@@ -1,9 +1,6 @@
 /* global getSelected */
 
 let settings = {
-    Height: 1550,
-    Width: 1032,
-    Bits: 14,
     CoreType: 'WR',
     CoreDiameter: 7.2,
     SrcHeight: 65.0,

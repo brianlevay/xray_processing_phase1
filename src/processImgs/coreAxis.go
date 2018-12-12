@@ -6,20 +6,18 @@ import (
 
 func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	// Configuration Variables //
-	Ithresh := uint16(0.8 * proc.ImaxInFlt)
 	maxXdist := 3.0
-	maxTheta := 5.0
 
 	var leftEdge, rightEdge, leftMax, rightMax, maxGap int
-	var w, wtsum, xsum, ysum, xxsum, xysum, Xmid, Ymid float64
+	var nsum, xsum, ysum, xxsum, xysum, Xmid, Ymid float64
 
 	for i := 0; i < proc.Height; i++ {
 		leftEdge, rightEdge, leftMax, rightMax, maxGap = 0, 0, 0, 0, 0
 		for j := 0; j < (proc.Width - 1); j++ {
-			if (Iraw[i][j] > Ithresh) && (Iraw[i][j+1] <= Ithresh) {
+			if (Iraw[i][j] > proc.IthreshInt) && (Iraw[i][j+1] <= proc.IthreshInt) {
 				leftEdge = j
 			}
-			if (Iraw[i][j] <= Ithresh) && (Iraw[i][j+1] > Ithresh) {
+			if (Iraw[i][j] <= proc.IthreshInt) && (Iraw[i][j+1] > proc.IthreshInt) {
 				rightEdge = j + 1
 			}
 			if (rightEdge - leftEdge) >= maxGap {
@@ -34,26 +32,25 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 		// Don't include values that are too far from the center of the image //
 		// Regression using the Y values (i) as the independent variable //
 		if (Xmid >= (proc.Xc - maxXdist)) && (Xmid <= (proc.Xc + maxXdist)) {
-			w = proc.WtsGapTable[maxGap]
-			wtsum += w
-			xsum += w * Ymid
-			ysum += w * Xmid
-			xxsum += w * (Ymid * Ymid)
-			xysum += w * (Ymid * Xmid)
+			nsum += 1.0
+			xsum += Ymid
+			ysum += Xmid
+			xxsum += (Ymid * Ymid)
+			xysum += (Ymid * Xmid)
 		}
 	}
-	if wtsum == 0.0 {
+	if nsum == 0.0 {
 		return 0.0, 0.0
 	}
-	beta := (xysum - (1.0/wtsum)*xsum*ysum) / (xxsum - (1.0/wtsum)*xsum*xsum)
-	xave := xsum / wtsum
-	yave := ysum / wtsum
+	beta := (xysum - (1.0/nsum)*xsum*ysum) / (xxsum - (1.0/nsum)*xsum*xsum)
+	xave := xsum / nsum
+	yave := ysum / nsum
 	alpha := yave - beta*xave
 
 	offsetProj := (beta*proc.Yc + alpha) - proc.Xc
 	offsetAct := offsetProj / proc.ProjMult
 	theta := math.Atan(beta) * (180.0 / math.Pi)
-	if math.Abs(theta) > maxTheta {
+	if math.Abs(theta) > proc.MaxTheta {
 		return 0.0, 0.0
 	} else {
 		return theta, offsetAct

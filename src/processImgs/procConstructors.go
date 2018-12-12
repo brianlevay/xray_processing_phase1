@@ -5,15 +5,29 @@ import (
 )
 
 func (proc *ImgProcessor) Initialize() {
-	// Configuration Variables //
+	// Configuration Variables for Calculations //
+	proc.Height = 1550
+	proc.Width = 1032
+	proc.Bits = 14
 	proc.CmPerPx = 0.0099
 	proc.Tmin = 0.5
 	proc.Lstep = 0.001
 
+	threshFrac := 0.8
+	proc.MaxTheta = 5.0
+
+	// Configuration Variables for Scales //
+	proc.BorderPx = 2
+	proc.ScaleWidth = 0.2
+	proc.RoiWidth = 0.1
+
+	// Calculated Values //
 	proc.ImaxInFlt = math.Pow(2, float64(proc.Bits)) - 1.0
 	proc.ImaxOutFlt = math.Pow(2, 16.0) - 1.0
 	proc.ImaxInInt = uint16(proc.ImaxInFlt)
 	proc.ImaxOutInt = uint16(proc.ImaxOutFlt)
+	proc.IthreshInt = uint16(threshFrac * proc.ImaxInFlt)
+
 	proc.Omin = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ihigh+1.0)
 	proc.Omax = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ilow+1.0)
 	proc.Tref = proc.CoreDiameter
@@ -21,8 +35,8 @@ func (proc *ImgProcessor) Initialize() {
 		proc.Tref = (proc.CoreDiameter / 2.0)
 	}
 	proc.ProjMult = 1.0 * (proc.SrcHeight / (proc.SrcHeight - proc.CoreHeight - (proc.CoreDiameter / 2.0)))
+
 	proc.CalculateXYd()
-	proc.CalculateWtsGapTable()
 	proc.CalculateMurhotTable()
 	proc.CalculateIcontTable()
 	proc.CreateScaleBars()
@@ -44,36 +58,6 @@ func (proc *ImgProcessor) CalculateXYd() {
 	proc.Yc = Yc
 	proc.Xd = Xd
 	proc.Yd = Yd
-}
-
-func (proc *ImgProcessor) CalculateWtsGapTable() {
-	// Configuration Variables //
-	deltaGapMin := 3.0
-	deltaGapFlat := 0.5
-	deltaGapMax := 0.5
-
-	// This uses a simplistic relationship between pixel width and core width, //
-	// not accounting for 3D projection of a cylinder //
-	var gap float64
-	ptHigh1 := proc.CoreDiameter
-	ptHigh0 := ptHigh1 + deltaGapMax
-	ptLow1 := ptHigh1 - deltaGapFlat
-	ptLow0 := ptLow1 - deltaGapMin
-
-	wtsGap := make([]float64, proc.Width)
-	for k := 0; k < proc.Width; k++ {
-		gap = pxToCmCore(proc, k)
-		if (gap <= ptLow0) || (gap >= ptHigh0) {
-			wtsGap[k] = 0.0
-		} else if (gap >= ptLow1) && (gap <= ptHigh1) {
-			wtsGap[k] = 1.0
-		} else if (gap > ptLow0) && (gap < ptLow1) {
-			wtsGap[k] = ((1.0-0.0)/(ptLow1-ptLow0))*(gap-ptLow0) + 0.0
-		} else {
-			wtsGap[k] = ((0.0-1.0)/(ptHigh0-ptHigh1))*(gap-ptHigh1) + 1.0
-		}
-	}
-	proc.WtsGapTable = wtsGap
 }
 
 func (proc *ImgProcessor) CalculateMurhotTable() {
