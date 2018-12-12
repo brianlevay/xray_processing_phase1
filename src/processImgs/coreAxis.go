@@ -19,13 +19,15 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	}
 }
 
+// This can be written to touch each pixel only once, but I'm not sure if it's worth summing
+// masses in intervals that will be discarded //
+
 func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16) ([]float64, []float64) {
 	var leftEdge, rightEdge, leftMax, rightMax, largestGap int
 	var mass, msum, xmsum float64
-
-	jSearch := int(float64(proc.PxGapMax) / 2.0)
 	Xmid := make([]float64, proc.Height)
 	Ymid := make([]float64, proc.Height)
+
 	for i := 0; i < proc.Height; i++ {
 		leftEdge, rightEdge, leftMax, rightMax, largestGap = 0, 0, 0, 0, 0
 		for j := 0; j < (proc.Width - 1); j++ {
