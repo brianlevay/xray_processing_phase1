@@ -13,7 +13,7 @@ func (proc *ImgProcessor) Initialize() {
 	proc.Tmin = 0.5
 	proc.Lstep = 0.001
 
-	threshFrac := 0.8
+	threshFrac := 0.9
 	gapMinFrac := 0.7
 	gapMaxFrac := 1.2
 	proc.MaxTheta = 5.0
