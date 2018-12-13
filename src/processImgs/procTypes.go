@@ -28,6 +28,7 @@ type ImgProcessor struct {
 	IthreshInt   uint16     `json:"-"`
 	PxGapMin     int        `json:"-"`
 	PxGapMax     int        `json:"-"`
+	MassTable    []float64  `json:"-"`
 	MaxTheta     float64    `json:"-"`
 	Xd           []float64  `json:"-"`
 	Yd           []float64  `json:"-"`

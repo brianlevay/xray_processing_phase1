@@ -46,7 +46,7 @@ func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16) ([]float64, [
 		msum, xmsum = 0.0, 0.0
 		if (largestGap >= proc.PxGapMin) && (largestGap <= proc.PxGapMax) {
 			for j := leftMax; j < (rightMax + 1); j++ {
-				mass = float64(proc.ImaxInInt - Iraw[i][j])
+				mass = proc.MassTable[Iraw[i][j]]
 				msum += mass
 				xmsum += proc.Xd[j] * mass
 			}

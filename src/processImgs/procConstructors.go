@@ -42,11 +42,21 @@ func (proc *ImgProcessor) Initialize() {
 		proc.Tref = (proc.CoreDiameter / 2.0)
 	}
 
+	proc.CalculateMassTable()
 	proc.CalculateXYd()
 	proc.CalculateMurhotTable()
 	proc.CalculateIcontTable()
 	proc.CreateScaleBars()
 	return
+}
+
+func (proc *ImgProcessor) CalculateMassTable() {
+	nvals := int(proc.ImaxInInt + 1)
+	masses := make([]float64, nvals)
+	for k := 0; k < nvals; k++ {
+		masses[k] = float64(proc.ImaxInInt-uint16(k)) / float64(proc.ImaxInFlt)
+	}
+	proc.MassTable = masses
 }
 
 func (proc *ImgProcessor) CalculateXYd() {
