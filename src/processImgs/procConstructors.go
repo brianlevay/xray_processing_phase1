@@ -16,6 +16,8 @@ func (proc *ImgProcessor) Initialize() {
 	threshFrac := 0.9
 	gapMinFrac := 0.7
 	gapMaxFrac := 1.2
+	proc.Nmass = 1.0
+	proc.Segments = 10
 	proc.MaxTheta = 5.0
 
 	// Configuration Variables for Scales //
@@ -51,10 +53,12 @@ func (proc *ImgProcessor) Initialize() {
 }
 
 func (proc *ImgProcessor) CalculateMassTable() {
+	var massBase float64
 	nvals := int(proc.ImaxInInt + 1)
 	masses := make([]float64, nvals)
 	for k := 0; k < nvals; k++ {
-		masses[k] = float64(proc.ImaxInInt-uint16(k)) / float64(proc.ImaxInFlt)
+		massBase = float64(proc.ImaxInInt-uint16(k)) / float64(proc.ImaxInFlt)
+		masses[k] = math.Pow(massBase, proc.Nmass)
 	}
 	proc.MassTable = masses
 }
