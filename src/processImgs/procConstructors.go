@@ -13,11 +13,12 @@ func (proc *ImgProcessor) Initialize() {
 	proc.Tmin = 0.5
 	proc.Lstep = 0.001
 
+	// Configuration Variables for CoreAxis //
 	threshFrac := 0.9
 	gapMinFrac := 0.7
 	gapMaxFrac := 1.2
 	proc.Nmass = 1.0
-	proc.Segments = 10
+	proc.FilterSteps = 3
 	proc.MaxTheta = 5.0
 
 	// Configuration Variables for Scales //

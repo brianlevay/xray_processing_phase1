@@ -2,15 +2,14 @@ package processImgs
 
 import (
 	"math"
-	"sort"
 )
 
 // Regression using the Y values (i) as the independent variable //
 
 func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	flag := -999.0
-	ColMid, RowMid := centerOfMassBetweenEdges(proc, Iraw, flag)
-	beta, alpha := medianOfSegments(proc, RowMid, ColMid, flag)
+	colMid, rowMid := centerOfMassBetweenEdges(proc, Iraw, flag)
+	beta, alpha := iterativeRegression(proc, rowMid, colMid, flag)
 	offsetProj := (beta*proc.Yc + alpha) - proc.Xc
 	offsetAct := offsetProj / proc.ProjMult
 	theta := math.Atan(beta) * (180.0 / math.Pi)
@@ -29,8 +28,8 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16, flag float64) ([]float64, []float64) {
 	var leftEdge, rightEdge, leftMax, rightMax, largestGap int
 	var mass, msum, xmsum float64
-	RowMid := make([]float64, proc.Height)
-	ColMid := make([]float64, proc.Height)
+	rowMid := make([]float64, proc.Height)
+	colMid := make([]float64, proc.Height)
 
 	for i := 0; i < proc.Height; i++ {
 		leftEdge, rightEdge, leftMax, rightMax, largestGap = 0, 0, 0, 0, 0
@@ -54,68 +53,70 @@ func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16, flag float64)
 				msum += mass
 				xmsum += proc.Xd[j] * mass
 			}
-			ColMid[i] = xmsum / msum
+			colMid[i] = xmsum / msum
 		} else {
-			ColMid[i] = flag
+			colMid[i] = flag
 		}
-		RowMid[i] = proc.Yd[i]
+		rowMid[i] = proc.Yd[i]
 	}
-	return ColMid, RowMid
+	return colMid, rowMid
 }
 
-func medianOfSegments(proc *ImgProcessor, X []float64, Y []float64, flag float64) (float64, float64) {
-	var start, stop int
-	var betaSeg, alphaSeg float64
-	stepSize := int(float64(proc.Height) / float64(proc.Segments))
-	betas := make([]float64, 0, proc.Segments)
-	alphas := make([]float64, 0, proc.Segments)
-	for k := 0; k < proc.Segments; k++ {
-		start = k * stepSize
-		stop = (k + 1) * stepSize
-		if stop > proc.Height {
-			stop = proc.Height
-		}
-		betaSeg, alphaSeg = linearRegression(X[start:stop], Y[start:stop], flag)
-		if betaSeg != flag {
-			betas = append(betas, betaSeg)
-			alphas = append(alphas, alphaSeg)
-		}
-	}
-	betaMedian := findMedianFlt(betas)
-	alphaMedian := findMedianFlt(alphas)
-	return betaMedian, alphaMedian
-}
-
-func linearRegression(X []float64, Y []float64, flag float64) (float64, float64) {
-	var nsum, xsum, ysum, xxsum, xysum float64
-	beta := flag
-	alpha := flag
-	nPts := len(X)
-	for i := 0; i < nPts; i++ {
-		if Y[i] != flag {
-			nsum += 1.0
-			xsum += X[i]
-			ysum += Y[i]
-			xxsum += X[i] * X[i]
-			xysum += X[i] * Y[i]
-		}
-	}
-	// Regression doesn't have any significant meaning for <3 points //
-	if nsum >= 3.0 {
-		xave := xsum / nsum
-		yave := ysum / nsum
-		beta = (xysum - (1.0/nsum)*xsum*ysum) / (xxsum - (1.0/nsum)*xsum*xsum)
-		alpha = yave - beta*xave
+func iterativeRegression(proc *ImgProcessor, X []float64, Y []float64, flag float64) (float64, float64) {
+	beta, alpha := linearRegression(X, Y, flag)
+	filterData(X, Y, beta, alpha, flag)
+	for k := 0; k < proc.FilterSteps; k++ {
+		beta, alpha = linearRegression(X, Y, flag)
+		filterData(X, Y, beta, alpha, flag)
 	}
 	return beta, alpha
 }
 
-func findMedianFlt(X []float64) float64 {
-	sort.Float64s(X)
+func linearRegression(X []float64, Y []float64, flag float64) (float64, float64) {
+	var nsum, xsum, ysum, xxsum, xysum float64
 	nPts := len(X)
-	midInt := int(float64(nPts-1) / 2.0)
-	if (nPts - 1 - midInt) > (midInt - 0) {
-		return (X[midInt] + X[midInt+1]) / 2.0
+	for k := 0; k < nPts; k++ {
+		if Y[k] != flag {
+			nsum += 1.0
+			xsum += X[k]
+			ysum += Y[k]
+			xxsum += X[k] * X[k]
+			xysum += X[k] * Y[k]
+		}
 	}
-	return X[midInt]
+	if nsum < 2.0 {
+		return flag, flag
+	}
+	xave := xsum / nsum
+	yave := ysum / nsum
+	beta := (xysum - (1.0/nsum)*xsum*ysum) / (xxsum - (1.0/nsum)*xsum*xsum)
+	alpha := yave - beta*xave
+	return beta, alpha
+}
+
+func filterData(X []float64, Y []float64, beta float64, alpha float64, flag float64) {
+	var nsum, xsum, xxsum, res float64
+	nPts := len(X)
+	for k := 0; k < nPts; k++ {
+		if Y[k] != flag {
+			res = Y[k] - beta*X[k] - alpha
+			nsum += 1.0
+			xsum += res
+			xxsum += res * res
+		}
+	}
+	if nsum < 2.0 {
+		return
+	}
+	variance := (xxsum - (1.0/nsum)*xsum*xsum)
+	resStd := math.Sqrt(variance / (nsum - 1.0))
+	for k := 0; k < nPts; k++ {
+		if Y[k] != flag {
+			res = math.Abs(Y[k] - beta*X[k] - alpha)
+			if res >= 2*resStd {
+				Y[k] = flag
+			}
+		}
+	}
+	return
 }
