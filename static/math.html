@@ -13,6 +13,49 @@
 		<section>
 			<h2>Assumptions</h2>
 			<p>Coming soon!</p>
+			<p>When I try to manually locate the axis of a core in an x-ray image, I consider several different pieces 
+			of information. First, I take note of the edges. The edges create an outline of the core, and I don't bother 
+			searching for the axis outside of them. Second, I look for where the core appears darkest. I try to reconcile 
+			the darkest parts of the core against the line created by the mid-points between the edges. At this point, 
+			it becomes a judgement call on how I would trace the axis. Obviously, when devising algorithms, I don't have the 
+			luxury of using "judgement" on each image. I need to write rules. However, I can still use my personal 
+			approach as a framework, and the following is based on my own experience and experiments.</p>
+			<p>Feel free to develop your own approach(es)!</p>
+		</section>
+		
+		<section>
+			<h2>Detecting Likely Points on the Core Axis</h2>
+			<p>Coming soon!</p>
+			<h3>Finding the Edges</h3>
+			<p>soon...</p>
+			
+			<h3>Finding the Axis</h3>
+			<p>Within each row, the core axis is determined by calculating the center of mass between the left 
+			and right edges.</p>
+			<p>X<sub>center</sub> = &sum; X<sub>i</sub>m<sub>i</sub> / &sum; m<sub>i</sub></p>
+			<p>m = ((I<sub>max</sub> - I<sub>raw</sub>)/(I<sub>max</sub>))<sup>N<sub>mass</sub></sup></p>
+			<p>When N<sub>mass</sub> = 0, each pixel is evenly weighted, meaning that the center of mass will 
+			simply be the mid-point between the edges. As N<sub>mass</sub> increases, the center will be increasingly biased towards 
+			the darkest part of the core in the given row. N<sub>mass</sub> = 1 weights each pixel by its intensity, 
+			which represents a typical center of mass calculation in most scenarios.</p>
+			<p>Cores are often asymmetric, heterogenous, and fragmented, meaning that it's a tough problem trying to decide how much to trust 
+			the edges vs the darkest portions when it comes to estimating the axis. If we weight darkness too much, 
+			then IRD will have strong effects on the outcome. If we weight edges too much, then broken pieces will 
+			have strong effects on the outcome. Based on initial tests, I feel that N<sub>mass</sub> = 1 is a reasonable 
+			compromise.</p>
+		</section>
+		
+		<section>
+			<h2>Estimating the Axis</h2>
+			<p>Coming soon!</p>
+			<h3>Ordinary Least Squares Regression</h3>
+			<p>soon...</p>
+			
+			<h3>Iterative Filtering</h3>
+			<p>soon...</p>
+			
+			<h3>Projecting to the Correct Position</h3>
+			<p>soon...</p>
 		</section>
 	</section>
 	
@@ -221,5 +264,14 @@
 		
 	</section>
 	
+	<section>
+		<h1>Scale Bars</h1>
+		
+		<section>
+			<h2>Assumptions</h2>
+			<p>Coming soon!</p>
+		</section>
+		
+	</section>
 	</body>
 </html>

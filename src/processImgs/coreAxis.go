@@ -8,17 +8,17 @@ import (
 
 func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	flag := -999.0
+	nStd := 2.0
 	colMid, rowMid := centerOfMassBetweenEdges(proc, Iraw, flag)
-	beta, alpha := iterativeRegression(proc, rowMid, colMid, flag)
-	offsetProj := (beta*proc.Yc + alpha) - proc.Xc
-	offsetAct := offsetProj / proc.ProjMult
+	beta, alpha := iterativeRegression(proc, rowMid, colMid, nStd, flag)
+	offset := ((beta*proc.Yc + alpha) - proc.Xc) / proc.ProjMult
 	theta := math.Atan(beta) * (180.0 / math.Pi)
 	if theta > proc.MaxTheta {
-		return proc.MaxTheta, offsetAct
+		return proc.MaxTheta, offset
 	} else if theta < -proc.MaxTheta {
-		return -proc.MaxTheta, offsetAct
+		return -proc.MaxTheta, offset
 	} else {
-		return theta, offsetAct
+		return theta, offset
 	}
 }
 
@@ -62,12 +62,12 @@ func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16, flag float64)
 	return colMid, rowMid
 }
 
-func iterativeRegression(proc *ImgProcessor, X []float64, Y []float64, flag float64) (float64, float64) {
+func iterativeRegression(proc *ImgProcessor, X []float64, Y []float64, nStd float64, flag float64) (float64, float64) {
 	beta, alpha := linearRegression(X, Y, flag)
-	filterData(X, Y, beta, alpha, flag)
+	filterData(X, Y, beta, alpha, nStd, flag)
 	for k := 0; k < proc.FilterSteps; k++ {
 		beta, alpha = linearRegression(X, Y, flag)
-		filterData(X, Y, beta, alpha, flag)
+		filterData(X, Y, beta, alpha, nStd, flag)
 	}
 	return beta, alpha
 }
@@ -89,12 +89,14 @@ func linearRegression(X []float64, Y []float64, flag float64) (float64, float64)
 	}
 	xave := xsum / nsum
 	yave := ysum / nsum
-	beta := (xysum - (1.0/nsum)*xsum*ysum) / (xxsum - (1.0/nsum)*xsum*xsum)
+	covariance := (xysum - (1.0/nsum)*xsum*ysum)
+	variance := (xxsum - (1.0/nsum)*xsum*xsum)
+	beta := covariance / variance
 	alpha := yave - beta*xave
 	return beta, alpha
 }
 
-func filterData(X []float64, Y []float64, beta float64, alpha float64, flag float64) {
+func filterData(X []float64, Y []float64, beta float64, alpha float64, nStd float64, flag float64) {
 	var nsum, xsum, xxsum, res float64
 	nPts := len(X)
 	for k := 0; k < nPts; k++ {
@@ -113,7 +115,7 @@ func filterData(X []float64, Y []float64, beta float64, alpha float64, flag floa
 	for k := 0; k < nPts; k++ {
 		if Y[k] != flag {
 			res = math.Abs(Y[k] - beta*X[k] - alpha)
-			if res >= 2*resStd {
+			if res >= nStd*resStd {
 				Y[k] = flag
 			}
 		}
