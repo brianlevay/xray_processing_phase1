@@ -4,6 +4,12 @@ import (
 	"math"
 )
 
+func (hset *HistogramSet) Initialize() {
+	// Configuration variables
+	hset.Bits = 14
+	hset.Nbins = 256
+}
+
 func newHistogram(bits int, nbins int) *Histogram {
 	hist := new(Histogram)
 	hist.Step = math.Pow(2, float64(bits)) / float64(nbins)
@@ -11,11 +17,4 @@ func newHistogram(bits int, nbins int) *Histogram {
 		hist.Cts = append(hist.Cts, 0)
 	}
 	return hist
-}
-
-func newHistogramSet(bits int, nbins int) *HistogramSet {
-	histSet := new(HistogramSet)
-	histSet.Bits = bits
-	histSet.Nbins = nbins
-	return histSet
 }

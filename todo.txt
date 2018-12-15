@@ -1,20 +1,20 @@
-TO-DO LIST:
+REMAINING TASKS FOR VERSION 1.0:
 
-*   Get FindCoreAxis to work more robustly
-*   Change drawHistogram to use Pix[] instead of Set()
 *   Add configuration during startup
     *   Create config file with detector parameters and thresholds
     *   Write file parser
     *   Add file parser to main(), add config struct to HistSet and ImgProcessor initialization, copy values accordingly
-    *   Remove variables from JavaScript, remove checks from routes
-*   Style the UI
 *   Add console info on startup, handle port selection (checking if available), clean up error logging
+*   Style the UI
 *   Create packaging and deployment scripts for Windows
 *   Test on Windows, test on MacOS, run performance benchmarks
 *   Finish documentation for Math, style it
 *   Write User Guide
 
-OPTIONAL:
+FUTURE WORK IF TIME ALLOWS:
 
+*   Add flexibility to handle cores in non-vertical orientation
+*   Add support for non-centered source
 *   Investigate automatic histogram bounds determination
 *   Investigate improved contrast enhancement algorithms
+*   Investigate improved core detection algorithms

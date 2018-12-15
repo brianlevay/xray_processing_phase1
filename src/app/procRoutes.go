@@ -34,9 +34,8 @@ func processingHandler(contents *fe.FileContents) {
 			log.Println("Started processing " + strconv.Itoa(nImages) + " images...")
 			img.ProcessTiffs(contents, proc)
 			log.Println("Finished processing images.")
-		} else {
-			log.Println("No images selected.")
 		}
+		log.Println("No images selected.")
 		w.Write([]byte(""))
 		return
 	})

@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	fe "fileExplorer"
 	hist "histogram"
 	"log"
 	"net/http"
-	"strings"
 )
 
 func histogramHandler(contents *fe.FileContents) {
@@ -17,33 +17,20 @@ func histogramHandler(contents *fe.FileContents) {
 		absenceResponse(selectedPres, "Selected", &w)
 		contents.Selected = stringToSlice(selectedS[0])
 		nImages := len(contents.Selected)
-		bits := 14
-		nbins := 256
 		if nImages > 0 {
-			width, errWidth := checkAndConvertToInt("Width", r.Form)
-			errorResponse(errWidth, &w)
-			height, errHeight := checkAndConvertToInt("Height", r.Form)
-			errorResponse(errHeight, &w)
+			sizeStr, sizePres := r.Form["Style"]
+			absenceResponse(sizePres, "Style", &w)
+			hset := new(hist.HistogramSet)
+			errJSON := json.Unmarshal([]byte(sizeStr[0]), hset)
+			errorResponse(errJSON, &w)
 			log.Println("Started generating histogram...")
-			histogram := hist.ImageHistogram(contents, bits, nbins)
-			buffer := hist.DrawHistogram(histogram, width, height)
-			sEnc := base64.StdEncoding.EncodeToString(buffer.Bytes())
+			hist.ImageHistogram(contents, hset)
+			sEnc := base64.StdEncoding.EncodeToString(hset.Image)
 			log.Println("Sending histogram...")
 			w.Write([]byte(sEnc))
-		} else {
-			log.Println("No images selected.")
-			w.Write([]byte(""))
 		}
+		log.Println("No images selected.")
+		w.Write([]byte(""))
 		return
 	})
-}
-
-func stringToSlice(valString string) []string {
-	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
-	cleaned := replacer.Replace(valString)
-	values := strings.Split(cleaned, ",")
-	if (len(values) == 1) && (strings.Compare(values[0], "") == 0) {
-		return []string{}
-	}
-	return values
 }

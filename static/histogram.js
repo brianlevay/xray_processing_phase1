@@ -2,7 +2,10 @@
 
 var hist = {
     Width: 800,
-    Height: 600
+    Height: 600,
+    R: 66,
+    G: 134,
+    B: 244
 };
 
 
@@ -18,8 +21,7 @@ function histogramAPI() {
     xhttp.open('POST', '/histogram', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let selected = getSelected();
-    let sizeStr = '&Width=' + hist['Width'] + '&Height=' + hist['Height'];
-    xhttp.send('Selected=' + JSON.stringify(selected) + sizeStr);
+    xhttp.send('Selected=' + JSON.stringify(selected) + '&Style=' + JSON.stringify(hist));
     return;
 }
 

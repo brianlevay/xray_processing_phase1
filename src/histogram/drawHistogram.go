@@ -3,44 +3,50 @@ package histogram
 import (
 	"bytes"
 	"image"
-	"image/color"
 	"image/png"
 	"log"
 )
 
-func DrawHistogram(hist *Histogram, width int, height int) *bytes.Buffer {
-	// Configuration Variables //
-	blue := color.RGBA{66, 134, 244, 255}
-
-	nbins := len(hist.Cts)
-	maxcts := hist.MaxCts()
-	bins_per_px := float64(nbins) / float64(width)
-	cts_per_px := maxcts / float64(height)
-
-	topLeft := image.Point{0, 0}
-	bottomRight := image.Point{width, height}
-	img := image.NewRGBA(image.Rectangle{topLeft, bottomRight})
-
-	var index int
+func (hset *HistogramSet) DrawImage() {
+	var index, top, k int
 	var value float64
-	var top int
-	for x := 0; x < width; x++ {
-		index = int(float64(x) * bins_per_px)
-		value = hist.Cts[index]
-		top = int((maxcts - value) / cts_per_px)
-		for y := 0; y < height; y++ {
-			if y < top {
-				img.Set(x, y, color.White)
-			} else {
-				img.Set(x, y, blue)
-			}
+
+	// Avoids the last bin to prevent scaling to saturated values //
+	maxVal := 0.0
+	for i := 0; i < (hset.Nbins - 1); i++ {
+		if hset.Merged.Cts[i] > maxVal {
+			maxVal = hset.Merged.Cts[i]
 		}
 	}
+	bins_per_px := float64(hset.Nbins) / float64(hset.Width)
+	cts_per_px := maxVal / float64(hset.Height)
+	topLeft := image.Point{0, 0}
+	bottomRight := image.Point{hset.Width, hset.Height}
+	rgba := image.NewRGBA(image.Rectangle{topLeft, bottomRight})
 
+	for j := 0; j < hset.Width; j++ {
+		index = int(float64(j) * bins_per_px)
+		value = hset.Merged.Cts[index]
+		top = int((maxVal - value) / cts_per_px)
+		for i := 0; i < hset.Height; i++ {
+			k = (i * rgba.Stride) + j*4
+			if i < top {
+				rgba.Pix[k] = 255
+				rgba.Pix[k+1] = 255
+				rgba.Pix[k+2] = 255
+			} else {
+				rgba.Pix[k] = hset.R
+				rgba.Pix[k+1] = hset.G
+				rgba.Pix[k+2] = hset.B
+			}
+			rgba.Pix[k+3] = 255
+		}
+	}
 	buffer := new(bytes.Buffer)
-	errE := png.Encode(buffer, img)
+	errE := png.Encode(buffer, rgba)
 	if errE != nil {
 		log.Println("Unable to encode image.")
 	}
-	return buffer
+	hset.Image = buffer.Bytes()
+	return
 }
