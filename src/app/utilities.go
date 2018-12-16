@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 func errorResponse(err error, w *http.ResponseWriter) {
@@ -21,8 +22,12 @@ func absenceResponse(presence bool, ID string, w *http.ResponseWriter) {
 	return
 }
 
-func invalidValueResponse(warning string, w *http.ResponseWriter) {
-	log.Println(warning)
-	(*w).Write([]byte(""))
-	return
+func stringToSlice(valString string) []string {
+	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
+	cleaned := replacer.Replace(valString)
+	values := strings.Split(cleaned, ",")
+	if (len(values) == 1) && (strings.Compare(values[0], "") == 0) {
+		return []string{}
+	}
+	return values
 }

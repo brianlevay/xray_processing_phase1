@@ -5,6 +5,7 @@ This software is intended to allow scientists to process x-ray images acquired f
 ## Critical Assumptions That Must Be Met
 * The core is expected to be oriented roughly top to bottom in the image. For the detector that's currently being used in Phase 1, that corresponds to the core being oriented along the long axis of the detector. The image searching algorithm uses a row-first approach, and it will fail if the core is aligned left to right. Future efforts may allow this to be configurable. 
 * The source is assumed to be centered over the detector for all projection calculations. This doesn't need to be exactly true in real life, but the more off-center the source becomes, the more error will be introduced. Future efforts may allow this to be set as part of the configuration.
+* The core is assumed to be roughly cylindrical. The code will not work correctly on other types of shapes, such as slabs.
 
 ## Basic User Workflow
 1. Select the raw images to process

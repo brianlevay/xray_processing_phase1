@@ -10,7 +10,6 @@ import (
 
 func ProcessTiffs(contents *fe.FileContents, proc *ImgProcessor) {
 	var wg sync.WaitGroup
-	proc.Initialize()
 	nfiles := len(contents.Selected)
 	for i := 0; i < nfiles; i++ {
 		wg.Add(1)

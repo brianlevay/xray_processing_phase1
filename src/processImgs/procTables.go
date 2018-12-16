@@ -4,55 +4,6 @@ import (
 	"math"
 )
 
-func (proc *ImgProcessor) Initialize() {
-	// Configuration Variables for Calculations //
-	proc.Height = 1550
-	proc.Width = 1032
-	proc.Bits = 14
-	proc.CmPerPx = 0.0099
-	proc.Tmin = 0.5
-	proc.Lstep = 0.001
-
-	// Configuration Variables for CoreAxis //
-	threshFrac := 0.9
-	gapMinFrac := 0.7
-	gapMaxFrac := 1.2
-	proc.Nmass = 1.0
-	proc.FilterSteps = 3
-	proc.MaxTheta = 5.0
-
-	// Configuration Variables for Scales //
-	proc.BorderPx = 2
-	proc.ScaleWidth = 0.2
-	proc.RoiWidth = 0.1
-
-	// Calculated Values //
-	proc.ProjMult = 1.0 * (proc.SrcHeight / (proc.SrcHeight - proc.CoreHeight - (proc.CoreDiameter / 2.0)))
-
-	proc.ImaxInFlt = math.Pow(2, float64(proc.Bits)) - 1.0
-	proc.ImaxOutFlt = math.Pow(2, 16.0) - 1.0
-	proc.ImaxInInt = uint16(proc.ImaxInFlt)
-	proc.ImaxOutInt = uint16(proc.ImaxOutFlt)
-
-	proc.IthreshInt = uint16(threshFrac * proc.ImaxInFlt)
-	proc.PxGapMin = cmCoreToPx(proc, (gapMinFrac * proc.CoreDiameter))
-	proc.PxGapMax = cmCoreToPx(proc, (gapMaxFrac * proc.CoreDiameter))
-
-	proc.Omin = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ihigh+1.0)
-	proc.Omax = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ilow+1.0)
-	proc.Tref = proc.CoreDiameter
-	if proc.CoreType == "HR" {
-		proc.Tref = (proc.CoreDiameter / 2.0)
-	}
-
-	proc.CalculateMassTable()
-	proc.CalculateXYd()
-	proc.CalculateMurhotTable()
-	proc.CalculateIcontTable()
-	proc.CreateScaleBars()
-	return
-}
-
 func (proc *ImgProcessor) CalculateMassTable() {
 	var massBase float64
 	nvals := int(proc.ImaxInInt + 1)

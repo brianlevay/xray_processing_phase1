@@ -1,10 +1,7 @@
 REMAINING TASKS FOR VERSION 1.0:
 
-*   Add configuration during startup
-    *   Create config file with detector parameters and thresholds
-    *   Write file parser
-    *   Add file parser to main(), add config struct to HistSet and ImgProcessor initialization, copy values accordingly
 *   Add console info on startup, handle port selection (checking if available), clean up error logging
+*   Lock buttons on UI, provide working indicator
 *   Style the UI
 *   Create packaging and deployment scripts for Windows
 *   Test on Windows, test on MacOS, run performance benchmarks

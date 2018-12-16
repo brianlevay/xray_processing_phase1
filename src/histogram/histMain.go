@@ -10,7 +10,6 @@ import (
 
 func ImageHistogram(contents *fe.FileContents, hset *HistogramSet) {
 	var wg sync.WaitGroup
-	hset.Initialize()
 	nfiles := len(contents.Selected)
 	for i := 0; i < nfiles; i++ {
 		wg.Add(1)
