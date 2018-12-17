@@ -9,8 +9,13 @@ func (hset *HistogramSet) Initialize(cfg map[string]float64) error {
 	// Configuration variables
 	hset.Bits = int(cfg["Bits"])
 	hset.Nbins = int(cfg["Nbins"])
+	hset.HeightPxHist = int(cfg["HeightPxHist"])
+	hset.WidthPxHist = int(cfg["WidthPxHist"])
+	hset.R = uint8(cfg["R"])
+	hset.G = uint8(cfg["G"])
+	hset.B = uint8(cfg["B"])
 
-	if (hset.Height == 0) || (hset.Width == 0) || (hset.Bits < 0) || (hset.Nbins <= 0) {
+	if (hset.HeightPxHist == 0) || (hset.WidthPxHist == 0) || (hset.Bits < 0) || (hset.Nbins <= 0) {
 		return errors.New("Invalid configuration values for histogram")
 	}
 	return nil

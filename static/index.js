@@ -1,13 +1,61 @@
 /* global getSelected */
 
-var hist = {
-    Width: 800,
-    Height: 600,
-    R: 66,
-    G: 134,
-    B: 244
+let settings = {
+    CoreType: 'WR',
+    CoreDiameter: 7.2,
+    AxisMethod: 'autoDetect',
+    AxisAngle: 0.0,
+    AxisOffset: 0.0,
+    IlowFrac: 0.0,
+    IpeakFrac: 0.5,
+    IhighFrac: 1.0,
+    FolderName: 'processed',
+    FileAppend: '_processed'
 };
 
+// Processing Functions //
+
+function processAPI() {
+    let xhttp;
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            alert("Finished Processing!");
+        }
+        return;
+    };
+    xhttp.open('POST', '/processing', true);
+    xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    let selected = getSelected();
+    updateSettings();
+    xhttp.send('Selected=' + JSON.stringify(selected) + '&Settings=' + JSON.stringify(settings));
+    return;
+}
+
+
+function updateSettings() {
+    if (document.getElementById('halfRound').checked) {
+       settings.CoreType = 'HR';
+   } else {
+       settings.CoreType = 'WR';
+   }
+   settings.CoreDiameter = parseFloat(document.getElementById('coreDiameter').value);
+   if (document.getElementById('autoDetect').checked) {
+       settings.AxisMethod = 'autoDetect';
+   } else {
+       settings.AxisMethod = 'setAxis';
+   }
+   settings.AxisAngle = parseFloat(document.getElementById('axisAngle').value);
+   settings.AxisOffset = parseFloat(document.getElementById('axisOffset').value);
+   settings.Ilow = parseFloat(document.getElementById('leftBounds').value);
+   settings.Ipeak = parseFloat(document.getElementById('center').value);
+   settings.Ihigh = parseFloat(document.getElementById('rightBounds').value);
+   settings.FolderName = document.getElementById('folderName').value;
+   settings.FileAppend = document.getElementById('fileAppend').value;
+   return;
+}
+
+// Histogram Functions //
 
 function histogramAPI() {
     let xhttp;
@@ -21,7 +69,7 @@ function histogramAPI() {
     xhttp.open('POST', '/histogram', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let selected = getSelected();
-    xhttp.send('Selected=' + JSON.stringify(selected) + '&Style=' + JSON.stringify(hist));
+    xhttp.send('Selected=' + JSON.stringify(selected));
     return;
 }
 

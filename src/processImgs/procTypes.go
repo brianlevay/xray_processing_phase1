@@ -5,9 +5,6 @@ import ()
 type ImgProcessor struct {
 	CoreType     string     `json:"CoreType"`
 	CoreDiameter float64    `json:"CoreDiameter"`
-	SrcHeight    float64    `json:"SrcHeight"`
-	CoreHeight   float64    `json:"CoreHeight"`
-	Motion       float64    `json:"Motion"`
 	AxisMethod   string     `json:"AxisMethod"`
 	AxisAngle    float64    `json:"AxisAngle"`
 	AxisOffset   float64    `json:"AxisOffset"`
@@ -16,10 +13,13 @@ type ImgProcessor struct {
 	IhighFrac    float64    `json:"IhighFrac"`
 	FolderName   string     `json:"FolderName"`
 	FileAppend   string     `json:"FileAppend"`
+	SrcHeight    float64    `json:"-"`
+	CoreHeight   float64    `json:"-"`
+	Motion       float64    `json:"-"`
 	HeightPxDet  int        `json:"-"`
 	WidthPxDet   int        `json:"-"`
-	Bits         int        `json:"-"`
 	CmPerPx      float64    `json:"-"`
+	Bits         int        `json:"-"`
 	ProjMult     float64    `json:"-"`
 	ImaxInFlt    float64    `json:"-"`
 	ImaxInInt    uint16     `json:"-"`
@@ -39,6 +39,7 @@ type ImgProcessor struct {
 	MurhotTable  []float64  `json:"-"`
 	Tref         float64    `json:"-"`
 	Tmin         float64    `json:"-"`
+	Tedge        float64    `json:"-"`
 	Omin         float64    `json:"-"`
 	Opeak        float64    `json:"-"`
 	Omax         float64    `json:"-"`

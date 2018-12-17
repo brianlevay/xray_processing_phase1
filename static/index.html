@@ -3,7 +3,7 @@
     <head>
         <meta charset='UTF-8'>
         <title>X-Ray Image Processing for Cores</title>
-        <link rel='stylesheet' href='style.css'>
+        <link rel='stylesheet' href='index.css'>
     </head>
     <body>
         <section id='appHeader' class='lvl1'>
@@ -47,7 +47,7 @@
         <section class='lvl1'>
             <div class='title1'>Processing Settings</div>
             <section class='lvl2'>
-                <div class='title2'>Instrument Geometry</div>
+                <div class='title2'>Core Geometry</div>
                 <div class='lvl3'>
                     <div>
                         <input id='wholeRound' type='radio' name='coreType' value='WR' checked><label>Whole round</label>
@@ -56,18 +56,6 @@
                     <div>
                         <input id='coreDiameter' type='number' name='coreDiameter' min=0.0 step=0.1>
                         <label>Diameter of core (cm)</label>
-                    </div>
-                    <div>
-                        <input id='srcHeight' type='number' name='srcHeight' min=0.0 step=0.1>
-                        <label>Height of source above detector (cm)</label>
-                    </div>
-                    <div>
-                        <input id='coreHeight' type='number' name='coreHeight' min=0.0 step=0.1>
-                        <label>Height of core base above detector (cm)</label>
-                    </div>
-                    <div>
-                        <input id='motion' type='number' name='motion' min='0.0' max='15.0' step='0.1'>
-                        <label>Distance the core is moved between images (cm)</label>
                     </div>
                     <div>
                         <input id='autoDetect' type='radio' name='axisMethod' value='autoDetect' checked><label>Auto-detect core axis</label>
@@ -108,7 +96,6 @@
         </section>
         
         <script src='fileExplorer.js'></script>
-        <script src='histogram.js'></script>
-        <script src='process.js'></script>
+        <script src='index.js'></script>
     </body>
 </html>

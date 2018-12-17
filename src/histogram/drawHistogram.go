@@ -18,17 +18,17 @@ func (hset *HistogramSet) DrawImage() {
 			maxVal = hset.Merged.Cts[i]
 		}
 	}
-	bins_per_px := float64(hset.Nbins) / float64(hset.Width)
-	cts_per_px := maxVal / float64(hset.Height)
+	bins_per_px := float64(hset.Nbins) / float64(hset.WidthPxHist)
+	cts_per_px := maxVal / float64(hset.HeightPxHist)
 	topLeft := image.Point{0, 0}
-	bottomRight := image.Point{hset.Width, hset.Height}
+	bottomRight := image.Point{hset.WidthPxHist, hset.HeightPxHist}
 	rgba := image.NewRGBA(image.Rectangle{topLeft, bottomRight})
 
-	for j := 0; j < hset.Width; j++ {
+	for j := 0; j < hset.WidthPxHist; j++ {
 		index = int(float64(j) * bins_per_px)
 		value = hset.Merged.Cts[index]
 		top = int((maxVal - value) / cts_per_px)
-		for i := 0; i < hset.Height; i++ {
+		for i := 0; i < hset.HeightPxHist; i++ {
 			k = (i * rgba.Stride) + j*4
 			if i < top {
 				rgba.Pix[k] = 255

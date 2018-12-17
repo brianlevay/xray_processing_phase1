@@ -1,10 +1,16 @@
 package processImgs
 
 import (
+	"errors"
 	"math"
 )
 
 func (proc *ImgProcessor) Initialize(cfg map[string]float64) error {
+	// Instrument Geometry
+	proc.SrcHeight = cfg["SrcHeight"]
+	proc.CoreHeight = cfg["CoreHeight"]
+	proc.Motion = cfg["Motion"]
+
 	// Basic Detector Setup //
 	proc.HeightPxDet = int(cfg["HeightPxDet"])
 	proc.WidthPxDet = int(cfg["WidthPxDet"])
@@ -22,7 +28,8 @@ func (proc *ImgProcessor) Initialize(cfg map[string]float64) error {
 	proc.MaxTheta = cfg["MaxTheta"]
 
 	// Configuration variables for Compensation //
-	proc.Tmin = 0.5
+	proc.Tmin = cfg["Tmin"]
+	proc.Tedge = cfg["Tedge"]
 
 	// Configuration Variables for Scales //
 	proc.BorderPx = int(cfg["BorderPx"])
@@ -33,9 +40,11 @@ func (proc *ImgProcessor) Initialize(cfg map[string]float64) error {
 	proc.Lstep = 0.001
 
 	// Check for validity of data //
-	errValid := proc.Validation()
-	if errValid != nil {
-		return errValid
+	if (proc.SrcHeight == 0.0) || (proc.CoreDiameter == 0.0) || (proc.SrcHeight < (proc.CoreHeight + proc.CoreDiameter)) {
+		return errors.New("Invalid measurement geometry")
+	}
+	if (proc.HeightPxDet == 0) || (proc.WidthPxDet == 0) || (proc.CmPerPx == 0.0) || (proc.Bits < 0) {
+		return errors.New("Invalid configuration values for detector and/or input data")
 	}
 
 	// Calculations //

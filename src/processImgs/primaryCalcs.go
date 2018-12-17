@@ -40,7 +40,7 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw [][]uint16, tmodel [][]float64) [][]u
 			}
 
 			// Drawing the modelled edges of the core
-			if (tmodel[i][j] < proc.Tmin) && (tmodel[i][j] > 0.0) {
+			if (tmodel[i][j] < proc.Tedge) && (tmodel[i][j] > 0.0) {
 				Iout[i][j] = 0
 			}
 		}

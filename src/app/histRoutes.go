@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	fe "fileExplorer"
 	hist "histogram"
 	"log"
@@ -30,22 +29,9 @@ func histogramHandler(contents *fe.FileContents, cfg map[string]float64) {
 			w.Write([]byte(""))
 			return
 		}
-		styleStr, stylePres := r.Form["Style"]
-		if stylePres == false {
-			log.Println("Style not present")
-			w.Write([]byte(""))
-			return
-		}
 
-		// Create histogram set, fill fields with JSON //
+		// Create histogram set, read values in from configuration //
 		hset := new(hist.HistogramSet)
-		errJSON := json.Unmarshal([]byte(styleStr[0]), hset)
-		if errJSON != nil {
-			log.Println(errJSON)
-			w.Write([]byte(""))
-			return
-		}
-		// Read values in from configuration //
 		errInit := hset.Initialize(cfg)
 		if errInit != nil {
 			log.Println(errInit)
