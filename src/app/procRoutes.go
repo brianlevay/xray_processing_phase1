@@ -12,9 +12,17 @@ import (
 func processingHandler(contents *fe.FileContents, cfg map[string]float64) {
 	http.HandleFunc("/processing", func(w http.ResponseWriter, r *http.Request) {
 		errP := r.ParseForm()
-		errorResponse(errP, &w)
+		if errP != nil {
+			log.Println(errP)
+			w.Write([]byte(""))
+			return
+		}
 		selectedS, selectedPres := r.Form["Selected"]
-		absenceResponse(selectedPres, "Selected", &w)
+		if selectedPres == false {
+			log.Println("Selected not present")
+			w.Write([]byte(""))
+			return
+		}
 		contents.Selected = stringToSlice(selectedS[0])
 		nImages := len(contents.Selected)
 		if nImages == 0 {
@@ -24,20 +32,34 @@ func processingHandler(contents *fe.FileContents, cfg map[string]float64) {
 		}
 		// Check for the necessary JSON //
 		settingsS, settingsPres := r.Form["Settings"]
-		absenceResponse(settingsPres, "Settings", &w)
+		if settingsPres == false {
+			log.Println("Settings not present")
+			w.Write([]byte(""))
+			return
+		}
 
 		// Create processor, fill fields with JSON //
 		proc := new(img.ImgProcessor)
 		errJSON := json.Unmarshal([]byte(settingsS[0]), proc)
-		errorResponse(errJSON, &w)
-
+		if errJSON != nil {
+			log.Println(errJSON)
+			w.Write([]byte(""))
+			return
+		}
 		// Read values in from configuration, then pre-populate additional struct fields and lookup tables //
 		errInit := proc.Initialize(cfg)
-		errorResponse(errInit, &w)
-
+		if errInit != nil {
+			log.Println(errInit)
+			w.Write([]byte(""))
+			return
+		}
 		// Create a subfolder for the output files //
 		errSub := fe.CreateSubfolder(contents.Root, proc.FolderName)
-		errorResponse(errSub, &w)
+		if errSub != nil {
+			log.Println(errSub)
+			w.Write([]byte(""))
+			return
+		}
 
 		// Process files //
 		log.Println("Started processing " + strconv.Itoa(nImages) + " images...")

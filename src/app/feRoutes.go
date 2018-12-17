@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	fe "fileExplorer"
+	"log"
 	"net/http"
 	"path"
 )
@@ -10,7 +11,11 @@ import (
 func fileExplorerHandler(contents *fe.FileContents) {
 	http.HandleFunc("/filesystem", func(w http.ResponseWriter, r *http.Request) {
 		errP := r.ParseForm()
-		errorResponse(errP, &w)
+		if errP != nil {
+			log.Println(errP)
+			w.Write([]byte(""))
+			return
+		}
 
 		var rootPath string
 		switch newRoot := r.Form["Root"][0]; newRoot {
@@ -29,7 +34,11 @@ func fileExplorerHandler(contents *fe.FileContents) {
 		contents.UpdateDir(rootPath)
 
 		dataJSON, errJSON := json.Marshal(contents)
-		errorResponse(errJSON, &w)
+		if errJSON != nil {
+			log.Println(errJSON)
+			w.Write([]byte(""))
+			return
+		}
 		w.Write(dataJSON)
 		return
 	})

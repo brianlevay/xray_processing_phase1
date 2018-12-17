@@ -12,9 +12,17 @@ import (
 func histogramHandler(contents *fe.FileContents, cfg map[string]float64) {
 	http.HandleFunc("/histogram", func(w http.ResponseWriter, r *http.Request) {
 		errP := r.ParseForm()
-		errorResponse(errP, &w)
+		if errP != nil {
+			log.Println(errP)
+			w.Write([]byte(""))
+			return
+		}
 		selectedS, selectedPres := r.Form["Selected"]
-		absenceResponse(selectedPres, "Selected", &w)
+		if selectedPres == false {
+			log.Println("Selected not present")
+			w.Write([]byte(""))
+			return
+		}
 		contents.Selected = stringToSlice(selectedS[0])
 		nImages := len(contents.Selected)
 		if nImages == 0 {
@@ -22,18 +30,28 @@ func histogramHandler(contents *fe.FileContents, cfg map[string]float64) {
 			w.Write([]byte(""))
 			return
 		}
-		// Check for the necessary JSON //
-		sizeStr, sizePres := r.Form["Style"]
-		absenceResponse(sizePres, "Style", &w)
+		styleStr, stylePres := r.Form["Style"]
+		if stylePres == false {
+			log.Println("Style not present")
+			w.Write([]byte(""))
+			return
+		}
 
 		// Create histogram set, fill fields with JSON //
 		hset := new(hist.HistogramSet)
-		errJSON := json.Unmarshal([]byte(sizeStr[0]), hset)
-		errorResponse(errJSON, &w)
-
+		errJSON := json.Unmarshal([]byte(styleStr[0]), hset)
+		if errJSON != nil {
+			log.Println(errJSON)
+			w.Write([]byte(""))
+			return
+		}
 		// Read values in from configuration //
 		errInit := hset.Initialize(cfg)
-		errorResponse(errInit, &w)
+		if errInit != nil {
+			log.Println(errInit)
+			w.Write([]byte(""))
+			return
+		}
 
 		// Process files //
 		log.Println("Started generating histogram...")
