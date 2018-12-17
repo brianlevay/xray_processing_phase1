@@ -1,61 +1,19 @@
-/* global getSelected */
+//// API Calls ////
 
-let settings = {
-    CoreType: 'WR',
-    CoreDiameter: 7.2,
-    AxisMethod: 'autoDetect',
-    AxisAngle: 0.0,
-    AxisOffset: 0.0,
-    IlowFrac: 0.0,
-    IpeakFrac: 0.5,
-    IhighFrac: 1.0,
-    FolderName: 'processed',
-    FileAppend: '_processed'
-};
-
-// Processing Functions //
-
-function processAPI() {
+function fileExplorerAPI(newRoot) {
     let xhttp;
     xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            alert("Finished Processing!");
+            updateFileList(this);
         }
         return;
     };
-    xhttp.open('POST', '/processing', true);
+    xhttp.open('POST', '/filesystem', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    let selected = getSelected();
-    updateSettings();
-    xhttp.send('Selected=' + JSON.stringify(selected) + '&Settings=' + JSON.stringify(settings));
+    xhttp.send('Root=' + newRoot);
     return;
 }
-
-
-function updateSettings() {
-    if (document.getElementById('halfRound').checked) {
-       settings.CoreType = 'HR';
-   } else {
-       settings.CoreType = 'WR';
-   }
-   settings.CoreDiameter = parseFloat(document.getElementById('coreDiameter').value);
-   if (document.getElementById('autoDetect').checked) {
-       settings.AxisMethod = 'autoDetect';
-   } else {
-       settings.AxisMethod = 'setAxis';
-   }
-   settings.AxisAngle = parseFloat(document.getElementById('axisAngle').value);
-   settings.AxisOffset = parseFloat(document.getElementById('axisOffset').value);
-   settings.Ilow = parseFloat(document.getElementById('leftBounds').value);
-   settings.Ipeak = parseFloat(document.getElementById('center').value);
-   settings.Ihigh = parseFloat(document.getElementById('rightBounds').value);
-   settings.FolderName = document.getElementById('folderName').value;
-   settings.FileAppend = document.getElementById('fileAppend').value;
-   return;
-}
-
-// Histogram Functions //
 
 function histogramAPI() {
     let xhttp;
@@ -73,49 +31,205 @@ function histogramAPI() {
     return;
 }
 
+function processAPI() {
+    let xhttp;
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            alert("Finished Processing!");
+        }
+        return;
+    };
+    xhttp.open("POST", "/processing", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    let selected = getSelected();
+    let settings = getSettings();
+    xhttp.send("Selected=" + JSON.stringify(selected) + "&Settings=" + JSON.stringify(settings));
+    return;
+}
+
+//// File Explorer Functions ////
+
+function updateFileList(xhttp) {
+    let response = JSON.parse(xhttp.response);
+    let selectAll = document.getElementById('selectAll');
+    let rootName = response['Root'];
+    let dirNames = response['Dirs'];
+    let fileNames = response['Files'];
+    selectAll.checked = false;
+    removeClassElements('root');
+    removeClassElements('dir');
+    removeClassElements('file');
+    addRootElement('fileList', rootName);
+    addDirElements('fileList', dirNames);
+    addFileElements('fileList', fileNames);
+    return;
+}
+
+let dirClickHandler = function(arg) {
+    return function() {
+        fileExplorerAPI(arg);
+    };
+};
+
+function removeClassElements(className) {
+    let classEls = document.getElementsByClassName(className);
+    while(classEls[0]) {
+        classEls[0].parentNode.removeChild(classEls[0]);
+    }
+    return;
+}
+
+function addRootElement(sectionName, rootName) {
+    let section = document.getElementById(sectionName);
+    let container = document.createElement('div');
+    let symb = document.createElement('span');
+    let text = document.createTextNode(rootName); 
+    container.className = 'root';
+    symb.innerHTML = '&#8617';
+    container.appendChild(symb);
+    container.appendChild(text);
+    container.onclick = function() {
+        fileExplorerAPI('..');
+    };
+    section.appendChild(container);
+    return;
+}
+
+function addDirElements(sectionName, dirNames) {
+    let section = document.getElementById(sectionName);
+    let container, symb, text;
+    for (let i = 0; i < dirNames.length; i++) {
+        container = document.createElement('div');
+        symb = document.createElement('span');
+        text = document.createTextNode(dirNames[i]); 
+        container.className = 'dir';
+        symb.innerHTML = '&#128193;';
+        container.appendChild(symb);
+        container.appendChild(text);
+        container.onclick = dirClickHandler(dirNames[i]);
+        section.appendChild(container);
+    }
+    return;
+}
+
+function addFileElements(sectionName, fileNames) {
+    let section = document.getElementById(sectionName);
+    let container, check, symb, text;
+    for (let i = 0; i < fileNames.length; i++) {
+        container = document.createElement('div');
+        check = document.createElement('input');
+        symb = document.createElement('span');
+        text = document.createTextNode(fileNames[i]); 
+        container.className = 'file';
+        check.setAttribute('type', 'checkbox');
+        check.setAttribute('class', 'fileCheckbox');
+        check.setAttribute('value', fileNames[i]);
+        symb.innerHTML = '&#128462;';
+        container.appendChild(check);
+        container.appendChild(symb);
+        container.appendChild(text);
+        section.appendChild(container);
+    }
+    return;
+}
+
+function toggleAll(source) {
+    let checkboxes = document.getElementsByClassName('fileCheckbox');
+    for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+    return;
+}
+
+function getSelected() {
+    let checkboxes = document.getElementsByClassName('fileCheckbox');
+    let selected = [];
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked == true) {
+            selected.push(checkboxes[i].value);
+        }
+    }
+    return selected;
+}
+
+//// Histogram Functions ////
 
 function updateHistogram(xhttp) {
     let histogramImg = document.getElementById('histogramImg');
-    let leftBounds = document.getElementById('leftBounds');
-    let center = document.getElementById('center');
-    let rightBounds = document.getElementById('rightBounds');
+    let IlowFrac = document.getElementById('IlowFrac');
+    let IpeakFrac = document.getElementById('IpeakFrac');
+    let IhighFrac = document.getElementById('IhighFrac');
     histogramImg.onload = function() {
-        leftBounds.value = 0.0;
-        center.value = 0.5;
-        rightBounds.value = 1.0;
-        leftBounds.style.width = histogramImg.width + 'px';
-        center.style.width = histogramImg.width + 'px';
-        rightBounds.style.width = histogramImg.width + 'px';
+        IlowFrac.value = 0.0;
+        IpeakFrac.value = 0.5;
+        IhighFrac.value = 1.0;
+        IlowFrac.style.width = histogramImg.width + 'px';
+        IpeakFrac.style.width = histogramImg.width + 'px';
+        IhighFrac.style.width = histogramImg.width + 'px';
     };
     histogramImg.src = 'data:image/png;base64,' + xhttp.response;
     return;
 }
 
 function setBoundsListeners() {
-    let leftBounds = document.getElementById('leftBounds');
-    let center = document.getElementById('center');
-    let rightBounds = document.getElementById('rightBounds');
-    leftBounds.addEventListener('input', function() {
-        if (+leftBounds.value > +center.value) {
-            leftBounds.value = +center.value - 1;
+    let IlowFrac = document.getElementById('IlowFrac');
+    let IpeakFrac = document.getElementById('IpeakFrac');
+    let IhighFrac = document.getElementById('IhighFrac');
+    IlowFrac.addEventListener('input', function() {
+        if (+IlowFrac.value > +IpeakFrac.value) {
+            IlowFrac.value = +IpeakFrac.value - 1;
         }
     }, false);
-    center.addEventListener('change', function() {
-        if (+center.value < +leftBounds.value) {
-            center.value = +leftBounds.value + 1;
-        } else if (+center.value > +rightBounds.value) {
-            center.value = +rightBounds.value - 1;
+    IpeakFrac.addEventListener('change', function() {
+        if (+IpeakFrac.value < +IlowFrac.value) {
+            IpeakFrac.value = +IlowFrac.value + 1;
+        } else if (+IpeakFrac.value > +IhighFrac.value) {
+            IpeakFrac.value = +IhighFrac.value - 1;
         }
     }, false);
-    rightBounds.addEventListener('change', function() {
-        if (+rightBounds.value < +center.value) {
-            rightBounds.value = +center.value + 1;
+    IhighFrac.addEventListener('change', function() {
+        if (+IhighFrac.value < +IpeakFrac.value) {
+            IhighFrac.value = +IpeakFrac.value + 1;
         }
     }, false);
     return;
 }
 
+//// Processing Functions ////
+
+function getSettings() {
+    var settings = {};
+    if (document.getElementById('halfRound').checked) {
+       settings["CoreType"] = "HR";
+   } else {
+       settings["CoreType"] = "WR";
+   }
+   settings["CoreDiameter"] = parseFloat(document.getElementById('CoreDiameter').value);
+   if (document.getElementById('autoDetect').checked) {
+       settings["AxisMethod"] = "autoDetect";
+   } else {
+       settings["AxisMethod"] = "setAxis";
+   }
+   settings["AxisAngle"] = parseFloat(document.getElementById('axisAngle').value);
+   settings["AxisOffset"] = parseFloat(document.getElementById('AxisOffset').value);
+   settings["IlowFrac"] = parseFloat(document.getElementById('IlowFrac').value);
+   settings["IpeakFrac"] = parseFloat(document.getElementById('IpeakFrac').value);
+   settings["IhighFrac"] = parseFloat(document.getElementById('IhighFrac').value);
+   settings["FolderName"] = document.getElementById('FolderName').value;
+   settings["FileAppend"] = document.getElementById('FileAppend').value;
+   return settings;
+}
 
 //// Initial calls on page load ////
 
 setBoundsListeners();
+
+document.addEventListener('DOMContentLoaded', function(){ 
+    fileExplorerAPI('.');
+    let selectAll = document.getElementById('selectAll');
+    selectAll.onclick = function() {
+        toggleAll(this);
+    };
+}, false);
+
