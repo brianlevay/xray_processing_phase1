@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"io/ioutil"
 	"strconv"
 	"strings"
@@ -32,4 +33,16 @@ func readConfigToMap(filepath string) (map[string]float64, error) {
 		}
 	}
 	return cfgFlt, nil
+}
+
+func saveConfigToFile(filepath string, cfg map[string]float64) error {
+	var b bytes.Buffer
+	for key, val := range cfg {
+		b.WriteString(key + ": " + strconv.FormatFloat(val, 'f', -1, 64) + "\n")
+	}
+	errWrite := ioutil.WriteFile(filepath, b.Bytes(), 0644)
+	if errWrite != nil {
+		return errWrite
+	}
+	return nil
 }
