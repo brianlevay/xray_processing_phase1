@@ -9,18 +9,18 @@ func (proc *ImgProcessor) CreateScaleBars() {
 	cmPxWidth := cmCoreToPx(proc, proc.ScaleWidth)
 	roiPxHeight := cmCoreToPx(proc, proc.Motion)
 	roiPxWidth := cmCoreToPx(proc, proc.RoiWidth)
-	roiIstart := int(float64(proc.Height-roiPxHeight) / 2.0)
-	iBorder := []int{0, (proc.Height - 1)}
+	roiIstart := int(float64(proc.HeightPxDet-roiPxHeight) / 2.0)
+	iBorder := []int{0, (proc.HeightPxDet - 1)}
 	jBorder := []int{0, (proc.BorderPx + cmPxWidth + proc.BorderPx - 1)}
 	iCms := []int{(iBorder[0] + proc.BorderPx), (iBorder[1] - proc.BorderPx)}
 	jCms := []int{(jBorder[0] + proc.BorderPx), (jBorder[1] - proc.BorderPx)}
 	iLn := []int{roiIstart, (roiIstart + roiPxHeight - 1)}
 	jLn := []int{(jBorder[1] + 1), (jBorder[1] + roiPxWidth)}
 
-	Iscale := make([][]uint16, proc.Height)
-	for i := 0; i < proc.Height; i++ {
-		Iscale[i] = make([]uint16, proc.Width)
-		for j := 0; j < proc.Width; j++ {
+	Iscale := make([][]uint16, proc.HeightPxDet)
+	for i := 0; i < proc.HeightPxDet; i++ {
+		Iscale[i] = make([]uint16, proc.WidthPxDet)
+		for j := 0; j < proc.WidthPxDet; j++ {
 			Iscale[i][j] = 1
 			if isInside(i, j, iBorder, jBorder) {
 				Iscale[i][j] = 0

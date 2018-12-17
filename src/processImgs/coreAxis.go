@@ -28,12 +28,12 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16, flag float64) ([]float64, []float64) {
 	var leftEdge, rightEdge, leftMax, rightMax, largestGap int
 	var mass, msum, xmsum float64
-	rowMid := make([]float64, proc.Height)
-	colMid := make([]float64, proc.Height)
+	rowMid := make([]float64, proc.HeightPxDet)
+	colMid := make([]float64, proc.HeightPxDet)
 
-	for i := 0; i < proc.Height; i++ {
+	for i := 0; i < proc.HeightPxDet; i++ {
 		leftEdge, rightEdge, leftMax, rightMax, largestGap = 0, 0, 0, 0, 0
-		for j := 0; j < (proc.Width - 1); j++ {
+		for j := 0; j < (proc.WidthPxDet - 1); j++ {
 			if (Iraw[i][j] > proc.IthreshInt) && (Iraw[i][j+1] <= proc.IthreshInt) {
 				leftEdge = j
 			}

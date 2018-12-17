@@ -10,10 +10,10 @@ func CalculateTModel(proc *ImgProcessor, theta float64, offset float64) [][]floa
 	t := newTModel(proc, theta, offset)
 	nTxz2 := len(t.Txz2Table)
 
-	tmodel := make([][]float64, proc.Height)
-	for i := 0; i < proc.Height; i++ {
-		tmodel[i] = make([]float64, proc.Width)
-		for j := 0; j < proc.Width; j++ {
+	tmodel := make([][]float64, proc.HeightPxDet)
+	for i := 0; i < proc.HeightPxDet; i++ {
+		tmodel[i] = make([]float64, proc.WidthPxDet)
+		for j := 0; j < proc.WidthPxDet; j++ {
 			tmodel[i][j] = 0.0
 			Xrd = proc.Xd[j]*t.Cos0 - proc.Yd[i]*t.Sin0
 			Yrd = proc.Xd[j]*t.Sin0 - proc.Yd[i]*t.Cos0

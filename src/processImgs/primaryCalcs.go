@@ -7,10 +7,10 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw [][]uint16, tmodel [][]float64) [][]u
 	var Lindex uint16
 	var Icont uint16
 
-	Iout := make([][]uint16, proc.Height)
-	for i := 0; i < proc.Height; i++ {
-		Iout[i] = make([]uint16, proc.Width)
-		for j := 0; j < proc.Width; j++ {
+	Iout := make([][]uint16, proc.HeightPxDet)
+	for i := 0; i < proc.HeightPxDet; i++ {
+		Iout[i] = make([]uint16, proc.WidthPxDet)
+		for j := 0; j < proc.WidthPxDet; j++ {
 			// Initial calculation
 			murhot = proc.MurhotTable[Iraw[i][j]]
 

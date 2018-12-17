@@ -11,13 +11,13 @@ type ImgProcessor struct {
 	AxisMethod   string     `json:"AxisMethod"`
 	AxisAngle    float64    `json:"AxisAngle"`
 	AxisOffset   float64    `json:"AxisOffset"`
-	Ilow         float64    `json:"Ilow"`
-	Ipeak        float64    `json:"Ipeak"`
-	Ihigh        float64    `json:"Ihigh"`
+	IlowFrac     float64    `json:"IlowFrac"`
+	IpeakFrac    float64    `json:"IpeakFrac"`
+	IhighFrac    float64    `json:"IhighFrac"`
 	FolderName   string     `json:"FolderName"`
 	FileAppend   string     `json:"FileAppend"`
-	Height       int        `json:"-"`
-	Width        int        `json:"-"`
+	HeightPxDet  int        `json:"-"`
+	WidthPxDet   int        `json:"-"`
 	Bits         int        `json:"-"`
 	CmPerPx      float64    `json:"-"`
 	ProjMult     float64    `json:"-"`
@@ -40,6 +40,7 @@ type ImgProcessor struct {
 	Tref         float64    `json:"-"`
 	Tmin         float64    `json:"-"`
 	Omin         float64    `json:"-"`
+	Opeak        float64    `json:"-"`
 	Omax         float64    `json:"-"`
 	Lstep        float64    `json:"-"`
 	IcontTable   []uint16   `json:"-"`

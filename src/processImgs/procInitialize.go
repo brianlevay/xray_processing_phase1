@@ -6,8 +6,8 @@ import (
 
 func (proc *ImgProcessor) Initialize(cfg map[string]float64) error {
 	// Basic Detector Setup //
-	proc.Height = int(cfg["Height"])
-	proc.Width = int(cfg["Width"])
+	proc.HeightPxDet = int(cfg["HeightPxDet"])
+	proc.WidthPxDet = int(cfg["WidthPxDet"])
 	proc.CmPerPx = cfg["CmPerPx"]
 
 	// Raw Image Size //
@@ -21,13 +21,15 @@ func (proc *ImgProcessor) Initialize(cfg map[string]float64) error {
 	proc.FilterSteps = int(cfg["FilterSteps"])
 	proc.MaxTheta = cfg["MaxTheta"]
 
+	// Configuration variables for Compensation //
+	proc.Tmin = 0.5
+
 	// Configuration Variables for Scales //
 	proc.BorderPx = int(cfg["BorderPx"])
 	proc.ScaleWidth = cfg["ScaleWidth"]
 	proc.RoiWidth = cfg["RoiWidth"]
 
 	// Configuration variables not currently set in file //
-	proc.Tmin = 0.5
 	proc.Lstep = 0.001
 
 	// Check for validity of data //
@@ -45,8 +47,9 @@ func (proc *ImgProcessor) Initialize(cfg map[string]float64) error {
 	proc.IthreshInt = uint16(threshFrac * proc.ImaxInFlt)
 	proc.PxGapMin = cmCoreToPx(proc, (gapMinFrac * proc.CoreDiameter))
 	proc.PxGapMax = cmCoreToPx(proc, (gapMaxFrac * proc.CoreDiameter))
-	proc.Omin = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ihigh+1.0)
-	proc.Omax = math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ilow+1.0)
+	proc.Omin = math.Log(proc.ImaxInFlt+1.0) - math.Log((proc.IhighFrac*proc.ImaxInFlt)+1.0)
+	proc.Opeak = math.Log(proc.ImaxInFlt+1.0) - math.Log((proc.IpeakFrac*proc.ImaxInFlt)+1.0)
+	proc.Omax = math.Log(proc.ImaxInFlt+1.0) - math.Log((proc.IlowFrac*proc.ImaxInFlt)+1.0)
 	proc.Tref = proc.CoreDiameter
 	if proc.CoreType == "HR" {
 		proc.Tref = (proc.CoreDiameter / 2.0)

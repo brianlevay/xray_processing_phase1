@@ -16,14 +16,14 @@ func (proc *ImgProcessor) CalculateMassTable() {
 }
 
 func (proc *ImgProcessor) CalculateXYd() {
-	Yc := (float64(proc.Height) * proc.CmPerPx) / 2.0
-	Xc := (float64(proc.Width) * proc.CmPerPx) / 2.0
-	Yd := make([]float64, proc.Height)
-	for i := 0; i < proc.Height; i++ {
+	Yc := (float64(proc.HeightPxDet) * proc.CmPerPx) / 2.0
+	Xc := (float64(proc.WidthPxDet) * proc.CmPerPx) / 2.0
+	Yd := make([]float64, proc.HeightPxDet)
+	for i := 0; i < proc.HeightPxDet; i++ {
 		Yd[i] = float64(i)*proc.CmPerPx + (proc.CmPerPx / 2.0)
 	}
-	Xd := make([]float64, proc.Width)
-	for j := 0; j < proc.Width; j++ {
+	Xd := make([]float64, proc.WidthPxDet)
+	for j := 0; j < proc.WidthPxDet; j++ {
 		Xd[j] = float64(j)*proc.CmPerPx + (proc.CmPerPx / 2.0)
 	}
 	proc.Xc = Xc
@@ -43,8 +43,7 @@ func (proc *ImgProcessor) CalculateMurhotTable() {
 
 func (proc *ImgProcessor) CalculateIcontTable() {
 	var L, P, SF, SP, Y float64
-	Opeak := math.Log(proc.ImaxInFlt+1.0) - math.Log(proc.Ipeak+1.0)
-	Lpeak := (Opeak - proc.Omin) / (proc.Omax - proc.Omin)
+	Lpeak := (proc.Opeak - proc.Omin) / (proc.Omax - proc.Omin)
 	N := math.Log(0.5) / math.Log(Lpeak)
 	W := 1.0 - math.Pow(math.Abs(2.0*(Lpeak-0.5)), 2.0)
 	nvals := int((1.0-0.0)/proc.Lstep) + 1

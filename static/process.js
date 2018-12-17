@@ -9,9 +9,9 @@ let settings = {
     AxisMethod: 'autoDetect',
     AxisAngle: 0.0,
     AxisOffset: 0.0,
-    Ilow: 0,
-    Ipeak: (2**14-1)/2,
-    Ihigh: (2**14-1),
+    IlowFrac: 0.0,
+    IpeakFrac: 0.5,
+    IhighFrac: 1.0,
     FolderName: 'processed',
     FileAppend: '_processed'
 };
