@@ -3,12 +3,11 @@ package main
 import (
 	"encoding/base64"
 	fe "fileExplorer"
-	hist "histogram"
 	"log"
 	"net/http"
 )
 
-func histogramHandler(contents *fe.FileContents, cfg map[string]float64) {
+func histogramHandler(contents *fe.FileContents, cfg *Configuration) {
 	http.HandleFunc("/histogram", func(w http.ResponseWriter, r *http.Request) {
 		errP := r.ParseForm()
 		if errP != nil {
@@ -31,7 +30,7 @@ func histogramHandler(contents *fe.FileContents, cfg map[string]float64) {
 		}
 
 		// Create histogram set, read values in from configuration //
-		hset := new(hist.HistogramSet)
+		hset := new(HistogramSet)
 		errInit := hset.Initialize(cfg)
 		if errInit != nil {
 			log.Println(errInit)
@@ -41,7 +40,7 @@ func histogramHandler(contents *fe.FileContents, cfg map[string]float64) {
 
 		// Process files //
 		log.Println("Started generating histogram...")
-		hist.ImageHistogram(contents, hset)
+		ImageHistogram(contents, hset)
 		sEnc := base64.StdEncoding.EncodeToString(hset.Image)
 		log.Println("Sending histogram...")
 		w.Write([]byte(sEnc))

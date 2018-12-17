@@ -1,4 +1,4 @@
-package processImgs
+package main
 
 import ()
 
@@ -7,16 +7,16 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw [][]uint16, tmodel [][]float64) [][]u
 	var Lindex uint16
 	var Icont uint16
 
-	Iout := make([][]uint16, proc.HeightPxDet)
-	for i := 0; i < proc.HeightPxDet; i++ {
-		Iout[i] = make([]uint16, proc.WidthPxDet)
-		for j := 0; j < proc.WidthPxDet; j++ {
+	Iout := make([][]uint16, proc.Cfg.HeightPxDet)
+	for i := 0; i < proc.Cfg.HeightPxDet; i++ {
+		Iout[i] = make([]uint16, proc.Cfg.WidthPxDet)
+		for j := 0; j < proc.Cfg.WidthPxDet; j++ {
 			// Initial calculation
 			murhot = proc.MurhotTable[Iraw[i][j]]
 
 			// Thickness compensation
 			murhotref = murhot
-			if tmodel[i][j] >= proc.Tmin {
+			if tmodel[i][j] >= proc.Cfg.Tmin {
 				murhotref = murhot * (proc.Tref / tmodel[i][j])
 			}
 
@@ -40,7 +40,7 @@ func PrimaryCalcs(proc *ImgProcessor, Iraw [][]uint16, tmodel [][]float64) [][]u
 			}
 
 			// Drawing the modelled edges of the core
-			if (tmodel[i][j] < proc.Tedge) && (tmodel[i][j] > 0.0) {
+			if (tmodel[i][j] < proc.Cfg.Tedge) && (tmodel[i][j] > 0.0) {
 				Iout[i][j] = 0
 			}
 		}

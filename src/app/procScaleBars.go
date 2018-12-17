@@ -1,4 +1,4 @@
-package processImgs
+package main
 
 import (
 	"math"
@@ -6,21 +6,21 @@ import (
 
 func (proc *ImgProcessor) CreateScaleBars() {
 	cmPxHeight := cmCoreToPx(proc, 1.0)
-	cmPxWidth := cmCoreToPx(proc, proc.ScaleWidth)
-	roiPxHeight := cmCoreToPx(proc, proc.Motion)
-	roiPxWidth := cmCoreToPx(proc, proc.RoiWidth)
-	roiIstart := int(float64(proc.HeightPxDet-roiPxHeight) / 2.0)
-	iBorder := []int{0, (proc.HeightPxDet - 1)}
-	jBorder := []int{0, (proc.BorderPx + cmPxWidth + proc.BorderPx - 1)}
-	iCms := []int{(iBorder[0] + proc.BorderPx), (iBorder[1] - proc.BorderPx)}
-	jCms := []int{(jBorder[0] + proc.BorderPx), (jBorder[1] - proc.BorderPx)}
+	cmPxWidth := cmCoreToPx(proc, proc.Cfg.ScaleWidth)
+	roiPxHeight := cmCoreToPx(proc, proc.Cfg.Motion)
+	roiPxWidth := cmCoreToPx(proc, proc.Cfg.RoiWidth)
+	roiIstart := int(float64(proc.Cfg.HeightPxDet-roiPxHeight) / 2.0)
+	iBorder := []int{0, (proc.Cfg.HeightPxDet - 1)}
+	jBorder := []int{0, (proc.Cfg.BorderPx + cmPxWidth + proc.Cfg.BorderPx - 1)}
+	iCms := []int{(iBorder[0] + proc.Cfg.BorderPx), (iBorder[1] - proc.Cfg.BorderPx)}
+	jCms := []int{(jBorder[0] + proc.Cfg.BorderPx), (jBorder[1] - proc.Cfg.BorderPx)}
 	iLn := []int{roiIstart, (roiIstart + roiPxHeight - 1)}
 	jLn := []int{(jBorder[1] + 1), (jBorder[1] + roiPxWidth)}
 
-	Iscale := make([][]uint16, proc.HeightPxDet)
-	for i := 0; i < proc.HeightPxDet; i++ {
-		Iscale[i] = make([]uint16, proc.WidthPxDet)
-		for j := 0; j < proc.WidthPxDet; j++ {
+	Iscale := make([][]uint16, proc.Cfg.HeightPxDet)
+	for i := 0; i < proc.Cfg.HeightPxDet; i++ {
+		Iscale[i] = make([]uint16, proc.Cfg.WidthPxDet)
+		for j := 0; j < proc.Cfg.WidthPxDet; j++ {
 			Iscale[i][j] = 1
 			if isInside(i, j, iBorder, jBorder) {
 				Iscale[i][j] = 0

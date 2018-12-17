@@ -1,46 +1,29 @@
 package main
 
 import (
-	"bytes"
+	"encoding/json"
 	"io/ioutil"
-	"strconv"
-	"strings"
 )
 
-func readConfigToMap(filepath string) (map[string]float64, error) {
-	cfgFlt := make(map[string]float64)
-	var linePts []string
-	var key, valueStr string
-	var valueFlt float64
-	var errConv error
+func readConfigFromFile(filepath string) (*Configuration, error) {
+	cfg := new(Configuration)
 	fileBytes, errRead := ioutil.ReadFile(filepath)
 	if errRead != nil {
-		return cfgFlt, errRead
+		return cfg, errRead
 	}
-	fileString := string(fileBytes)
-	fileLines := strings.Split(fileString, "\n")
-	for k := 0; k < len(fileLines); k++ {
-		if strings.Contains(fileLines[k], "#") == false {
-			linePts = strings.Split(fileLines[k], ":")
-			if len(linePts) == 2 {
-				key = strings.Trim(linePts[0], " \t")
-				valueStr = strings.Trim(linePts[1], " \t\r")
-				valueFlt, errConv = strconv.ParseFloat(valueStr, 64)
-				if errConv == nil {
-					cfgFlt[key] = valueFlt
-				}
-			}
-		}
+	errJSON := json.Unmarshal(fileBytes, cfg)
+	if errJSON != nil {
+		return cfg, errJSON
 	}
-	return cfgFlt, nil
+	return cfg, nil
 }
 
-func saveConfigToFile(filepath string, cfg map[string]float64) error {
-	var b bytes.Buffer
-	for key, val := range cfg {
-		b.WriteString(key + ": " + strconv.FormatFloat(val, 'f', -1, 64) + "\n")
+func saveConfigToFile(filepath string, cfg *Configuration) error {
+	fileBytes, errJSON := json.Marshal(cfg)
+	if errJSON != nil {
+		return errJSON
 	}
-	errWrite := ioutil.WriteFile(filepath, b.Bytes(), 0644)
+	errWrite := ioutil.WriteFile(filepath, fileBytes, 0644)
 	if errWrite != nil {
 		return errWrite
 	}

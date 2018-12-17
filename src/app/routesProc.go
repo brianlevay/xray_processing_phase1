@@ -5,11 +5,10 @@ import (
 	fe "fileExplorer"
 	"log"
 	"net/http"
-	img "processImgs"
 	"strconv"
 )
 
-func processingHandler(contents *fe.FileContents, cfg map[string]float64) {
+func processingHandler(contents *fe.FileContents, cfg *Configuration) {
 	http.HandleFunc("/processing", func(w http.ResponseWriter, r *http.Request) {
 		errP := r.ParseForm()
 		if errP != nil {
@@ -39,7 +38,7 @@ func processingHandler(contents *fe.FileContents, cfg map[string]float64) {
 		}
 
 		// Create processor, fill fields with JSON //
-		proc := new(img.ImgProcessor)
+		proc := new(ImgProcessor)
 		errJSON := json.Unmarshal([]byte(settingsS[0]), proc)
 		if errJSON != nil {
 			log.Println(errJSON)
@@ -63,7 +62,7 @@ func processingHandler(contents *fe.FileContents, cfg map[string]float64) {
 
 		// Process files //
 		log.Println("Started processing " + strconv.Itoa(nImages) + " images...")
-		img.ProcessTiffs(contents, proc)
+		ProcessTiffs(contents, proc)
 		log.Println("Finished processing images.")
 		w.Write([]byte(""))
 		return

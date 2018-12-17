@@ -1,4 +1,4 @@
-package processImgs
+package main
 
 import (
 	fe "fileExplorer"

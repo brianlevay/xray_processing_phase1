@@ -1,4 +1,4 @@
-package processImgs
+package main
 
 import (
 	"math"
@@ -13,10 +13,10 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 	beta, alpha := iterativeRegression(proc, rowMid, colMid, nStd, flag)
 	offset := ((beta*proc.Yc + alpha) - proc.Xc) / proc.ProjMult
 	theta := math.Atan(beta) * (180.0 / math.Pi)
-	if theta > proc.MaxTheta {
-		return proc.MaxTheta, offset
-	} else if theta < -proc.MaxTheta {
-		return -proc.MaxTheta, offset
+	if theta > proc.Cfg.MaxTheta {
+		return proc.Cfg.MaxTheta, offset
+	} else if theta < -proc.Cfg.MaxTheta {
+		return -proc.Cfg.MaxTheta, offset
 	} else {
 		return theta, offset
 	}
@@ -28,12 +28,12 @@ func FindCoreAxis(proc *ImgProcessor, Iraw [][]uint16) (float64, float64) {
 func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16, flag float64) ([]float64, []float64) {
 	var leftEdge, rightEdge, leftMax, rightMax, largestGap int
 	var mass, msum, xmsum float64
-	rowMid := make([]float64, proc.HeightPxDet)
-	colMid := make([]float64, proc.HeightPxDet)
+	rowMid := make([]float64, proc.Cfg.HeightPxDet)
+	colMid := make([]float64, proc.Cfg.HeightPxDet)
 
-	for i := 0; i < proc.HeightPxDet; i++ {
+	for i := 0; i < proc.Cfg.HeightPxDet; i++ {
 		leftEdge, rightEdge, leftMax, rightMax, largestGap = 0, 0, 0, 0, 0
-		for j := 0; j < (proc.WidthPxDet - 1); j++ {
+		for j := 0; j < (proc.Cfg.WidthPxDet - 1); j++ {
 			if (Iraw[i][j] > proc.IthreshInt) && (Iraw[i][j+1] <= proc.IthreshInt) {
 				leftEdge = j
 			}
@@ -65,7 +65,7 @@ func centerOfMassBetweenEdges(proc *ImgProcessor, Iraw [][]uint16, flag float64)
 func iterativeRegression(proc *ImgProcessor, X []float64, Y []float64, nStd float64, flag float64) (float64, float64) {
 	beta, alpha := linearRegression(X, Y, flag)
 	filterData(X, Y, beta, alpha, nStd, flag)
-	for k := 0; k < proc.FilterSteps; k++ {
+	for k := 0; k < proc.Cfg.FilterSteps; k++ {
 		beta, alpha = linearRegression(X, Y, flag)
 		filterData(X, Y, beta, alpha, nStd, flag)
 	}

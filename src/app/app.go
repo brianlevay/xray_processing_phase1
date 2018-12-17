@@ -15,7 +15,7 @@ func main() {
 	}
 	contents := fe.NewExplorer(cwd, ".tif")
 
-	cfg, errCfg := readConfigToMap("setup.cfg")
+	cfg, errCfg := readConfigFromFile("setup.cfg")
 	if errCfg != nil {
 		log.Fatal(errCfg)
 	}
