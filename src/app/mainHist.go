@@ -7,36 +7,34 @@ import (
 	"image/png"
 	"log"
 	"math"
-	"sync"
+	"strconv"
 )
 
 func ImageHistogram(contents *fe.FileContents, hset *HistogramSet) {
-	var wg sync.WaitGroup
 	nfiles := len(contents.Selected)
 	for i := 0; i < nfiles; i++ {
-		wg.Add(1)
-		go hset.ProcessImage(contents.Root, contents.Selected[i], &wg)
+		hset.ProcessImage(contents.Root, contents.Selected[i])
+		if (i != 0) && (math.Mod(float64(i), 10.0) == 0) {
+			log.Println(strconv.Itoa(i) + " files completed")
+		}
 	}
-	wg.Wait()
 	hset.MergeHistograms()
 	hset.DrawImage()
 	return
 }
 
-func (hset *HistogramSet) ProcessImage(root string, filename string, wg *sync.WaitGroup) {
+func (hset *HistogramSet) ProcessImage(root string, filename string) {
 	var pxVal uint16
 	var k, h_int int
 	var h_act float64
 	img, errImg := fe.OpenTiff(root, filename)
 	if errImg != nil {
 		log.Println("Error opening " + filename)
-		wg.Done()
 		return
 	}
 	gray16, ok := img.(*image.Gray16)
 	if ok == false {
 		log.Println(filename + " not Gray16 format")
-		wg.Done()
 		return
 	}
 	hist := newHistogram(hset.Cfg.Bits, hset.Cfg.Nbins)
@@ -64,7 +62,6 @@ func (hset *HistogramSet) ProcessImage(root string, filename string, wg *sync.Wa
 	hset.Mtx.Lock()
 	hset.Set = append(hset.Set, hist)
 	hset.Mtx.Unlock()
-	wg.Done()
 	return
 }
 
@@ -77,6 +74,7 @@ func (hset *HistogramSet) MergeHistograms() {
 		}
 	}
 	hset.Merged = hist
+	return
 }
 
 func (hset *HistogramSet) DrawImage() {

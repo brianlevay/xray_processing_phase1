@@ -3,33 +3,32 @@ package main
 import (
 	fe "fileExplorer"
 	"log"
+	"math"
 	"path"
+	"strconv"
 	"strings"
-	"sync"
 )
 
 func ProcessTiffs(contents *fe.FileContents, proc *ImgProcessor) {
-	var wg sync.WaitGroup
 	nfiles := len(contents.Selected)
 	for i := 0; i < nfiles; i++ {
-		wg.Add(1)
-		go proc.ProcessImage(contents.Root, contents.Selected[i], &wg)
+		proc.ProcessImage(contents.Root, contents.Selected[i])
+		if (i != 0) && (math.Mod(float64(i), 10.0) == 0) {
+			log.Println(strconv.Itoa(i) + " files completed")
+		}
 	}
-	wg.Wait()
 	return
 }
 
-func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.WaitGroup) {
+func (proc *ImgProcessor) ProcessImage(root string, filename string) {
 	imgOrig, errOpen := fe.OpenTiff(root, filename)
 	if errOpen != nil {
 		log.Println(errOpen)
-		wg.Done()
 		return
 	}
 	Iraw, errType := Gray16ToUint16(imgOrig)
 	if errType != nil {
 		log.Println(errType)
-		wg.Done()
 		return
 	}
 
@@ -55,6 +54,5 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string, wg *sync.Wa
 	if errSave != nil {
 		log.Println(errSave)
 	}
-	wg.Done()
 	return
 }
