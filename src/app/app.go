@@ -26,6 +26,7 @@ func main() {
 	fileExplorerHandler(contents)
 	histogramHandler(contents, cfg)
 	processingHandler(contents, cfg)
+	setupHandler(cfg)
 
 	listener, errListen := getAvailablePort()
 	if errListen != nil {

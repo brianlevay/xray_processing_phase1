@@ -9,7 +9,7 @@ function getSetupAPI() {
         }
         return;
     };
-    xhttp.open('GET', '/getsetup', true);
+    xhttp.open('GET', '/setup', true);
     xhttp.send();
     return;
 }
@@ -48,7 +48,7 @@ function getSetupValues() {
     let setup = {};
     let inputs = document.getElementsByTagName('input');
     for (var i = 0; i < inputs.length; i++) {
-        setup[inputs[i].id] = inputs[i].value;
+        setup[inputs[i].id] = parseFloat(inputs[i].value);
     }
     return setup;
 }

@@ -5,8 +5,9 @@ go install fileExplorer
 go install app
 
 export GOOS=linux
-go build -o xray-processing-linux app
+go build -o xrayImgProcessing_linux app
 
-echo "BASH: Started running program at: $(date)"
-echo "  "
-./xray-processing-linux
+export GOOS=windows
+go build -o xrayImgProcessing_windows.exe app
+
+echo "BASH: Finished build at: $(date)"

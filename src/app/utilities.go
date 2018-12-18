@@ -34,6 +34,7 @@ func startupDisplay(port int) {
 	fmt.Println("Please access the program via:")
 	fmt.Println("http://localhost:" + strconv.Itoa(port) + "/")
 	fmt.Println("\nType 'Ctrl+C' or close this window to terminate the program.\n")
+	fmt.Println("PROGRAM LOG:")
 	return
 }
 
