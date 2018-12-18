@@ -6,6 +6,7 @@ import (
 )
 
 func (hset *HistogramSet) Initialize(cfg *Configuration) error {
+	hset.Cfg = cfg
 	if (hset.Cfg.HeightPxHist == 0) || (hset.Cfg.WidthPxHist == 0) || (hset.Cfg.Bits < 0) || (hset.Cfg.Nbins <= 0) {
 		return errors.New("Invalid configuration values for histogram")
 	}
@@ -13,6 +14,7 @@ func (hset *HistogramSet) Initialize(cfg *Configuration) error {
 }
 
 func (proc *ImgProcessor) Initialize(cfg *Configuration) error {
+	proc.Cfg = cfg
 	proc.Lstep = 0.001
 	if (proc.Cfg.SrcHeight == 0.0) || (proc.CoreDiameter == 0.0) || (proc.Cfg.SrcHeight < (proc.Cfg.CoreHeight + proc.CoreDiameter)) {
 		return errors.New("Invalid measurement geometry")

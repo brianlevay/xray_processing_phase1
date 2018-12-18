@@ -211,7 +211,7 @@ function getSettings() {
    } else {
        settings["AxisMethod"] = "setAxis";
    }
-   settings["AxisAngle"] = parseFloat(document.getElementById('axisAngle').value);
+   settings["AxisAngle"] = parseFloat(document.getElementById('AxisAngle').value);
    settings["AxisOffset"] = parseFloat(document.getElementById('AxisOffset').value);
    settings["IlowFrac"] = parseFloat(document.getElementById('IlowFrac').value);
    settings["IpeakFrac"] = parseFloat(document.getElementById('IpeakFrac').value);
