@@ -29,5 +29,12 @@ This software is intended to allow scientists to process x-ray images acquired f
 * The relationship between the input grayscale and the output grayscale is monotonic within the bounds specified by the user
 * The relationship between the input grayscale and the output grayscale is the same for all images processed in the same batch
 
+## Important Performance Notes
+* Contrary to my expectations, processing each image sequentially is far, far faster and more memory efficient than processing in parallel using goroutines
+* With large numbers of files, using goroutines locks up the computer (high memory usage, not high CPU usage), whereas processing sequentially has no performance degradation
+* With low numbers of files, the performance differences are negligable
+* It may be possible in the future to use small, sequential batches of goroutines to find that sweet spot of performance
+* It may also be possible to improve performance by using more stack variables rather than heap variables
+
 ## Installing and Running the Software
 *coming soon*
