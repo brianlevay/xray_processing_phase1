@@ -7,7 +7,6 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"path/filepath"
-	"strconv"
 )
 
 func main() {
@@ -33,7 +32,6 @@ func main() {
 		log.Fatal(errListen)
 	}
 	port := listener.Addr().(*net.TCPAddr).Port
-	log.Println("Program running at:")
-	log.Println("http://localhost:" + strconv.Itoa(port) + "/")
+	startupDisplay(port)
 	panic(http.Serve(listener, nil))
 }

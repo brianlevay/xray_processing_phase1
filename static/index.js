@@ -21,9 +21,13 @@ function histogramAPI() {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             updateHistogram(this);
+            toggleButton('getHistogram');
+            statusUpdate('histogramIndicator', false);
         }
         return;
     };
+    toggleButton('getHistogram');
+    statusUpdate('histogramIndicator', true);
     xhttp.open('POST', '/histogram', true);
     xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     let selected = getSelected();
@@ -37,9 +41,13 @@ function processAPI() {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             alert("Finished Processing!");
+            toggleButton('processFiles');
+            statusUpdate('processIndicator', false);
         }
         return;
     };
+    toggleButton('processFiles');
+    statusUpdate('processIndicator', true);
     xhttp.open("POST", "/processing", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     let selected = getSelected();
@@ -219,6 +227,28 @@ function getSettings() {
    settings["FolderName"] = document.getElementById('FolderName').value;
    settings["FileAppend"] = document.getElementById('FileAppend').value;
    return settings;
+}
+
+//// Button locking and process indicators ////
+
+ function toggleButton(id) {
+     var button = document.getElementById(id);
+     if (button.disabled == false) {
+         button.disabled = true;
+     } else {
+         button.disabled = false;
+     }
+     return;
+ }
+ 
+function statusUpdate(id, show) {
+    var span = document.getElementById(id);
+    if (show == true) {
+        span.innerHTML = "Processing...";
+    } else {
+        span.innerHTML = "";
+    }
+    return;
 }
 
 //// Initial calls on page load ////

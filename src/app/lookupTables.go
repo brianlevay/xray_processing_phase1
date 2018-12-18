@@ -13,6 +13,7 @@ func (proc *ImgProcessor) CalculateMassTable() {
 		masses[k] = math.Pow(massBase, proc.Cfg.Nmass)
 	}
 	proc.MassTable = masses
+	return
 }
 
 func (proc *ImgProcessor) CalculateXYd() {
@@ -30,6 +31,7 @@ func (proc *ImgProcessor) CalculateXYd() {
 	proc.Yc = Yc
 	proc.Xd = Xd
 	proc.Yd = Yd
+	return
 }
 
 func (proc *ImgProcessor) CalculateMurhotTable() {
@@ -39,6 +41,7 @@ func (proc *ImgProcessor) CalculateMurhotTable() {
 		murhots[k] = math.Log(proc.ImaxInFlt+1.0) - math.Log(float64(k)+1.0)
 	}
 	proc.MurhotTable = murhots
+	return
 }
 
 func (proc *ImgProcessor) CalculateIcontTable() {
@@ -58,6 +61,7 @@ func (proc *ImgProcessor) CalculateIcontTable() {
 		Icont[k] = uint16(proc.ImaxOutFlt * (1.0 - Y))
 	}
 	proc.IcontTable = Icont
+	return
 }
 
 func (t *TModel) CalculateTxz2Table() {
@@ -94,4 +98,5 @@ func (t *TModel) CalculateTxz2Table() {
 		}
 		t.Txz2Table[k] = Txz * Txz
 	}
+	return
 }

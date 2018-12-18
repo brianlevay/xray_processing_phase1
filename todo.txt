@@ -1,12 +1,9 @@
 REMAINING TASKS FOR VERSION 1.0:
 
-*   Add console info on startup
-*   Lock buttons on UI, provide working indicator
-*   Style the UI
-*   Create packaging and deployment scripts for Windows
-*   Test on Windows, test on MacOS, run performance benchmarks
-*   Finish documentation for Math, style it
-*   Write User Guide
+*   Test on Windows, run performance benchmarks
+*   Finish documentation for Math
+*   Style and improve UI 
+*   Test on MacOS
 
 FUTURE WORK IF TIME ALLOWS:
 

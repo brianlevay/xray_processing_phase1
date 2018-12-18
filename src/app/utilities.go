@@ -2,7 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net"
+	"strconv"
 	"strings"
 )
 
@@ -17,6 +19,22 @@ func getAvailablePort() (net.Listener, error) {
 		}
 	}
 	return listener, errors.New("Unable to find available port")
+}
+
+func startupDisplay(port int) {
+	fmt.Println(`__________________________________________________________________`)
+	fmt.Println(` __  __    ____               ___                                 `)
+	fmt.Println(` \ \/ /   |  _ \ __ _ _   _  |_ _|_ __ ___   __ _  __ _  ___ _ __ `)
+	fmt.Println(`  \  / __ |_|_) / _' | | | |  | || '_ ' _ \ / _' |/ _' |/ _ \ '__|`)
+	fmt.Println(`  /  \|__||  _ < (_| | |_| |  | || | | | | | ( | | ( | |  __/ |   `)
+	fmt.Println(` /_/\_\   |_| \_\__,_|\__, | |___|_| |_| |_|\__,_|\__, |\___|_|   `)
+	fmt.Println(`                      |___/                       |___/           `)
+	fmt.Println(`__________________________________________________________________`)
+	fmt.Println("\nWelcome to the X-Ray Image Processing Program\n")
+	fmt.Println("Please access the program via:")
+	fmt.Println("http://localhost:" + strconv.Itoa(port) + "/")
+	fmt.Println("\nType 'Ctrl+C' or close this window to terminate the program.\n")
+	return
 }
 
 func stringToSlice(valString string) []string {

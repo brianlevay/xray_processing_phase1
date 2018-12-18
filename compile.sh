@@ -8,4 +8,5 @@ export GOOS=linux
 go build -o xray-processing-linux app
 
 echo "BASH: Started running program at: $(date)"
+echo "  "
 ./xray-processing-linux
