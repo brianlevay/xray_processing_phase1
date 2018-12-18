@@ -3,9 +3,11 @@ package main
 import (
 	fe "fileExplorer"
 	"log"
+	"net"
 	"net/http"
 	_ "net/http/pprof"
 	"path/filepath"
+	"strconv"
 )
 
 func main() {
@@ -20,13 +22,18 @@ func main() {
 		log.Fatal(errCfg)
 	}
 
-	port := ":8080"
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
-
 	fileExplorerHandler(contents)
 	histogramHandler(contents, cfg)
 	processingHandler(contents, cfg)
 
-	http.ListenAndServe(port, nil)
+	listener, errListen := getAvailablePort()
+	if errListen != nil {
+		log.Fatal(errListen)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	log.Println("Program running at:")
+	log.Println("http://localhost:" + strconv.Itoa(port) + "/")
+	panic(http.Serve(listener, nil))
 }

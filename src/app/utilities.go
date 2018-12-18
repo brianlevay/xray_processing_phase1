@@ -1,8 +1,23 @@
 package main
 
 import (
+	"errors"
+	"net"
 	"strings"
 )
+
+func getAvailablePort() (net.Listener, error) {
+	var listener net.Listener
+	var errListen error
+	preferredPorts := []string{":8080", ":8081", ":8082", ":6060", ":0"}
+	for p := 0; p < len(preferredPorts); p++ {
+		listener, errListen = net.Listen("tcp", preferredPorts[p])
+		if errListen == nil {
+			return listener, nil
+		}
+	}
+	return listener, errors.New("Unable to find available port")
+}
 
 func stringToSlice(valString string) []string {
 	replacer := strings.NewReplacer("[", "", "]", "", "\"", "")
