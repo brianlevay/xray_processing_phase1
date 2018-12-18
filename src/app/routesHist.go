@@ -39,8 +39,9 @@ func histogramHandler(contents *fe.FileContents, cfg *Configuration) {
 		}
 
 		// Process files //
+		batchN := 20.0
 		log.Println("Started generating histogram...")
-		ImageHistogram(contents, hset)
+		ImageHistogram(contents, hset, batchN)
 		sEnc := base64.StdEncoding.EncodeToString(hset.Image)
 		log.Println("Sending histogram...")
 		w.Write([]byte(sEnc))

@@ -61,8 +61,9 @@ func processingHandler(contents *fe.FileContents, cfg *Configuration) {
 		}
 
 		// Process files //
+		batchN := 20.0
 		log.Println("Started processing " + strconv.Itoa(nImages) + " images...")
-		ProcessTiffs(contents, proc)
+		ProcessTiffs(contents, proc, batchN)
 		log.Println("Finished processing images.")
 		w.Write([]byte(""))
 		return

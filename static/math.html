@@ -7,271 +7,271 @@
     </head>
     <html>
 	<body>
-	<section>
-		<h1>Core Axis Determination</h1>
-		
 		<section>
-			<h2>Assumptions</h2>
-			<p>Coming soon!</p>
-			<p>When I try to manually locate the axis of a core in an x-ray image, I consider several different pieces 
-			of information. First, I take note of the edges. The edges create an outline of the core, and I don't bother 
-			searching for the axis outside of them. Second, I look for where the core appears darkest. I try to reconcile 
-			the darkest parts of the core against the line created by the mid-points between the edges. At this point, 
-			it becomes a judgement call on how I would trace the axis. Obviously, when devising algorithms, I don't have the 
-			luxury of using "judgement" on each image. I need to write rules. However, I can still use my personal 
-			approach as a framework, and the following is based on my own experience and experiments.</p>
-			<p>Feel free to develop your own approach(es)!</p>
+			<h1>Core Axis Determination</h1>
+			
+			<section>
+				<h2>Assumptions</h2>
+				<p>Coming soon!</p>
+				<p>When I try to manually locate the axis of a core in an x-ray image, I consider several different pieces 
+				of information. First, I take note of the edges. The edges create an outline of the core, and I don't bother 
+				searching for the axis outside of them. Second, I look for where the core appears darkest. I try to reconcile 
+				the darkest parts of the core against the line created by the mid-points between the edges. At this point, 
+				it becomes a judgement call on how I would trace the axis. Obviously, when devising algorithms, I don't have the 
+				luxury of using "judgement" on each image. I need to write rules. However, I can still use my personal 
+				approach as a framework, and the following is based on my own experience and experiments.</p>
+				<p>Feel free to develop your own approach(es)!</p>
+			</section>
+			
+			<section>
+				<h2>Detecting Likely Points on the Core Axis</h2>
+				<p>Coming soon!</p>
+				<h3>Finding the Edges</h3>
+				<p>soon...</p>
+				
+				<h3>Finding the Axis</h3>
+				<p>Within each row, the core axis is determined by calculating the center of mass between the left 
+				and right edges.</p>
+				<p>X<sub>center</sub> = &sum; X<sub>i</sub>m<sub>i</sub> / &sum; m<sub>i</sub></p>
+				<p>m = ((I<sub>max</sub> - I<sub>raw</sub>)/(I<sub>max</sub>))<sup>N<sub>mass</sub></sup></p>
+				<p>When N<sub>mass</sub> = 0, each pixel is evenly weighted, meaning that the center of mass will 
+				simply be the mid-point between the edges. As N<sub>mass</sub> increases, the center will be increasingly biased towards 
+				the darkest part of the core in the given row. N<sub>mass</sub> = 1 weights each pixel by its intensity, 
+				which represents a typical center of mass calculation in most scenarios.</p>
+				<p>Cores are often asymmetric, heterogenous, and fragmented, meaning that it's a tough problem trying to decide how much to trust 
+				the edges vs the darkest portions when it comes to estimating the axis. If we weight darkness too much, 
+				then IRD will have strong effects on the outcome. If we weight edges too much, then broken pieces will 
+				have strong effects on the outcome. Based on initial tests, I feel that N<sub>mass</sub> = 1 is a reasonable 
+				compromise.</p>
+			</section>
+			
+			<section>
+				<h2>Estimating the Axis</h2>
+				<p>Coming soon!</p>
+				<h3>Ordinary Least Squares Regression</h3>
+				<p>soon...</p>
+				
+				<h3>Iterative Filtering</h3>
+				<p>soon...</p>
+				
+				<h3>Projecting to the Correct Position</h3>
+				<p>soon...</p>
+			</section>
 		</section>
 		
 		<section>
-			<h2>Detecting Likely Points on the Core Axis</h2>
-			<p>Coming soon!</p>
-			<h3>Finding the Edges</h3>
-			<p>soon...</p>
+			<h1>Thickness Modelling</h1>
+		
+			<section>
+				<h2>Assumptions</h2>
+				<p>The primary assumptions are that the cylinder axis is always at the same Z and is aligned with the Y axis. 
+				If it's not aligned with Y, a simple XY axis rotation can be performed so that Yr is aligned with the axis. 
+				This will keep the math the same (and simple).</p>
+			</section>
+		
+			<section>
+				<h2>Coordinate Systems</h2>
+				<h3>Convert from initial coordinates to rotated coordinates, where Yr is aligned with cylinder axis</h3>
+				<p>Xr = X cos&Theta; - Y sin&Theta;</p>
+				<p>Yr = X sin&Theta; - Y cos&Theta;</p>
+				<p>Zr = Z</p>
+			</section>
+		
+			<section>
+				<h2>Fundamental Equations</h2>
+				<h3>Equation of a cylinder, aligned with Yr axis</h3>
+				<p>(Xr - Xr<sub>a</sub>)<sup>2</sup> + (Zr - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
+				
+				<h3>Parametric equations of a ray, passing from the source to a point on the detector</h3>
+				<p>Xr = Xr<sub>s</sub> + (u<sub>Xr</sub>)t</p>
+				<p>Yr = Yr<sub>s</sub> + (u<sub>Yr</sub>)t</p>
+				<p>Zr = Zr<sub>s</sub> + (u<sub>Zr</sub>)t</p>
+				<p>u<sub>Xr</sub> = (Xr<sub>d</sub> - Xr<sub>s</sub>) / ||u||</p>
+				<p>u<sub>Yr</sub> = (Yr<sub>d</sub> - Yr<sub>s</sub>) / ||u||</p>
+				<p>u<sub>Zr</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>) / ||u||</p>
+			</section>
+		
+			<section>
+				<h2>Intersections Between a Ray and the Top Plane of the Half-Round Cylinder </h2>
+				<p>if u<sub>Zr</sub> &ne; 0</p>
+				<p>t<sub>h</sub> = (Zr<sub>a</sub> - Zr<sub>s</sub>) / u<sub>Zr</sub></p>
+				<p>else</p>
+				<p>t<sub>h</sub> = undefined</p>
+			</section>
+		
+			<section>
+				<h2>Intersections Between a Ray and a Cylinder</h2>
+				<h3>Substitution</h3>
+				<p>(Xr<sub>s</sub> + (u<sub>Xr</sub>)t - Xr<sub>a</sub>)<sup>2</sup> + (Zr<sub>s</sub> + (u<sub>Zr</sub>)t - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
+				
+				<h3>Expand the full equation</h3>
+				<p>At<sup>2</sup> + Bt + C = 0</p>
+				<p>A = u<sub>Xr</sub><sup>2</sup> + u<sub>Zr</sub><sup>2</sup></p>
+				<p>B = 2u<sub>Xr</sub>(Xr<sub>s</sub> - Xr<sub>a</sub>) + 2u<sub>Zr</sub>(Zr<sub>s</sub> - Zr<sub>a</sub>)</p>
+				<p>C = Xr<sub>s</sub><sup>2</sup> - 2Xr<sub>s</sub>Xr<sub>a</sub> + Xr<sub>a</sub><sup>2</sup> + Zr<sub>s</sub><sup>2</sup> - 2Zr<sub>s</sub>Zr<sub>a</sub> + Zr<sub>a</sub><sup>2</sup> - R<sup>2</sup></p>
+				
+				<h3>Solve using the quadratic formula</h3>
+				<p>det = B<sup>2</sup> - 4AC</p>
+				<p>if det &gt; 0</p>
+				<p>t<sub>c1</sub> = (-B - &radic;det) / 2A</p>
+				<p>t<sub>c2</sub> = (-B + &radic;det) / 2A</p>
+				<p>else</p>
+				<p>t<sub>c1</sub>, t<sub>c2</sub> = 0</p>
+			</section>
+		
+			<section>
+				<h2>Path Lengths Through Whole Round and Half Round</h2>
+				<h3>Whole round</h3>
+				<p>if det &gt; 0</p>
+				<p>thickness = t<sub>c2</sub> - t<sub>c1</sub>
+				<p>else</p>
+				<p>thickness = 0
+				
+				<h3>Half round</h3>
+				<p>if det &gt; 0 and t<sub>h</sub> &lt; t<sub>c1</sub></p>
+				<p>thickness = t<sub>c2</sub> - t<sub>c1</sub></p>
+				<p>if det &gt; 0 and t<sub>c2</sub> &gt; t<sub>h</sub> &gt; t<sub>c1</sub></p>
+				<p>thickness = t<sub>c2</sub> - t<sub>h</sub></p>
+				<p>if det &le; 0 or t<sub>h</sub> &gt; t<sub>c2</sub></p>
+				<p>thickness = 0</p>
+			</section>
 			
-			<h3>Finding the Axis</h3>
-			<p>Within each row, the core axis is determined by calculating the center of mass between the left 
-			and right edges.</p>
-			<p>X<sub>center</sub> = &sum; X<sub>i</sub>m<sub>i</sub> / &sum; m<sub>i</sub></p>
-			<p>m = ((I<sub>max</sub> - I<sub>raw</sub>)/(I<sub>max</sub>))<sup>N<sub>mass</sub></sup></p>
-			<p>When N<sub>mass</sub> = 0, each pixel is evenly weighted, meaning that the center of mass will 
-			simply be the mid-point between the edges. As N<sub>mass</sub> increases, the center will be increasingly biased towards 
-			the darkest part of the core in the given row. N<sub>mass</sub> = 1 weights each pixel by its intensity, 
-			which represents a typical center of mass calculation in most scenarios.</p>
-			<p>Cores are often asymmetric, heterogenous, and fragmented, meaning that it's a tough problem trying to decide how much to trust 
-			the edges vs the darkest portions when it comes to estimating the axis. If we weight darkness too much, 
-			then IRD will have strong effects on the outcome. If we weight edges too much, then broken pieces will 
-			have strong effects on the outcome. Based on initial tests, I feel that N<sub>mass</sub> = 1 is a reasonable 
-			compromise.</p>
+			<section>
+				<h2>Alternative Formulation for Computational Efficiency</h2>
+				<h3>Summary</h3>
+				<p>Using the previous set of equations directly requires the determinant to be calculated for each and every pixel, 
+				which is computationally expensive. This is solely because the length of the unit vector is calculated in 3D. 
+				However, all other values in the calculations are confined to the Xr, Zr plane. If u<sub>Yr</sub> is initially treated as 0, 
+				then the thicknesses in the Xr, Zr plane can be pre-calculated in the form of a lookup table. Because Yr is oriented 
+				parallel to the cylinder axis, converting t<sub>xz</sub> to t<sub>xyz</sub> is a very simple trigonometry problem.</p>
+				
+				<h3>Basic Definitions</h3>
+				<p>t<sub>x</sub>, t<sub>y</sub>, t<sub>z</sub> = Xr, Yr, and Zr distances between entry point and exit point of core</p>
+				<p>t<sub>xz</sub> = &radic;(t<sub>x</sub><sup>2</sup> + t<sub>z</sub><sup>2</sup>)</p>
+				<p>t<sub>xyz</sub> = &radic;(t<sub>x</sub><sup>2</sup> + t<sub>y</sub><sup>2</sup> + t<sub>z</sub><sup>2</sup>)</p>
+				<p>&Delta;Xr = (Xr<sub>d</sub> - Xr<sub>s</sub>)</p>
+				<p>&Delta;Yr = (Yr<sub>d</sub> - Yr<sub>s</sub>)</p>
+				<p>&Delta;Zr = (Zr<sub>d</sub> - Zr<sub>s</sub>)</p>
+				
+				<h3>Trigonometric Equivalence</h3>
+				<p>t<sub>y</sub> / t<sub>xz</sub> = &Delta;Yr / &radic;(&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)</p>
+				
+				<h3>Substitute, Rearrange, and Solve</h3>
+				<p>t<sub>xyz</sub> = &radic;(t<sub>xz</sub><sup>2</sup> + t<sub>y</sub><sup>2</sup>)</p>
+				<p>t<sub>xyz</sub> = &radic;(t<sub>xz</sub><sup>2</sup> (1 + (&Delta;Yr<sup>2</sup> / (&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)))</p>
+				
+				<h3>Limits for Calculations</h3>
+				<p>Intersections only need to be calculated over the range of Xr values that will give a determinant > 0. 
+				You could explicitly rearrange the quadratic formula to solve for Xr when t<sub>c1</sub> and t<sub>c2</sub>= 0, 
+				or you could use an approximation that still allows some negative determinant values. You can skip the calculations if the ray between the source and the value of Xr passes 
+				outside of a square that fits around the cylinder in 2D.</p>
+				<p>Zr - Zr<sub>s</sub> = m * (Xr - Xr<sub>s</sub>)</p>
+				<p>Xr<sub>min</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>)*((Xr<sub>a</sub> - R - Xr<sub>s</sub>) / (Zr<sub>a</sub> + R - Zr<sub>s</sub>)) + Xr<sub>s</sub></p>
+				<p>Xr<sub>max</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>)*((Xr<sub>a</sub> + R - Xr<sub>s</sub>) / (Zr<sub>a</sub> + R - Zr<sub>s</sub>)) + Xr<sub>s</sub></p>
+			</section>
 		</section>
 		
 		<section>
-			<h2>Estimating the Axis</h2>
-			<p>Coming soon!</p>
-			<h3>Ordinary Least Squares Regression</h3>
-			<p>soon...</p>
+			<h1>Primary Calculations</h1>
+		
+			<section>
+				<h2>Theoretical Background</h2>
+				<h3>Fundamental material properties</h3>
+				<p>&mu;(E) = mass attenuation coefficient of a material at a particular x-ray energy, based on the chemical composition</p>
+				<p>&rho; = material density</p>
+				<p>t = material thickness along the x-ray path</p>
+				
+				<h3>Basic equation for monochromatic x-ray transmission</h3>
+				<p>I<sub>trans</sub>(E) = I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup></p>
+				
+				<h3>Equation for total x-ray transmission</h3>
+				<p>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</p>
+			</section>
 			
-			<h3>Iterative Filtering</h3>
-			<p>soon...</p>
+			<section>
+				<h2>Polychromatic X-Ray Approximation</h2>
+				<h3>Approximated x-ray transmission</h3>
+				<p>Based on numerical simulations, for a given material composition and source spectrum, a single effective 
+				mass attenuation coefficent can be used to approximate attenuation behavior for polychromatic x-rays.</p>
+				<p>I<sub>trans</sub> = &sum; I<sub>trans</sub>(E)</p>
+				<p>I<sub>0</sub> = &sum; I<sub>0</sub>(E)</p>
+				<p>I<sub>trans</sub> &approx; I<sub>0</sub> * e<sup>-&mu;<sub>eff</sub>*&rho;*t</sup></p>
 			
-			<h3>Projecting to the Correct Position</h3>
-			<p>soon...</p>
-		</section>
-	</section>
-	
-	<section>
-		<h1>Thickness Modelling</h1>
-	
-		<section>
-			<h2>Assumptions</h2>
-			<p>The primary assumptions are that the cylinder axis is always at the same Z and is aligned with the Y axis. 
-			If it's not aligned with Y, a simple XY axis rotation can be performed so that Yr is aligned with the axis. 
-			This will keep the math the same (and simple).</p>
-		</section>
-	
-		<section>
-			<h2>Coordinate Systems</h2>
-			<h3>Convert from initial coordinates to rotated coordinates, where Yr is aligned with cylinder axis</h3>
-			<p>Xr = X cos&Theta; - Y sin&Theta;</p>
-			<p>Yr = X sin&Theta; - Y cos&Theta;</p>
-			<p>Zr = Z</p>
-		</section>
-	
-		<section>
-			<h2>Fundamental Equations</h2>
-			<h3>Equation of a cylinder, aligned with Yr axis</h3>
-			<p>(Xr - Xr<sub>a</sub>)<sup>2</sup> + (Zr - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
+				<h3>Estimating effective material properties</h3>
+				<p>If our detector is over-saturated, we don't know I<sub>0</sub> (the total number of x-rays from the source), 
+				we only know I<sub>max</sub>, the value at which the detector saturates. The impact of using I<sub>max</sub> 
+				instead of I<sub>0</sub> is that all of our &mu;<sub>eff</sub>*&rho;*t values will be shifted by a constant value. </p>
+				<p>&mu;<sub>eff</sub>*&rho;*t &approx; ln(I<sub>max</sub> + 1.0) - ln(I<sub>trans</sub> + 1.0)</p>
+				<p>We add 1.0 to I<sub>trans</sub> to prevent undefined behavior when I<sub>trans</sub> = 0, and we add 1.0 to I<sub>max</sub> 
+				to preserve the fact that &mu;<sub>eff</sub>*&rho;*t = 0 when I<sub>trans</sub> is equal to I<sub>max</sub>.</p>
 			
-			<h3>Parametric equations of a ray, passing from the source to a point on the detector</h3>
-			<p>Xr = Xr<sub>s</sub> + (u<sub>Xr</sub>)t</p>
-			<p>Yr = Yr<sub>s</sub> + (u<sub>Yr</sub>)t</p>
-			<p>Zr = Zr<sub>s</sub> + (u<sub>Zr</sub>)t</p>
-			<p>u<sub>Xr</sub> = (Xr<sub>d</sub> - Xr<sub>s</sub>) / ||u||</p>
-			<p>u<sub>Yr</sub> = (Yr<sub>d</sub> - Yr<sub>s</sub>) / ||u||</p>
-			<p>u<sub>Zr</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>) / ||u||</p>
-		</section>
-	
-		<section>
-			<h2>Intersections Between a Ray and the Top Plane of the Half-Round Cylinder </h2>
-			<p>if u<sub>Zr</sub> &ne; 0</p>
-			<p>t<sub>h</sub> = (Zr<sub>a</sub> - Zr<sub>s</sub>) / u<sub>Zr</sub></p>
-			<p>else</p>
-			<p>t<sub>h</sub> = undefined</p>
-		</section>
-	
-		<section>
-			<h2>Intersections Between a Ray and a Cylinder</h2>
-			<h3>Substitution</h3>
-			<p>(Xr<sub>s</sub> + (u<sub>Xr</sub>)t - Xr<sub>a</sub>)<sup>2</sup> + (Zr<sub>s</sub> + (u<sub>Zr</sub>)t - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
-			
-			<h3>Expand the full equation</h3>
-			<p>At<sup>2</sup> + Bt + C = 0</p>
-			<p>A = u<sub>Xr</sub><sup>2</sup> + u<sub>Zr</sub><sup>2</sup></p>
-			<p>B = 2u<sub>Xr</sub>(Xr<sub>s</sub> - Xr<sub>a</sub>) + 2u<sub>Zr</sub>(Zr<sub>s</sub> - Zr<sub>a</sub>)</p>
-			<p>C = Xr<sub>s</sub><sup>2</sup> - 2Xr<sub>s</sub>Xr<sub>a</sub> + Xr<sub>a</sub><sup>2</sup> + Zr<sub>s</sub><sup>2</sup> - 2Zr<sub>s</sub>Zr<sub>a</sub> + Zr<sub>a</sub><sup>2</sup> - R<sup>2</sup></p>
-			
-			<h3>Solve using the quadratic formula</h3>
-			<p>det = B<sup>2</sup> - 4AC</p>
-			<p>if det &gt; 0</p>
-			<p>t<sub>c1</sub> = (-B - &radic;det) / 2A</p>
-			<p>t<sub>c2</sub> = (-B + &radic;det) / 2A</p>
-			<p>else</p>
-			<p>t<sub>c1</sub>, t<sub>c2</sub> = 0</p>
-		</section>
-	
-		<section>
-			<h2>Path Lengths Through Whole Round and Half Round</h2>
-			<h3>Whole round</h3>
-			<p>if det &gt; 0</p>
-			<p>thickness = t<sub>c2</sub> - t<sub>c1</sub>
-			<p>else</p>
-			<p>thickness = 0
-			
-			<h3>Half round</h3>
-			<p>if det &gt; 0 and t<sub>h</sub> &lt; t<sub>c1</sub></p>
-			<p>thickness = t<sub>c2</sub> - t<sub>c1</sub></p>
-			<p>if det &gt; 0 and t<sub>c2</sub> &gt; t<sub>h</sub> &gt; t<sub>c1</sub></p>
-			<p>thickness = t<sub>c2</sub> - t<sub>h</sub></p>
-			<p>if det &le; 0 or t<sub>h</sub> &gt; t<sub>c2</sub></p>
-			<p>thickness = 0</p>
+				<h3>Compensating for thickness</h3>
+				<p>We can remove the impact of thickness variations by normalizing to a constant reference thickness (in this case, the maximum core thickness). 
+				Outside the modelled footprint of the core, we leave the &mu;<sub>eff</sub>*&rho;*t values unchanged. 
+				The reason that we adjust to a constant thickness rather than just dividing by the thickness is that it better preserves the relationships 
+				between pixel values within the core footprint and pixel values outside of the core, if other objects are present (such as references or standards).</p>
+				<p>&mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> &approx; (&mu;<sub>eff</sub>*&rho;*t) * (t<sub>ref</sub> / t<sub>model</sub>)
+				<p>t<sub>model</sub> = distances through the core that x-rays have to travel to reach each pixel</p>
+				<p>t<sub>ref</sub> = maximum vertical distance through core (diameter or radius)</p>
+			</section>
 		</section>
 		
 		<section>
-			<h2>Alternative Formulation for Computational Efficiency</h2>
-			<h3>Summary</h3>
-			<p>Using the previous set of equations directly requires the determinant to be calculated for each and every pixel, 
-			which is computationally expensive. This is solely because the length of the unit vector is calculated in 3D. 
-			However, all other values in the calculations are confined to the Xr, Zr plane. If u<sub>Yr</sub> is initially treated as 0, 
-			then the thicknesses in the Xr, Zr plane can be pre-calculated in the form of a lookup table. Because Yr is oriented 
-			parallel to the cylinder axis, converting t<sub>xz</sub> to t<sub>xyz</sub> is a very simple trigonometry problem.</p>
+			<h1>Contrast Enhancement</h1>
 			
-			<h3>Basic Definitions</h3>
-			<p>t<sub>x</sub>, t<sub>y</sub>, t<sub>z</sub> = Xr, Yr, and Zr distances between entry point and exit point of core</p>
-			<p>t<sub>xz</sub> = &radic;(t<sub>x</sub><sup>2</sup> + t<sub>z</sub><sup>2</sup>)</p>
-			<p>t<sub>xyz</sub> = &radic;(t<sub>x</sub><sup>2</sup> + t<sub>y</sub><sup>2</sup> + t<sub>z</sub><sup>2</sup>)</p>
-			<p>&Delta;Xr = (Xr<sub>d</sub> - Xr<sub>s</sub>)</p>
-			<p>&Delta;Yr = (Yr<sub>d</sub> - Yr<sub>s</sub>)</p>
-			<p>&Delta;Zr = (Zr<sub>d</sub> - Zr<sub>s</sub>)</p>
+			<section>
+				<h2>Requirements</h2>
+				<p>Must be a function that is continuous over the input range and through the peak! Using two different functions around the 
+				peak leads to strong anomalies and unstable behavior at the peak itself, which creates artifacts over large swaths of the images.</p>
+			</section>
 			
-			<h3>Trigonometric Equivalence</h3>
-			<p>t<sub>y</sub> / t<sub>xz</sub> = &Delta;Yr / &radic;(&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)</p>
+			<section>
+				<h2>Histogram Stretching and Centering</h2>
+				<h3>Values</h3>
+				<p>O<sub>val</sub> = &mu;<sub>eff</sub>*&rho;*t<sub>max</sub></p>
+				<p>O<sub>min</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>high</sub> + 1.0)</p>
+				<p>O<sub>peak</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>peak</sub> + 1.0)</p>
+				<p>O<sub>max</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>low</sub> + 1.0)</p>
+				
+				<h3>Normalization</h3>
+				<p>if O<sub>min</sub> &le; O<sub>val</sub> &le; O<sub>max</sub></p>
+				<p>L = (O<sub>val</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
+				<p>if O<sub>val</sub> &lt; O<sub>min</sub></p>
+				<p>L = 0.0</p>
+				<p>if O<sub>val</sub> &gt; O<sub>max</sub></p>
+				<p>L = 1.0</p>
+				
+				<h3>Using a polynomial to stretch the L values and center the peak at 0.5</h3>
+				<p>L<sub>peak</sub> = (O<sub>peak</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
+				<p>0.5 = L<sub>peak</sub><sup>n</sup></p>
+				<p>n = ln(0.5) / ln(L<sub>peak</sub>)</p>
+				<p>P = L<sup>n</sup></p>
+				
+				<h3>Using a sine function to stretch central values and compress edge values</h3>
+				<p>S(L) = 0.5 * sin(&pi; * (L − 0.5)) + 0.5</p>
+				<p>S(P) = 0.5 * sin(&pi; * (P − 0.5)) + 0.5</p>
+				
+				<h3>Avoiding too much distortion</h3>
+				<p>When L<sub>peak</sub> is far from 0.5, using S(P) can distort the spectrum too much and cause spectral artifacts. 
+				Using S(L) will not shift the peak at all, however, leaving too much original skew. Using a weighted mixture of S(P) and S(L) 
+				allows us to shift the peak and stretch the histogram without causing poor behavior under extreme skew.</p>
+				<p>w = 1.0 − abs(2.0 * (L<sub>peak</sub> − 0.5))<sup>2</sup></p>
+				<p>Y = w * S(P) + (1 − w) * S(L)</p>
+				
+				<h3>Converting to pixel values and reversing greyscale</h3>
+				<p>I<sub>proc</sub> = I<sub>max</sub> * (1 - Y)</p>
+			</section>
 			
-			<h3>Substitute, Rearrange, and Solve</h3>
-			<p>t<sub>xyz</sub> = &radic;(t<sub>xz</sub><sup>2</sup> + t<sub>y</sub><sup>2</sup>)</p>
-			<p>t<sub>xyz</sub> = &radic;(t<sub>xz</sub><sup>2</sup> (1 + (&Delta;Yr<sup>2</sup> / (&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)))</p>
-			
-			<h3>Limits for Calculations</h3>
-			<p>Intersections only need to be calculated over the range of Xr values that will give a determinant > 0. 
-			You could explicitly rearrange the quadratic formula to solve for Xr when t<sub>c1</sub> and t<sub>c2</sub>= 0, 
-			or you could use an approximation that still allows some negative determinant values. You can skip the calculations if the ray between the source and the value of Xr passes 
-			outside of a square that fits around the cylinder in 2D.</p>
-			<p>Zr - Zr<sub>s</sub> = m * (Xr - Xr<sub>s</sub>)</p>
-			<p>Xr<sub>min</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>)*((Xr<sub>a</sub> - R - Xr<sub>s</sub>) / (Zr<sub>a</sub> + R - Zr<sub>s</sub>)) + Xr<sub>s</sub></p>
-			<p>Xr<sub>max</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>)*((Xr<sub>a</sub> + R - Xr<sub>s</sub>) / (Zr<sub>a</sub> + R - Zr<sub>s</sub>)) + Xr<sub>s</sub></p>
-		</section>
-	</section>
-	
-	<section>
-		<h1>Primary Calculations</h1>
-	
-		<section>
-			<h2>Theoretical Background</h2>
-			<h3>Fundamental material properties</h3>
-			<p>&mu;(E) = mass attenuation coefficient of a material at a particular x-ray energy, based on the chemical composition</p>
-			<p>&rho; = material density</p>
-			<p>t = material thickness along the x-ray path</p>
-			
-			<h3>Basic equation for monochromatic x-ray transmission</h3>
-			<p>I<sub>trans</sub>(E) = I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup></p>
-			
-			<h3>Equation for total x-ray transmission</h3>
-			<p>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</p>
 		</section>
 		
 		<section>
-			<h2>Polychromatic X-Ray Approximation</h2>
-			<h3>Approximated x-ray transmission</h3>
-			<p>Based on numerical simulations, for a given material composition and source spectrum, a single effective 
-			mass attenuation coefficent can be used to approximate attenuation behavior for polychromatic x-rays.</p>
-			<p>I<sub>trans</sub> = &sum; I<sub>trans</sub>(E)</p>
-			<p>I<sub>0</sub> = &sum; I<sub>0</sub>(E)</p>
-			<p>I<sub>trans</sub> &approx; I<sub>0</sub> * e<sup>-&mu;<sub>eff</sub>*&rho;*t</sup></p>
-		
-			<h3>Estimating effective material properties</h3>
-			<p>If our detector is over-saturated, we don't know I<sub>0</sub> (the total number of x-rays from the source), 
-			we only know I<sub>max</sub>, the value at which the detector saturates. The impact of using I<sub>max</sub> 
-			instead of I<sub>0</sub> is that all of our &mu;<sub>eff</sub>*&rho;*t values will be shifted by a constant value. </p>
-			<p>&mu;<sub>eff</sub>*&rho;*t &approx; ln(I<sub>max</sub> + 1.0) - ln(I<sub>trans</sub> + 1.0)</p>
-			<p>We add 1.0 to I<sub>trans</sub> to prevent undefined behavior when I<sub>trans</sub> = 0, and we add 1.0 to I<sub>max</sub> 
-			to preserve the fact that &mu;<sub>eff</sub>*&rho;*t = 0 when I<sub>trans</sub> is equal to I<sub>max</sub>.</p>
-		
-			<h3>Compensating for thickness</h3>
-			<p>We can remove the impact of thickness variations by normalizing to a constant reference thickness (in this case, the maximum core thickness). 
-			Outside the modelled footprint of the core, we leave the &mu;<sub>eff</sub>*&rho;*t values unchanged. 
-			The reason that we adjust to a constant thickness rather than just dividing by the thickness is that it better preserves the relationships 
-			between pixel values within the core footprint and pixel values outside of the core, if other objects are present (such as references or standards).</p>
-			<p>&mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> &approx; (&mu;<sub>eff</sub>*&rho;*t) * (t<sub>ref</sub> / t<sub>model</sub>)
-			<p>t<sub>model</sub> = distances through the core that x-rays have to travel to reach each pixel</p>
-			<p>t<sub>ref</sub> = maximum vertical distance through core (diameter or radius)</p>
+			<h1>Scale Bars</h1>
+			
+			<section>
+				<h2>Assumptions</h2>
+				<p>Coming soon!</p>
+			</section>
+			
 		</section>
-	</section>
-	
-	<section>
-		<h1>Contrast Enhancement</h1>
-		
-		<section>
-			<h2>Requirements</h2>
-			<p>Must be a function that is continuous over the input range and through the peak! Using two different functions around the 
-			peak leads to strong anomalies and unstable behavior at the peak itself, which creates artifacts over large swaths of the images.</p>
-		</section>
-		
-		<section>
-			<h2>Histogram Stretching and Centering</h2>
-			<h3>Values</h3>
-			<p>O<sub>val</sub> = &mu;<sub>eff</sub>*&rho;*t<sub>max</sub></p>
-			<p>O<sub>min</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>high</sub> + 1.0)</p>
-			<p>O<sub>peak</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>peak</sub> + 1.0)</p>
-			<p>O<sub>max</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>low</sub> + 1.0)</p>
-			
-			<h3>Normalization</h3>
-			<p>if O<sub>min</sub> &le; O<sub>val</sub> &le; O<sub>max</sub></p>
-			<p>L = (O<sub>val</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
-			<p>if O<sub>val</sub> &lt; O<sub>min</sub></p>
-			<p>L = 0.0</p>
-			<p>if O<sub>val</sub> &gt; O<sub>max</sub></p>
-			<p>L = 1.0</p>
-			
-			<h3>Using a polynomial to stretch the L values and center the peak at 0.5</h3>
-			<p>L<sub>peak</sub> = (O<sub>peak</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
-			<p>0.5 = L<sub>peak</sub><sup>n</sup></p>
-			<p>n = ln(0.5) / ln(L<sub>peak</sub>)</p>
-			<p>P = L<sup>n</sup></p>
-			
-			<h3>Using a sine function to stretch central values and compress edge values</h3>
-			<p>S(L) = 0.5 * sin(&pi; * (L − 0.5)) + 0.5</p>
-			<p>S(P) = 0.5 * sin(&pi; * (P − 0.5)) + 0.5</p>
-			
-			<h3>Avoiding too much distortion</h3>
-			<p>When L<sub>peak</sub> is far from 0.5, using S(P) can distort the spectrum too much and cause spectral artifacts. 
-			Using S(L) will not shift the peak at all, however, leaving too much original skew. Using a weighted mixture of S(P) and S(L) 
-			allows us to shift the peak and stretch the histogram without causing poor behavior under extreme skew.</p>
-			<p>w = 1.0 − abs(2.0 * (L<sub>peak</sub> − 0.5))<sup>2</sup></p>
-			<p>Y = w * S(P) + (1 − w) * S(L)</p>
-			
-			<h3>Converting to pixel values and reversing greyscale</h3>
-			<p>I<sub>proc</sub> = I<sub>max</sub> * (1 - Y)</p>
-		</section>
-		
-	</section>
-	
-	<section>
-		<h1>Scale Bars</h1>
-		
-		<section>
-			<h2>Assumptions</h2>
-			<p>Coming soon!</p>
-		</section>
-		
-	</section>
 	</body>
 </html>

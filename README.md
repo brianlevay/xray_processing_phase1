@@ -2,10 +2,8 @@
 
 This software is intended to allow scientists to process x-ray images acquired from cores. It's designed around the initial setup used on the JOIDES resolution during Phase 1 of the X-Ray Imager Project.
 
-## Critical Assumptions That Must Be Met
-* The core is expected to be oriented roughly top to bottom in the image. For the detector that's currently being used in Phase 1, that corresponds to the core being oriented along the long axis of the detector. The image searching algorithm uses a row-first approach, and it will fail if the core is aligned left to right. Future efforts may allow this to be configurable. 
-* The source is assumed to be centered over the detector for all projection calculations. This doesn't need to be exactly true in real life, but the more off-center the source becomes, the more error will be introduced. Future efforts may allow this to be set as part of the configuration.
-* The core is assumed to be roughly cylindrical. The code will not work correctly on other types of shapes, such as slabs.
+## Installing and Running the Software
+*coming soon*
 
 ## Basic User Workflow
 1. Select the raw images to process
@@ -24,17 +22,35 @@ This software is intended to allow scientists to process x-ray images acquired f
 7. Add scale bars
 8. Save the new image
 
+## Critical Assumptions That Must Be Met
+* The core is expected to be oriented roughly top to bottom in the image. For the detector that's currently being used in Phase 1, that corresponds to the core being oriented along the long axis of the detector. The image searching algorithm uses a row-first approach, and it will fail if the core is aligned left to right. Future efforts may allow this to be configurable. 
+* The source is assumed to be centered over the detector for all projection calculations. This doesn't need to be exactly true in real life, but the more off-center the source becomes, the more error will be introduced. Future efforts may allow this to be set as part of the configuration.
+* The core is assumed to be roughly cylindrical. The code will not work correctly on other types of shapes, such as slabs.
+
 ## Important Processing Notes
 * Grayscale values are globally consistent; a pixel value in one part of an image has the same underlying meaning as the same value in another part of the image
 * The relationship between the input grayscale and the output grayscale is monotonic within the bounds specified by the user
 * The relationship between the input grayscale and the output grayscale is the same for all images processed in the same batch
+
+# Development Roadmap
+
+## Remaining Tasks for Version 1.0:
+* Finish documentation for Math
+* Style and improve UI
+* Test on Windows, run performance benchmarks
+* Test on MacOS
+
+## Future Changes if Time Allows:
+* Add flexibility to handle cores in non-vertical orientation
+* Add support for non-centered source
+* Investigate automatic histogram bounds determination
+* Investigate improved contrast enhancement algorithms
+* Investigate improved core detection algorithms
+* Overall performance improvements
 
 ## Important Performance Notes
 * Contrary to my expectations, processing each image sequentially is far, far faster and more memory efficient than processing in parallel using goroutines
 * With large numbers of files, using goroutines locks up the computer (high memory usage, not high CPU usage), whereas processing sequentially has no performance degradation
 * With low numbers of files, the performance differences are negligable
 * It may be possible in the future to use small, sequential batches of goroutines to find that sweet spot of performance
-* It may also be possible to improve performance by using more stack variables rather than heap variables
-
-## Installing and Running the Software
-*coming soon*
+* It may also be possible to improve performance by using more stack variables or by reducing the frequency of dereferencing

@@ -9,11 +9,11 @@ import (
 	"strings"
 )
 
-func ProcessTiffs(contents *fe.FileContents, proc *ImgProcessor) {
+func ProcessTiffs(contents *fe.FileContents, proc *ImgProcessor, batchN float64) {
 	nfiles := len(contents.Selected)
 	for i := 0; i < nfiles; i++ {
 		proc.ProcessImage(contents.Root, contents.Selected[i])
-		if (i != 0) && (math.Mod(float64(i), 10.0) == 0) {
+		if (i != 0) && (math.Mod(float64(i), batchN) == 0) {
 			log.Println(strconv.Itoa(i) + " files completed")
 		}
 	}
