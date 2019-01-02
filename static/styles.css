@@ -21,6 +21,15 @@ input[type=number] {
     margin: 15px 5px 15px 5px;
 }
 
+.equation {
+    margin: 0px 0px 0px 20px;
+}
+
+.conditional {
+    margin: 5px 0px 5px 10px;
+    font-weight: bold;
+}
+
 #fileList {
     margin: 5px;
 }

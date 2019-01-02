@@ -46,8 +46,9 @@
 				<ol>
 					<li>Within each row of pixels, find the edges of the core</li>
 					<li>Within each row of pixels, calculate the center of mass between the edges</li>
-					<li>Perform ordinary least squares regression to fit a line through the centers of mass</li>
-					<li>Iteratively discard points that are too far from the line and re-calculate regression</li>
+					<li>Perform ordinary least squares regression to fit a line through the centers; 
+					iteratively discard points that are too far from the line and re-calculate the regression</li>
+					<li>Convert the axis position from 2D detector coordinates to 3D cartesian coordinates, using projection</li>
 				</ol>
 			</section>
 			
@@ -61,16 +62,18 @@
 			</section>
 			
 			<section class='lvl2'>
-				<h2>Detecting Likely Points on the Core Axis</h2>
+				<h2>Finding the Edges</h2>
 				<p>Coming soon!</p>
-				<h3>Finding the Edges</h3>
-				<p>soon...</p>
-				
-				<h3>Finding the Axis</h3>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Finding the Centers</h2>
 				<p>Within each row, the core axis is determined by calculating the center of mass between the left 
 				and right edges.</p>
-				<p>X<sub>center</sub> = &sum; X<sub>i</sub>m<sub>i</sub> / &sum; m<sub>i</sub></p>
-				<p>m = ((I<sub>max</sub> - I<sub>raw</sub>)/(I<sub>max</sub>))<sup>N<sub>mass</sub></sup></p>
+				
+				<div class='equation'>m<sub>i</sub> = ((I<sub>max</sub> - I<sub>i</sub>)/(I<sub>max</sub>))<sup>N<sub>mass</sub></sup></div>
+				<div class='equation'>X<sub>center</sub> = &sum; X<sub>i</sub>m<sub>i</sub> / &sum; m<sub>i</sub></div>
+				
 				<p>When N<sub>mass</sub> = 0, each pixel is evenly weighted, meaning that the center of mass will 
 				simply be the mid-point between the edges. As N<sub>mass</sub> increases, the center will be increasingly biased towards 
 				the darkest part of the core in the given row. N<sub>mass</sub> = 1 weights each pixel by its intensity, 
@@ -83,15 +86,17 @@
 			</section>
 			
 			<section class='lvl2'>
-				<h2>Estimating the Axis</h2>
-				<p>Coming soon!</p>
+				<h2>Fitting the Axis to the Centers</h2>
 				<h3>Ordinary Least Squares Regression</h3>
 				<p>soon...</p>
 				
 				<h3>Iterative Filtering</h3>
 				<p>soon...</p>
 				
-				<h3>Projecting to the Correct Position</h3>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Projecting the Axis to 3D Coordinates</h2>
 				<p>soon...</p>
 			</section>
 		</section>
@@ -102,10 +107,9 @@
 			<section class='lvl2'>
 				<h2>Summary</h2>
 				<ol>
-					<li>The cartesian coordinates of the detector, source, and core are rotated so that the core axis is parallel to the new Y axis (Yr)</li>
-					<li>Hold</li>
-					<li>Hold</li>
-					<li>Hold</li>
+					<li>Rotate the cartesian coordinates of the detector, source, and core so that the core axis is parallel to the new Y axis (Yr)</li>
+					<li>Calculate the intersections between the source-to-pixel rays and the cylinder representing the core (including plane through center)</li>
+					<li>Determine the ray path lengths through the core, based on the intersections and the core type</li>
 				</ol>
 			</section>
 		
@@ -119,149 +123,155 @@
 			</section>
 		
 			<section class='lvl2'>
-				<h2>Coordinate Systems</h2>
-				<h3>Convert from initial coordinates to rotated coordinates, where Yr is aligned with cylinder axis</h3>
-				<p>Xr = X cos&Theta; - Y sin&Theta;</p>
-				<p>Yr = X sin&Theta; - Y cos&Theta;</p>
-				<p>Zr = Z</p>
-			</section>
-		
-			<section class='lvl2'>
-				<h2>Fundamental Equations</h2>
-				<h3>Equation of a cylinder, aligned with Yr axis</h3>
-				<p>(Xr - Xr<sub>a</sub>)<sup>2</sup> + (Zr - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
-				
-				<h3>Parametric equations of a ray, passing from the source to a point on the detector</h3>
-				<p>Xr = Xr<sub>s</sub> + (u<sub>Xr</sub>)t</p>
-				<p>Yr = Yr<sub>s</sub> + (u<sub>Yr</sub>)t</p>
-				<p>Zr = Zr<sub>s</sub> + (u<sub>Zr</sub>)t</p>
-				<p>u<sub>Xr</sub> = (Xr<sub>d</sub> - Xr<sub>s</sub>) / ||u||</p>
-				<p>u<sub>Yr</sub> = (Yr<sub>d</sub> - Yr<sub>s</sub>) / ||u||</p>
-				<p>u<sub>Zr</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>) / ||u||</p>
-			</section>
-		
-			<section class='lvl2'>
-				<h2>Intersections Between a Ray and the Top Plane of the Half-Round Cylinder </h2>
-				<p>if u<sub>Zr</sub> &ne; 0</p>
-				<p>t<sub>h</sub> = (Zr<sub>a</sub> - Zr<sub>s</sub>) / u<sub>Zr</sub></p>
-				<p>else</p>
-				<p>t<sub>h</sub> = undefined</p>
+				<h2>Rotate Coordinates</h2>
+				<p>Convert from initial coordinates to rotated coordinates, where Yr is aligned with the cylinder axis</p>
+				<div class='equation'>Xr = X cos&Theta; - Y sin&Theta;</div>
+				<div class='equation'>Yr = X sin&Theta; - Y cos&Theta;</div>
+				<div class='equation'>Zr = Z</div>
 			</section>
 		
 			<section class='lvl2'>
 				<h2>Intersections Between a Ray and a Cylinder</h2>
-				<h3>Substitution</h3>
-				<p>(Xr<sub>s</sub> + (u<sub>Xr</sub>)t - Xr<sub>a</sub>)<sup>2</sup> + (Zr<sub>s</sub> + (u<sub>Zr</sub>)t - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
+				<h3>Fundamental equations</h3>
+				<p>Equation of a cylinder, aligned with Yr axis</p>
+				<div class='equation'>(Xr<sub>cyl</sub> - Xr<sub>axis</sub>)<sup>2</sup> + (Zr<sub>cyl</sub> - Zr<sub>axis</sub>)<sup>2</sup> = R<sup>2</sup></div>
 				
-				<h3>Expand the full equation</h3>
-				<p>At<sup>2</sup> + Bt + C = 0</p>
-				<p>A = u<sub>Xr</sub><sup>2</sup> + u<sub>Zr</sub><sup>2</sup></p>
-				<p>B = 2u<sub>Xr</sub>(Xr<sub>s</sub> - Xr<sub>a</sub>) + 2u<sub>Zr</sub>(Zr<sub>s</sub> - Zr<sub>a</sub>)</p>
-				<p>C = Xr<sub>s</sub><sup>2</sup> - 2Xr<sub>s</sub>Xr<sub>a</sub> + Xr<sub>a</sub><sup>2</sup> + Zr<sub>s</sub><sup>2</sup> - 2Zr<sub>s</sub>Zr<sub>a</sub> + Zr<sub>a</sub><sup>2</sup> - R<sup>2</sup></p>
+				<p>Parametric equations of a ray, passing from the source to a point on the detector</p>
+				<div class='equation'>&Delta;Xr = (Xr<sub>det</sub> - Xr<sub>src</sub>)</div>
+				<div class='equation'>&Delta;Yr = (Yr<sub>det</sub> - Yr<sub>src</sub>)</div>
+				<div class='equation'>&Delta;Zr = (Zr<sub>det</sub> - Zr<sub>src</sub>)</div>
+				<div class='equation'>u<sub>xr</sub> = &Delta;Xr / &radic;(&Delta;Xr<sup>2</sup> + &Delta;Yr<sup>2</sup> + &Delta;Zr<sup>2</sup>)</div>
+				<div class='equation'>u<sub>yr</sub> = &Delta;Yr / &radic;(&Delta;Xr<sup>2</sup> + &Delta;Yr<sup>2</sup> + &Delta;Zr<sup>2</sup>)</div>
+				<div class='equation'>u<sub>zr</sub> = &Delta;Zr / &radic;(&Delta;Xr<sup>2</sup> + &Delta;Yr<sup>2</sup> + &Delta;Zr<sup>2</sup>)</div>
+				<div class='equation'>Xr<sub>ray</sub> = Xr<sub>src</sub> + (u<sub>xr</sub>)t</div>
+				<div class='equation'>Yr<sub>ray</sub> = Yr<sub>src</sub> + (u<sub>yr</sub>)t</div>
+				<div class='equation'>Zr<sub>ray</sub> = Zr<sub>src</sub> + (u<sub>zr</sub>)t</div>
+			
+				<h3>Substitute equations to find intersections</h3>
+				<div class='equation'>Xr<sub>cyl</sub> = Xr<sub>ray</sub></div>
+				<div class='equation'>Zr<sub>cyl</sub> = Zr<sub>ray</sub></div>
+				<div class='equation'>(Xr<sub>src</sub> + (u<sub>xr</sub>)t - Xr<sub>axis</sub>)<sup>2</sup> + (Zr<sub>src</sub> + (u<sub>zr</sub>)t - Zr<sub>axis</sub>)<sup>2</sup> = R<sup>2</sup></div>
 				
-				<h3>Solve using the quadratic formula</h3>
-				<p>det = B<sup>2</sup> - 4AC</p>
-				<p>if det &gt; 0</p>
-				<p>t<sub>c1</sub> = (-B - &radic;det) / 2A</p>
-				<p>t<sub>c2</sub> = (-B + &radic;det) / 2A</p>
-				<p>else</p>
-				<p>t<sub>c1</sub>, t<sub>c2</sub> = 0</p>
+				<h3>Rearrange to solve quadratic equation</h3>
+				<div class='equation'>At<sup>2</sup> + Bt + C = 0</div>
+				<div class='equation'>A = u<sub>xr</sub><sup>2</sup> + u<sub>zr</sub><sup>2</sup></div>
+				<div class='equation'>B = 2u<sub>xr</sub>(Xr<sub>src</sub> - Xr<sub>axis</sub>) + 2u<sub>zr</sub>(Zr<sub>src</sub> - Zr<sub>axis</sub>)</div>
+				<div class='equation'>C = Xr<sub>src</sub><sup>2</sup> - 2Xr<sub>src</sub>Xr<sub>axis</sub> + Xr<sub>axis</sub><sup>2</sup> + Zr<sub>src</sub><sup>2</sup> - 2Zr<sub>src</sub>Zr<sub>axis</sub> + Zr<sub>axis</sub><sup>2</sup> - R<sup>2</sup></div>
+				<div class='equation'>D = B<sup>2</sup> - 4AC</div>
+				<div class='conditional'>if D &gt; 0:</div>
+				<div class='equation'>t<sub>c1</sub> = (-B - &radic;D) / 2A</div>
+				<div class='equation'>t<sub>c2</sub> = (-B + &radic;D) / 2A</div>
+				
+				<h3>Find the intersection with the horizontal plane dividing the core</h3>
+				<div class='conditional'>if D &gt; 0:</div>
+				<div class='equation'>t<sub>h</sub> = (Zr<sub>a</sub> - Zr<sub>s</sub>) / u<sub>zr</sub></div>
 			</section>
 		
 			<section class='lvl2'>
-				<h2>Path Lengths Through Whole Round and Half Round</h2>
+				<h2>Path Lengths Through the Core</h2>
 				<h3>Whole round</h3>
-				<p>if det &gt; 0</p>
-				<p>thickness = t<sub>c2</sub> - t<sub>c1</sub>
-				<p>else</p>
-				<p>thickness = 0
+				<div class='conditional'>if D &gt; 0:</div>
+				<div class='equation'>&Delta;t = t<sub>c2</sub> - t<sub>c1</sub></div>
+				<div class='conditional'>else:</div>
+				<div class='equation'>&Delta;t = 0</div>
 				
 				<h3>Half round</h3>
-				<p>if det &gt; 0 and t<sub>h</sub> &lt; t<sub>c1</sub></p>
-				<p>thickness = t<sub>c2</sub> - t<sub>c1</sub></p>
-				<p>if det &gt; 0 and t<sub>c2</sub> &gt; t<sub>h</sub> &gt; t<sub>c1</sub></p>
-				<p>thickness = t<sub>c2</sub> - t<sub>h</sub></p>
-				<p>if det &le; 0 or t<sub>h</sub> &gt; t<sub>c2</sub></p>
-				<p>thickness = 0</p>
+				<div class='conditional'>if D &gt; 0 and t<sub>h</sub> &lt; t<sub>c1</sub>:</div>
+				<div class='equation'>&Delta;t = t<sub>c2</sub> - t<sub>c1</sub></div>
+				<div class='conditional'>if D &gt; 0 and t<sub>c2</sub> &gt; t<sub>h</sub> &gt; t<sub>c1</sub>:</div>
+				<div class='equation'>&Delta;t = t<sub>c2</sub> - t<sub>h</sub></div>
+				<div class='conditional'>if D &le; 0 or t<sub>h</sub> &gt; t<sub>c2</sub>:</div>
+				<div class='equation'>&Delta;t = 0</div>
 			</section>
 			
 			<section class='lvl2'>
 				<h2>Alternative Formulation for Computational Efficiency</h2>
-				<h3>Summary</h3>
+				<h3>Description</h3>
 				<p>Using the previous set of equations directly requires the determinant to be calculated for each and every pixel, 
 				which is computationally expensive. This is solely because the length of the unit vector is calculated in 3D. 
-				However, all other values in the calculations are confined to the Xr, Zr plane. If u<sub>Yr</sub> is initially treated as 0, 
+				However, all other values in the calculations are confined to the Xr, Zr plane. If u<sub>yr</sub> is initially treated as 0, 
 				then the thicknesses in the Xr, Zr plane can be pre-calculated in the form of a lookup table. Because Yr is oriented 
-				parallel to the cylinder axis, converting t<sub>xz</sub> to t<sub>xyz</sub> is a very simple trigonometry problem.</p>
+				parallel to the cylinder axis, converting &Delta;t<sub>xz</sub> to &Delta;t<sub>xyz</sub> is a very simple trigonometry problem.</p>
 				
 				<h3>Basic Definitions</h3>
-				<p>t<sub>x</sub>, t<sub>y</sub>, t<sub>z</sub> = Xr, Yr, and Zr distances between entry point and exit point of core</p>
-				<p>t<sub>xz</sub> = &radic;(t<sub>x</sub><sup>2</sup> + t<sub>z</sub><sup>2</sup>)</p>
-				<p>t<sub>xyz</sub> = &radic;(t<sub>x</sub><sup>2</sup> + t<sub>y</sub><sup>2</sup> + t<sub>z</sub><sup>2</sup>)</p>
-				<p>&Delta;Xr = (Xr<sub>d</sub> - Xr<sub>s</sub>)</p>
-				<p>&Delta;Yr = (Yr<sub>d</sub> - Yr<sub>s</sub>)</p>
-				<p>&Delta;Zr = (Zr<sub>d</sub> - Zr<sub>s</sub>)</p>
+				<div class='equation'>&Delta;t<sub>x</sub>, &Delta;t<sub>y</sub>, &Delta;t<sub>z</sub> = cartesian components of distance between entry point and exit point of core</div>
+				<div class='equation'>&Delta;t<sub>xz</sub> = &radic;(&Delta;t<sub>x</sub><sup>2</sup> + &Delta;t<sub>z</sub><sup>2</sup>)</div>
+				<div class='equation'>&Delta;t<sub>xyz</sub> = &radic;(&Delta;t<sub>x</sub><sup>2</sup> + &Delta;t<sub>y</sub><sup>2</sup> + &Delta;t<sub>z</sub><sup>2</sup>)</div>
 				
 				<h3>Trigonometric Equivalence</h3>
-				<p>t<sub>y</sub> / t<sub>xz</sub> = &Delta;Yr / &radic;(&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)</p>
+				<div class='equation'>&Delta;t<sub>y</sub> / &Delta;t<sub>xz</sub> = &Delta;Yr / &radic;(&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)</div>
 				
 				<h3>Substitute, Rearrange, and Solve</h3>
-				<p>t<sub>xyz</sub> = &radic;(t<sub>xz</sub><sup>2</sup> + t<sub>y</sub><sup>2</sup>)</p>
-				<p>t<sub>xyz</sub> = &radic;(t<sub>xz</sub><sup>2</sup> (1 + (&Delta;Yr<sup>2</sup> / (&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)))</p>
+				<div class='equation'>&Delta;t<sub>xyz</sub> = &radic;(&Delta;t<sub>xz</sub><sup>2</sup> + &Delta;t<sub>y</sub><sup>2</sup>)</div>
+				<div class='equation'>&Delta;t<sub>xyz</sub> = &radic;(&Delta;t<sub>xz</sub><sup>2</sup> (1 + (&Delta;Yr<sup>2</sup> / (&Delta;Xr<sup>2</sup> + &Delta;Zr<sup>2</sup>)))</div>
 				
 				<h3>Limits for Calculations</h3>
 				<p>Intersections only need to be calculated over the range of Xr values that will give a determinant > 0. 
 				You could explicitly rearrange the quadratic formula to solve for Xr when t<sub>c1</sub> and t<sub>c2</sub>= 0, 
 				or you could use an approximation that still allows some negative determinant values. You can skip the calculations if the ray between the source and the value of Xr passes 
 				outside of a square that fits around the cylinder in 2D.</p>
-				<p>Zr - Zr<sub>s</sub> = m * (Xr - Xr<sub>s</sub>)</p>
-				<p>Xr<sub>min</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>)*((Xr<sub>a</sub> - R - Xr<sub>s</sub>) / (Zr<sub>a</sub> + R - Zr<sub>s</sub>)) + Xr<sub>s</sub></p>
-				<p>Xr<sub>max</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>)*((Xr<sub>a</sub> + R - Xr<sub>s</sub>) / (Zr<sub>a</sub> + R - Zr<sub>s</sub>)) + Xr<sub>s</sub></p>
+				<div class='equation'>Xr<sub>min</sub> = (Zr<sub>det</sub> - Zr<sub>src</sub>)*((Xr<sub>axis</sub> - R - Xr<sub>src</sub>) / (Zr<sub>axis</sub> + R - Zr<sub>src</sub>)) + Xr<sub>src</sub></div>
+				<div class='equation'>Xr<sub>max</sub> = (Zr<sub>det</sub> - Zr<sub>src</sub>)*((Xr<sub>axis</sub> + R - Xr<sub>src</sub>) / (Zr<sub>axis</sub> + R - Zr<sub>src</sub>)) + Xr<sub>src</sub></div>
 			</section>
 		</section>
 		
 		<section class='lvl1'>
 			<h1>Primary Calculations</h1>
+			
+			<section class='lvl2'>
+				<h2>Summary</h2>
+				<ol>
+					<li>Calculate &mu;<sub>eff</sub>*&rho;*t</li>
+					<li>Perform thickness compensation to calculate &mu;<sub>eff</sub>*&rho;*t<sub>ref</sub></li>
+				</ol>
+			</section>
+		
+			<section class='lvl2'>
+				<h2>Assumptions</h2>
+				<ul>
+					<li>I<sub>max</sub> is treated as I<sub>0</sub> in the calculations. See below for more discussion about the significance of this assumption.</li>
+					<li>&mu;<sub>eff</sub> is treated as independent of thickness, even though simulations show that this is not true.</li>
+				</ul>
+			</section>
 		
 			<section class='lvl2'>
 				<h2>Theoretical Background</h2>
 				<h3>Fundamental material properties</h3>
-				<p>&mu;(E) = mass attenuation coefficient of a material at a particular x-ray energy, based on the chemical composition</p>
-				<p>&rho; = material density</p>
-				<p>t = material thickness along the x-ray path</p>
+				<div class='equation'>&mu;(E) = mass attenuation coefficient of a material at a particular x-ray energy, based on the chemical composition</div>
+				<div class='equation'>&rho; = material density</div>
+				<div class='equation'>t = material thickness along the x-ray path</div>
 				
 				<h3>Basic equation for monochromatic x-ray transmission</h3>
-				<p>I<sub>trans</sub>(E) = I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup></p>
-				
-				<h3>Equation for total x-ray transmission</h3>
-				<p>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</p>
+				<div class='equation'>I<sub>trans</sub>(E) = I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup></div>
+				<div class='equation'>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</div>
+			
+				<h3>Approximated x-ray transmission for polychromatic source</h3>
+				<p>Based on numerical simulations, for a given material composition and source spectrum, a single effective 
+				mass attenuation coefficent can be used to approximate attenuation behavior for polychromatic x-rays.</p>
+				<div class='equation'>I<sub>trans</sub> = &sum; I<sub>trans</sub>(E)</div>
+				<div class='equation'>I<sub>0</sub> = &sum; I<sub>0</sub>(E)</div>
+				<div class='equation'>I<sub>trans</sub> &approx; I<sub>0</sub> * e<sup>-&mu;<sub>eff</sub>*&rho;*t</sup></div>
 			</section>
 			
 			<section class='lvl2'>
-				<h2>Polychromatic X-Ray Approximation</h2>
-				<h3>Approximated x-ray transmission</h3>
-				<p>Based on numerical simulations, for a given material composition and source spectrum, a single effective 
-				mass attenuation coefficent can be used to approximate attenuation behavior for polychromatic x-rays.</p>
-				<p>I<sub>trans</sub> = &sum; I<sub>trans</sub>(E)</p>
-				<p>I<sub>0</sub> = &sum; I<sub>0</sub>(E)</p>
-				<p>I<sub>trans</sub> &approx; I<sub>0</sub> * e<sup>-&mu;<sub>eff</sub>*&rho;*t</sup></p>
-			
-				<h3>Estimating effective material properties</h3>
+				<h2>Calculating the material properties</h2>
 				<p>If our detector is over-saturated, we don't know I<sub>0</sub> (the total number of x-rays from the source), 
 				we only know I<sub>max</sub>, the value at which the detector saturates. The impact of using I<sub>max</sub> 
-				instead of I<sub>0</sub> is that all of our &mu;<sub>eff</sub>*&rho;*t values will be shifted by a constant value. </p>
-				<p>&mu;<sub>eff</sub>*&rho;*t &approx; ln(I<sub>max</sub> + 1.0) - ln(I<sub>trans</sub> + 1.0)</p>
-				<p>We add 1.0 to I<sub>trans</sub> to prevent undefined behavior when I<sub>trans</sub> = 0, and we add 1.0 to I<sub>max</sub> 
+				instead of I<sub>0</sub> is that all of our &mu;<sub>eff</sub>*&rho;*t values will be shifted by a constant value. 
+				We add 1.0 to I<sub>trans</sub> to prevent undefined behavior when I<sub>trans</sub> = 0, and we add 1.0 to I<sub>max</sub> 
 				to preserve the fact that &mu;<sub>eff</sub>*&rho;*t = 0 when I<sub>trans</sub> is equal to I<sub>max</sub>.</p>
+				<div class='equation'>&mu;<sub>eff</sub>*&rho;*t &approx; ln(I<sub>max</sub> + 1.0) - ln(I<sub>trans</sub> + 1.0)</div>
+			</section>
 			
-				<h3>Compensating for thickness</h3>
+			<section class='lvl2'>
+				<h2>Compensating for thickness</h2>
 				<p>We can remove the impact of thickness variations by normalizing to a constant reference thickness (in this case, the maximum core thickness). 
 				Outside the modelled footprint of the core, we leave the &mu;<sub>eff</sub>*&rho;*t values unchanged. 
 				The reason that we adjust to a constant thickness rather than just dividing by the thickness is that it better preserves the relationships 
 				between pixel values within the core footprint and pixel values outside of the core, if other objects are present (such as references or standards).</p>
-				<p>&mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> &approx; (&mu;<sub>eff</sub>*&rho;*t) * (t<sub>ref</sub> / t<sub>model</sub>)
-				<p>t<sub>model</sub> = distances through the core that x-rays have to travel to reach each pixel</p>
-				<p>t<sub>ref</sub> = maximum vertical distance through core (diameter or radius)</p>
+				<div class='equation'>t<sub>model</sub> = distance through the core that x-rays travel</div>
+				<div class='equation'>t<sub>ref</sub> = maximum vertical distance through core</div>
+				<div class='equation'>&mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> &approx; (&mu;<sub>eff</sub>*&rho;*t) * (t<sub>ref</sub> / t<sub>model</sub>)</div>
 			</section>
 		</section>
 		
@@ -269,46 +279,75 @@
 			<h1>Contrast Enhancement</h1>
 			
 			<section class='lvl2'>
-				<h2>Requirements</h2>
-				<p>Must be a function that is continuous over the input range and through the peak! Using two different functions around the 
-				peak leads to strong anomalies and unstable behavior at the peak itself, which creates artifacts over large swaths of the images.</p>
+				<h2>Summary</h2>
+				<ol>
+					<li>Normalize (0-1) and clip the &mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> values based on user-specified bounds</li>
+					<li>Calculate the transformation function based on the histogram shape</li>
+					<li>Convert the normalized input values to normalized (0-1) output values using the transformation function</li>
+					<li>Convert the new normalized values to 16-bit, reversing the scale so that high &mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> values have low pixel 
+					brightness (to preserve the initial acquisition color scheme, where dark means fewer x-rays)</li>
+				</ol>
+			</section>
+		
+			<section class='lvl2'>
+				<h2>Assumptions</h2>
+				<ul>
+					<li>None</li>
+				</ul>
 			</section>
 			
 			<section class='lvl2'>
-				<h2>Histogram Stretching and Centering</h2>
-				<h3>Values</h3>
-				<p>O<sub>val</sub> = &mu;<sub>eff</sub>*&rho;*t<sub>max</sub></p>
-				<p>O<sub>min</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>high</sub> + 1.0)</p>
-				<p>O<sub>peak</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>peak</sub> + 1.0)</p>
-				<p>O<sub>max</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>low</sub> + 1.0)</p>
+				<h2>Description</h2>
+				<p>The goal for this part of the program is to enhance the visibility of subtle features at the expense of obvious features. 
+				To do this, I created a global function that would map all input &mu;<sub>eff</sub>*&rho;*t<sub>ref</sub> values to 
+				new 16-bit output values for display. The function stretches the values around the histogram peak, and it shifts the peak 
+				towards the center of the output value range. The function needs to be continuous over the input range, especially over the range 
+				around the histogram peak. Using two different functions around the peak leads to artifacts over large swaths of the images. 
+				The function also needs to be monotonic, meaning that all input values (inside a clipping range) are uniquely mapped to 
+				output values. Finally, the function does not rely on any local context, meaning that a value in one image 
+				has the same underlying meaning as a value in another image (or part of an image).</p>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Clipping and Normalizing Values</h2>
+				<h3>Reference Values</h3>
+				<div class='equation'>O<sub>val</sub> = &mu;<sub>eff</sub>*&rho;*t<sub>ref</sub></div>
+				<div class='equation'>O<sub>min</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>high</sub> + 1.0)</div>
+				<div class='equation'>O<sub>peak</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>peak</sub> + 1.0)</div>
+				<div class='equation'>O<sub>max</sub> = ln(I<sub>max</sub> + 1.0) - ln(I<sub>low</sub> + 1.0)</div>
 				
 				<h3>Normalization</h3>
-				<p>if O<sub>min</sub> &le; O<sub>val</sub> &le; O<sub>max</sub></p>
-				<p>L = (O<sub>val</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
-				<p>if O<sub>val</sub> &lt; O<sub>min</sub></p>
-				<p>L = 0.0</p>
-				<p>if O<sub>val</sub> &gt; O<sub>max</sub></p>
-				<p>L = 1.0</p>
-				
+				<div class='conditional'>if O<sub>min</sub> &le; O<sub>val</sub> &le; O<sub>max</sub></div>
+				<div class='equation'>L = (O<sub>val</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</div>
+				<div class='conditional'>if O<sub>val</sub> &lt; O<sub>min</sub></div>
+				<div class='equation'>L = 0.0</div>
+				<div class='conditional'>if O<sub>val</sub> &gt; O<sub>max</sub></div>
+				<div class='equation'>L = 1.0</div>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Calculating and Applying the Transformation Function</h2>
 				<h3>Using a polynomial to stretch the L values and center the peak at 0.5</h3>
-				<p>L<sub>peak</sub> = (O<sub>peak</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</p>
-				<p>0.5 = L<sub>peak</sub><sup>n</sup></p>
-				<p>n = ln(0.5) / ln(L<sub>peak</sub>)</p>
-				<p>P = L<sup>n</sup></p>
+				<div class='equation'>P = L<sup>n</sup></div>
+				<div class='equation'>0.5 = L<sub>peak</sub><sup>n</sup></div>
+				<div class='equation'>L<sub>peak</sub> = (O<sub>peak</sub> - O<sub>min</sub>) / (O<sub>max</sub> - O<sub>min</sub>)</div>
+				<div class='equation'>n = ln(0.5) / ln(L<sub>peak</sub>)</div>
 				
 				<h3>Using a sine function to stretch central values and compress edge values</h3>
-				<p>S(L) = 0.5 * sin(&pi; * (L − 0.5)) + 0.5</p>
-				<p>S(P) = 0.5 * sin(&pi; * (P − 0.5)) + 0.5</p>
+				<div class='equation'>S(L) = 0.5 * sin(&pi; * (L − 0.5)) + 0.5</div>
+				<div class='equation'>S(P) = 0.5 * sin(&pi; * (P − 0.5)) + 0.5</div>
 				
 				<h3>Avoiding too much distortion</h3>
 				<p>When L<sub>peak</sub> is far from 0.5, using S(P) can distort the spectrum too much and cause spectral artifacts. 
 				Using S(L) will not shift the peak at all, however, leaving too much original skew. Using a weighted mixture of S(P) and S(L) 
 				allows us to shift the peak and stretch the histogram without causing poor behavior under extreme skew.</p>
-				<p>w = 1.0 − abs(2.0 * (L<sub>peak</sub> − 0.5))<sup>2</sup></p>
-				<p>Y = w * S(P) + (1 − w) * S(L)</p>
-				
-				<h3>Converting to pixel values and reversing greyscale</h3>
-				<p>I<sub>proc</sub> = I<sub>max</sub> * (1 - Y)</p>
+				<div class='equation'>w = 1.0 − abs(2.0 * (L<sub>peak</sub> − 0.5))<sup>2</sup></div>
+				<div class='equation'>Y = w * S(P) + (1 − w) * S(L)</div>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Converting to pixel values and reversing greyscale</h2>
+				<div class='equation'>I<sub>proc</sub> = I<sub>max</sub> * (1 - Y)</div>
 			</section>
 			
 		</section>
@@ -317,8 +356,17 @@
 			<h1>Scale Bars</h1>
 			
 			<section class='lvl2'>
+				<h2>Summary</h2>
+				<ol>
+					<li>Coming soon...</li>
+				</ol>
+			</section>
+		
+			<section class='lvl2'>
 				<h2>Assumptions</h2>
-				<p>Coming soon!</p>
+				<ul>
+					<li>Coming soon...</li>
+				</ul>
 			</section>
 			
 		</section>
