@@ -6,97 +6,101 @@
         <link rel='stylesheet' href='styles.css'>
     </head>
     <body>
-        <section id='appHeader' class='lvl1'>
-            <div class='appTitle'>X-Ray Image Processing for Cores</div>
+        <header>
+            <h1>X-Ray Image Processing for Cores</h1>
+        </header>
+        <nav>
+            <h1>Navigation</h1>
+            <a href='setup.html'>Processing Settings</a><br>
+            <a href='math.html'>Math Documentation</a>
+        </nav>
+        
+        <section class='lvl1'>
+        	<h1>Basic User Workflow</h1>
+        	<ol>
+        		<li>Select the raw images to process</li>
+        		<li>Generate a histogram for pixel values in all of the images</li>
+        		<li>Select the desired histogram bounds to be used for processing</li>
+        		<li>Specify the geometry of the system and the core</li>
+        		<li>Process the images</li>
+        	</ol>
         </section>
         
         <section class='lvl1'>
-            <div class='title1'>File Explorer</div>
-            <div class='lvl2'>
+            <h1>File Explorer</h1>
+            <section class='lvl2'>
                 <input id='selectAll' type='checkbox'><label>Select all</label>
-            </div>
-            <div class='lvl2' id='fileList'></div>
+            </section>
+            <section class='lvl2' id='fileList'></section>
         </section>
         
         <section class='lvl1'>
-            <div class='title1'>Image Histogram</div>
-            <div>
+            <h1>Image Histogram</h1>
+            <section class='lvl2'>
                 <button id='getHistogram' onclick='histogramAPI()'>Get Histogram</button>
                 <span id='histogramIndicator'></span>
-            </div>
-            <div class='lvl2'>
+            </section>
+            <section class='lvl2'>
                 <div>
                     <img id='histogramImg'>
                 </div>
                 <div>
                     <input id='IlowFrac' type='range' class='slider' step='0.01' min='0.0' max='1.0' value='0.0'>
                     <label>Left edge &nbsp;</label>
-                </div>
-                <div>
+                    <br>
                     <input id='IpeakFrac' type='range' class='slider' step='0.01' min='0.0' max='1.0' value='0.5'>
                     <label>Peak position &nbsp;</label>
-                </div>
-                <div>
+                    <br>
                     <input id='IhighFrac' type='range' class='slider' step='0.01' min='0.0' max='1.0' value='1.0'>
                     <label>Right edge &nbsp;</label>
                 </div>
-            </div>
+            </section>
         </section>
         
         <section class='lvl1'>
-            <div class='title1'>Process Images</div>
-            <div class='lvl2'>
-                <div class='title2'>Core Size</div>
+            <h1>Process Images</h1>
+            <section class='lvl2'>
+                <h2>Core Dimensions</h2>
                 <div>
                     <input id='wholeRound' type='radio' name='CoreType' value='WR' checked><label>Whole round</label>
+                    <br>
                     <input id='halfRound' type='radio' name='CoreType' value='HR'><label>Half round</label>
-                </div>
-                <div>
+                    <br><br>
+                    
+                    <label>Diameter of core (cm)</label>   
                     <input id='CoreDiameter' type='number' min='0.0' step='0.1'>
-                    <label>Diameter of core (cm)</label>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Core Orientation</div>
+            </section>
+            <section class='lvl2'>
+                <h2>Axis Determination</h2>
                 <div>
                     <input id='autoDetect' type='radio' name='AxisMethod' value='autoDetect' checked><label>Auto-detect core axis</label>
+                    <br>
                     <input id='setAxis' type='radio' name='AxisMethod' value='setAxis'><label>Set core axis</label>
-                </div>
-                <div>
-                    <input id='AxisAngle' type='number' min='-10.0' max='10.0' step='0.1'>
+                    <br><br>
+                        
                     <label>Angle of core axis, counter-clockwise (&deg;)</label>
-                </div>
-                <div>
-                    <input id='AxisOffset' type='number' min='-2.0' max='2.0' step='0.1'>
+                    <input id='AxisAngle' type='number' min='-10.0' max='10.0' step='0.1'>
+                        
                     <label>Core axis offset from center of image (cm)</label>
+                    <input id='AxisOffset' type='number' min='-2.0' max='2.0' step='0.1'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Output Files</div>
+            </section>
+            <section class='lvl2'>
+                <h2>File Names</h2>
                 <div>
-                    <input id='FolderName' type='text' value='processed'>
                     <label>Name of output folder</label>
-                </div>
-                <div>
-                    <input id='FileAppend' type='text' value='_processed'>
+                    <input id='FolderName' type='text' value='processed'>
+                        
                     <label>String to append at the end of the file name</label>
+                    <input id='FileAppend' type='text' value='_processed'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Run Program</div>
-                <div>
-                    <button id='processFiles' onclick='processAPI()'>Process Files</button>
-                    <span id='processIndicator'></span>
-                </div>
-            </div>
-        </section>
-        
-        <section class='lvl1'>
-            <div class='title1'>Directory</div>
-            <div class='lvl2'>
-                <a href='setup.html'>Processing Settings</a><br>
-                <a href='math.html'>Math Documentation</a>
-            </div>
+            </section>
+            <section class='lvl2'>
+                <h2>Process</h2>
+                <div><button id='processFiles' onclick='processAPI()'>Process Files</button></div>
+                <span id='processIndicator'></span>
+            </section>
         </section>
         
         <script src='index.js'></script>

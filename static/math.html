@@ -5,25 +5,62 @@
         <title>Math Behind the Image Processing</title>
         <link rel='stylesheet' href='styles.css'>
     </head>
-    <html>
 	<body>
-		<section>
+		<header class='header'>
+            <h1>Math Behind the Processing</h1>
+        </header>
+        <nav>
+            <h1>Navigation</h1>
+            <a href='index.html'>Main Page</a><br>
+            <a href='setup.html'>Processing Settings</a>
+        </nav>
+        
+        <section class='lvl1'>
+        	<h1>Basic Processing Workflow</h1>
+			<ol>
+				<li>Open the raw image</li>
+				<li>Detect the location of the core in the image (unless the location is specified by the user)</li>
+				<li>Model the x-ray path from the source to each pixel using the specified location and geometry</li>
+				<li>Calculate &mu;&rho;t from the raw image (primary image enhancement step)</li>
+				<li>Perform thickness compensation using modelled ray paths to "flatten" the core</li>
+				<li>Apply contrast enhancement algorithms to improve the image</li>
+				<li>Add scale bars</li>
+				<li>Save the new image</li>
+			</ol>
+        </section>
+		
+		<section class='lvl1'>
+			<h1>Important Processing Notes</h1>
+			<ul>
+				<li>Grayscale values are globally consistent; a pixel value in one part of an image has the same underlying meaning as the same value in another part of the image</li>
+				<li>The relationship between the input grayscale and the output grayscale is monotonic within the bounds specified by the user</li>
+				<li>The relationship between the input grayscale and the output grayscale is the same for all images processed in the same batch</li>
+			</ul>
+		</section>
+
+		<section class='lvl1'>
 			<h1>Core Axis Determination</h1>
 			
-			<section>
-				<h2>Assumptions</h2>
-				<p>Coming soon!</p>
-				<p>When I try to manually locate the axis of a core in an x-ray image, I consider several different pieces 
-				of information. First, I take note of the edges. The edges create an outline of the core, and I don't bother 
-				searching for the axis outside of them. Second, I look for where the core appears darkest. I try to reconcile 
-				the darkest parts of the core against the line created by the mid-points between the edges. At this point, 
-				it becomes a judgement call on how I would trace the axis. Obviously, when devising algorithms, I don't have the 
-				luxury of using "judgement" on each image. I need to write rules. However, I can still use my personal 
-				approach as a framework, and the following is based on my own experience and experiments.</p>
-				<p>Feel free to develop your own approach(es)!</p>
+			<section class='lvl2'>
+				<h2>Summary</h2>
+				<ol>
+					<li>Within each row of pixels, find the edges of the core</li>
+					<li>Within each row of pixels, calculate the center of mass between the edges</li>
+					<li>Perform ordinary least squares regression to fit a line through the centers of mass</li>
+					<li>Iteratively discard points that are too far from the line and re-calculate regression</li>
+				</ol>
 			</section>
 			
-			<section>
+			<section class='lvl2'>
+				<h2>Assumptions</h2>
+				<ul>
+					<li>The core is expected to be oriented roughly top to bottom in the image. 
+					For the detector that's currently being used in Phase 1, that corresponds to the core being oriented along the long axis of the detector. 
+					The image searching algorithm uses a row-first approach, and it will fail if the core is aligned left to right.</li>
+				</ul>
+			</section>
+			
+			<section class='lvl2'>
 				<h2>Detecting Likely Points on the Core Axis</h2>
 				<p>Coming soon!</p>
 				<h3>Finding the Edges</h3>
@@ -45,7 +82,7 @@
 				compromise.</p>
 			</section>
 			
-			<section>
+			<section class='lvl2'>
 				<h2>Estimating the Axis</h2>
 				<p>Coming soon!</p>
 				<h3>Ordinary Least Squares Regression</h3>
@@ -59,17 +96,29 @@
 			</section>
 		</section>
 		
-		<section>
+		<section class='lvl1'>
 			<h1>Thickness Modelling</h1>
-		
-			<section>
-				<h2>Assumptions</h2>
-				<p>The primary assumptions are that the cylinder axis is always at the same Z and is aligned with the Y axis. 
-				If it's not aligned with Y, a simple XY axis rotation can be performed so that Yr is aligned with the axis. 
-				This will keep the math the same (and simple).</p>
+			
+			<section class='lvl2'>
+				<h2>Summary</h2>
+				<ol>
+					<li>The cartesian coordinates of the detector, source, and core are rotated so that the core axis is parallel to the new Y axis (Yr)</li>
+					<li>Hold</li>
+					<li>Hold</li>
+					<li>Hold</li>
+				</ol>
 			</section>
 		
-			<section>
+			<section class='lvl2'>
+				<h2>Assumptions</h2>
+				<ul>
+					<li>The core is assumed to be a cylinder or half-cylinder. The code will not work correctly on other shapes, such as slabs.</li>
+					<li>The cylinder axis is assumed to always be at the same height above the detector.</li>
+					<li>The source is assumed to be centered over the detector for all projection calculations. </li>
+				</ul>
+			</section>
+		
+			<section class='lvl2'>
 				<h2>Coordinate Systems</h2>
 				<h3>Convert from initial coordinates to rotated coordinates, where Yr is aligned with cylinder axis</h3>
 				<p>Xr = X cos&Theta; - Y sin&Theta;</p>
@@ -77,7 +126,7 @@
 				<p>Zr = Z</p>
 			</section>
 		
-			<section>
+			<section class='lvl2'>
 				<h2>Fundamental Equations</h2>
 				<h3>Equation of a cylinder, aligned with Yr axis</h3>
 				<p>(Xr - Xr<sub>a</sub>)<sup>2</sup> + (Zr - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
@@ -91,7 +140,7 @@
 				<p>u<sub>Zr</sub> = (Zr<sub>d</sub> - Zr<sub>s</sub>) / ||u||</p>
 			</section>
 		
-			<section>
+			<section class='lvl2'>
 				<h2>Intersections Between a Ray and the Top Plane of the Half-Round Cylinder </h2>
 				<p>if u<sub>Zr</sub> &ne; 0</p>
 				<p>t<sub>h</sub> = (Zr<sub>a</sub> - Zr<sub>s</sub>) / u<sub>Zr</sub></p>
@@ -99,7 +148,7 @@
 				<p>t<sub>h</sub> = undefined</p>
 			</section>
 		
-			<section>
+			<section class='lvl2'>
 				<h2>Intersections Between a Ray and a Cylinder</h2>
 				<h3>Substitution</h3>
 				<p>(Xr<sub>s</sub> + (u<sub>Xr</sub>)t - Xr<sub>a</sub>)<sup>2</sup> + (Zr<sub>s</sub> + (u<sub>Zr</sub>)t - Zr<sub>a</sub>)<sup>2</sup> = R<sup>2</sup></p>
@@ -119,7 +168,7 @@
 				<p>t<sub>c1</sub>, t<sub>c2</sub> = 0</p>
 			</section>
 		
-			<section>
+			<section class='lvl2'>
 				<h2>Path Lengths Through Whole Round and Half Round</h2>
 				<h3>Whole round</h3>
 				<p>if det &gt; 0</p>
@@ -136,7 +185,7 @@
 				<p>thickness = 0</p>
 			</section>
 			
-			<section>
+			<section class='lvl2'>
 				<h2>Alternative Formulation for Computational Efficiency</h2>
 				<h3>Summary</h3>
 				<p>Using the previous set of equations directly requires the determinant to be calculated for each and every pixel, 
@@ -171,10 +220,10 @@
 			</section>
 		</section>
 		
-		<section>
+		<section class='lvl1'>
 			<h1>Primary Calculations</h1>
 		
-			<section>
+			<section class='lvl2'>
 				<h2>Theoretical Background</h2>
 				<h3>Fundamental material properties</h3>
 				<p>&mu;(E) = mass attenuation coefficient of a material at a particular x-ray energy, based on the chemical composition</p>
@@ -188,7 +237,7 @@
 				<p>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</p>
 			</section>
 			
-			<section>
+			<section class='lvl2'>
 				<h2>Polychromatic X-Ray Approximation</h2>
 				<h3>Approximated x-ray transmission</h3>
 				<p>Based on numerical simulations, for a given material composition and source spectrum, a single effective 
@@ -216,16 +265,16 @@
 			</section>
 		</section>
 		
-		<section>
+		<section class='lvl1'>
 			<h1>Contrast Enhancement</h1>
 			
-			<section>
+			<section class='lvl2'>
 				<h2>Requirements</h2>
 				<p>Must be a function that is continuous over the input range and through the peak! Using two different functions around the 
 				peak leads to strong anomalies and unstable behavior at the peak itself, which creates artifacts over large swaths of the images.</p>
 			</section>
 			
-			<section>
+			<section class='lvl2'>
 				<h2>Histogram Stretching and Centering</h2>
 				<h3>Values</h3>
 				<p>O<sub>val</sub> = &mu;<sub>eff</sub>*&rho;*t<sub>max</sub></p>
@@ -264,10 +313,10 @@
 			
 		</section>
 		
-		<section>
+		<section class='lvl1'>
 			<h1>Scale Bars</h1>
 			
-			<section>
+			<section class='lvl2'>
 				<h2>Assumptions</h2>
 				<p>Coming soon!</p>
 			</section>

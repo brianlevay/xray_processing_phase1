@@ -6,138 +6,117 @@
         <link rel='stylesheet' href='styles.css'>
     </head>
     <body>
-        <section id='appHeader' class='lvl1'>
-            <div class='appTitle'>Processing Settings</div>
-        </section>
+        <header>
+            <h1>Processing Settings</h1>
+        </header>
+        <nav>
+            <h1>Navigation</h1>
+            <a href='index.html'>Main Page</a><br>
+            <a href='math.html'>Math Documentation</a>
+        </nav>
         
         <section class='lvl1'>
-            <div class='title1'>Settings</div>
-            <div class='lvl2'>
-                <div class='title2'>Instrument Geometry</div>
+            <h1>Settings</h1>
+            <section class='lvl2'>
+                <h2>Instrument Geometry</h2>
                 <div>
-                    <input id='SrcHeight' type='number' name='SrcHeight' min='0.0' step='0.1'>
                     <label>Source height above detector (cm)</label>
-                </div>
-                <div>
-                    <input id='CoreHeight' type='number' name='CoreHeight' min='0.0' step='0.1'>
+                    <input id='SrcHeight' type='number' name='SrcHeight' min='0.0' step='0.1'>
+                    
                     <label>Core height above detector (cm)</label>
-                </div>
-                <div>
-                    <input id='Motion' type='number' name='Motion' min='0.0' step='0.1'>
+                    <input id='CoreHeight' type='number' name='CoreHeight' min='0.0' step='0.1'>
+                    
                     <label>Motion of core between images (cm)</label>
+                    <input id='Motion' type='number' name='Motion' min='0.0' step='0.1'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Detector Settings</div>
+            </section>
+            <section class='lvl2'>
+                <h2>Detector Settings</h2>
                 <div>
-                    <input id='HeightPxDet' type='number' name='HeightPxDet' min='0' step='1'>
                     <label>Pixel height of detector</label>
-                </div>
-                <div>
-                    <input id='WidthPxDet' type='number' name='WidthPxDet' min='0' step='1'>
+                    <input id='HeightPxDet' type='number' name='HeightPxDet' min='0' step='1'>
+                    
                     <label>Pixel width of detector</label>
-                </div>
-                <div>
-                    <input id='CmPerPx' type='number' name='CmPerPx' min='0' step='0.0001'>
+                    <input id='WidthPxDet' type='number' name='WidthPxDet' min='0' step='1'>
+                    
                     <label>Size of each pixel (cm)</label>
-                </div>
-                <div>
-                    <input id='Bits' type='number' name='Bits' min='8' step='1' max='16'>
+                    <input id='CmPerPx' type='number' name='CmPerPx' min='0' step='0.0001'>
+                    
                     <label>Number of bits used to store raw data (may be less than bit size of image)</label>
+                    <input id='Bits' type='number' name='Bits' min='8' step='1' max='16'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Histogram Settings</div>
+            </section>
+            <section class='lvl2'>
+                <h2>Histogram Settings</h2>
                 <div>
-                    <input id='HeightPxHist' type='number' name='HeightPxHist' min='0' step='1'>
                     <label>Pixel height of histgram image</label>
-                </div>
-                <div>
-                    <input id='WidthPxHist' type='number' name='WidthPxHist' min='0' step='1'>
+                    <input id='HeightPxHist' type='number' name='HeightPxHist' min='0' step='1'>
+                    
                     <label>Pixel width of histogram image</label>
-                </div>
-                <div>
-                    <input id='Nbins' type='number' name='Nbins' min='1' step='1'>
+                    <input id='WidthPxHist' type='number' name='WidthPxHist' min='0' step='1'>
+                    
                     <label>Number of bins used for histogram</label>
-                </div>
-                <div>
-                    <input id='R' type='number' name='R' min='0' step='1' max='255'>
+                    <input id='Nbins' type='number' name='Nbins' min='1' step='1'>
+                    
                     <label>Red value in RGB color of histogram bars</label>
-                </div>
-                <div>
-                    <input id='G' type='number' name='G' min='0' step='1' max='255'>
+                    <input id='R' type='number' name='R' min='0' step='1' max='255'>
+                    
                     <label>Green value in RGB color of histogram bars</label>
-                </div>
-                <div>
-                    <input id='B' type='number' name='B' min='0' step='1' max='255'>
+                    <input id='G' type='number' name='G' min='0' step='1' max='255'>
+                    
                     <label>Blue value in RGB color of histogram bars</label>
+                    <input id='B' type='number' name='B' min='0' step='1' max='255'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Core Axis Settings</div>
+            </section>
+            <section class='lvl2'>
+                <h2>Core Axis Settings</h2>
                 <div>
+                    <label>Fraction of maximum pixel value that defines the presence of core (core if I<sub>raw</sub> &lt; Fraction*I<sub>max</sub>)</label>
                     <input id='ThreshFrac' type='number' name='ThreshFrac' min='0.0' step='0.01' max='1.0'>
-                    <label>Fraction of maximum pixel value that defines the presence of core (I<sub>raw</sub> &lt; Fraction*I<sub>max</sub>)</label>
-                </div>
-                <div>
-                    <input id='GapMinFrac' type='number' name='GapMinFrac' min='0.0' step='0.01' max='1.0'>
+                    
                     <label>Minimum fraction of core diameter used for edge detection</label>
-                </div>
-                <div>
-                    <input id='GapMaxFrac' type='number' name='GapMaxFrac' min='1.0' step='0.01' max='2.0'>
+                    <input id='GapMinFrac' type='number' name='GapMinFrac' min='0.0' step='0.01' max='1.0'>
+                    
                     <label>Maximum multiplier of core diameter used for edge detection</label>
-                </div>
-                <div>
-                    <input id='Nmass' type='number' name='Nmass' min='0.0' step='0.01'>
+                    <input id='GapMaxFrac' type='number' name='GapMaxFrac' min='1.0' step='0.01' max='2.0'>
+                    
                     <label>Polynomial coefficient used to weight pixel intensities for center of mass</label>
-                </div>
-                <div>
-                    <input id='FilterSteps' type='number' name='FilterSteps' min='0' step='1' max='10'>
+                    <input id='Nmass' type='number' name='Nmass' min='0.0' step='0.01'>
+                    
                     <label>Number of times data is filtered during core axis regression</label>
-                </div>
-                <div>
-                    <input id='MaxTheta' type='number' name='MaxTheta' min='0' step='1' max='10'>
+                    <input id='FilterSteps' type='number' name='FilterSteps' min='0' step='1' max='10'>
+                    
                     <label>Maximum core angle that automatic detection can calculate</label>
+                    <input id='MaxTheta' type='number' name='MaxTheta' min='0' step='1' max='10'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Thickness Compensation Settings</div>
+            </section>
+            <section class='lvl2'>
+                <h2>Thickness Compensation Settings</h2>
                 <div>
-                    <input id='Tmin' type='number' name='Tmin' min='0.0' step='0.01'>
                     <label>Minimum core thickness used for compensation (values below this will not be adjusted)</label>
-                </div>
-                <div>
-                    <input id='Tedge' type='number' name='Tedge' min='0.0' step='0.01'>
+                    <input id='Tmin' type='number' name='Tmin' min='0.0' step='0.01'>
+                    
                     <label>Maximum core thickness used to define the edges (0 &lt; edge &lt; T<sub>edge</sub>)</label>
+                    <input id='Tedge' type='number' name='Tedge' min='0.0' step='0.01'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Scale Bar Settings</div>
+            </section>
+            <section class='lvl2'>
+                <h2>Scale Bar Settings</h2>
                 <div>
-                    <input id='ScaleWidth' type='number' name='ScaleWidth' min='0.0' step='0.01'>
                     <label>Width of ruler prior to projection (cm)</label>
-                </div>
-                <div>
-                    <input id='RoiWidth' type='number' name='RoiWidth' min='0.0' step='0.01'>
+                    <input id='ScaleWidth' type='number' name='ScaleWidth' min='0.0' step='0.01'>
+                    
                     <label>Width of ROI bar prior to projection (cm)</label>
-                </div>
-                <div>
-                    <input id='BorderPx' type='number' name='BorderPx' min='0' step='1'>
+                    <input id='RoiWidth' type='number' name='RoiWidth' min='0.0' step='0.01'>
+                    
                     <label>Pixel width of border around scale bars</label>
+                    <input id='BorderPx' type='number' name='BorderPx' min='0' step='1'>
                 </div>
-            </div>
-            <div class='lvl2'>
-                <div class='title2'>Update Settings</div>
+            </section>
+            <section class='lvl2'>
+                <h2>Update Settings</h2>
                 <div><button id='updateSettings' onclick='sendSetupAPI()'>Save</button></div>
-            </div>
-        </section>
-
-        <section class='lvl1'>
-            <div class='title1'>Directory</div>
-            <div class='lvl2'>
-                <a href='index.html'>Processing Page</a><br>
-                <a href='math.html'>Math Documentation</a>
-            </div>
+            </section>
         </section>
         
         <script src='setup.js'></script>
