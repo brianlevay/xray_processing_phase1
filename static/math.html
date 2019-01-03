@@ -28,15 +28,15 @@
 				<li>Save the new image</li>
 			</ol>
         </section>
-		
-		<section class='lvl1'>
-			<h1>Important Processing Notes</h1>
-			<ul>
+        
+        <section class='lvl1'>
+        	<h1>Important Processing Notes</h1>
+        	<ul>
 				<li>Grayscale values are globally consistent; a pixel value in one part of an image has the same underlying meaning as the same value in another part of the image</li>
 				<li>The relationship between the input grayscale and the output grayscale is monotonic within the bounds specified by the user</li>
 				<li>The relationship between the input grayscale and the output grayscale is the same for all images processed in the same batch</li>
 			</ul>
-		</section>
+        </section>
 
 		<section class='lvl1'>
 			<h1>Core Axis Determination</h1>
@@ -63,7 +63,18 @@
 			
 			<section class='lvl2'>
 				<h2>Finding the Edges</h2>
-				<p>Coming soon!</p>
+				<p>Within each row, the edges of features are determined by identifying where pixel values go above and below a certain threshold 
+				(above means bright, or the absence of material, whereas below means dark, or the presence of material).</p>
+				<div class='conditional'>if (I<sub>j</sub> &gt; I<sub>thresh</sub>) and (I<sub>j+1</sub> &le; I<sub>thresh</sub>):</div>
+				<div class='equation'>left edge<sub>a</sub> = X<sub>j</sub></div>
+				<div class='conditional'>if (I<sub>j</sub> &le; I<sub>thresh</sub>) and (I<sub>j+1</sub> &gt; I<sub>thresh</sub>):</div>
+				<div class='equation'>right edge<sub>b</sub> = X<sub>j+1</sub></div>
+				<div class='equation'>gap<sub>k</sub> = (right edge<sub>b</sub> - left edge<sub>a</sub>)</div>
+				<p>The edges of the core are assumed to form the largest gap between a right and left edge pair in the row. 
+				The largest gap is only considered to represent the core if it falls within a certain size range relative to the projected core radius.</p>
+				<div class='conditional'>if (gap<sub>min</sub> &le; gap<sub>k</sub> &le; gap<sub>max</sub>) and (gap<sub>k</sub> &gt; gap<sub>largest</sub>):</div>
+				<div class='equation'>left edge<sub>i</sub> = left edge<sub>a</sub></div>
+				<div class='equation'>right edge<sub>i</sub> = right edge<sub>b</sub></div>
 			</section>
 			
 			<section class='lvl2'>
@@ -71,8 +82,9 @@
 				<p>Within each row, the core axis is determined by calculating the center of mass between the left 
 				and right edges.</p>
 				
-				<div class='equation'>m<sub>i</sub> = ((I<sub>max</sub> - I<sub>i</sub>)/(I<sub>max</sub>))<sup>N<sub>mass</sub></sup></div>
-				<div class='equation'>X<sub>center</sub> = &sum; X<sub>i</sub>m<sub>i</sub> / &sum; m<sub>i</sub></div>
+				<div class='equation'>m<sub>ij</sub> = ((I<sub>max</sub> - I<sub>ij</sub>)/(I<sub>max</sub>))<sup>N<sub>mass</sub></sup></div>
+				<div class='equation'>X<sub>center, i</sub> = &sum; X<sub>j</sub>m<sub>ij</sub> / &sum; m<sub>ij</sub></div>
+				<div class='equation'>Y<sub>center, i</sub> = Y<sub>i</sub></div>
 				
 				<p>When N<sub>mass</sub> = 0, each pixel is evenly weighted, meaning that the center of mass will 
 				simply be the mid-point between the edges. As N<sub>mass</sub> increases, the center will be increasingly biased towards 
@@ -88,10 +100,28 @@
 			<section class='lvl2'>
 				<h2>Fitting the Axis to the Centers</h2>
 				<h3>Ordinary Least Squares Regression</h3>
-				<p>soon...</p>
+				<p>Because the core is oriented roughly vertically, the core axis needs to be fit by treating Y (the row positions) as the 
+				independent variable and X (the column positions) as the dependent variable.</p>
+				<div class='equation'>x<sub>i</sub> = Y<sub>center, i</sub></div>
+				<div class='equation'>y<sub>i</sub> = X<sub>center, i</sub></div>
+				<div class='equation'>x<sub>ave</sub> = (1/n)*&sum;x<sub>i</sub></div>
+				<div class='equation'>y<sub>ave</sub> = (1/n)*&sum;y<sub>i</sub></div>
+				<div class='equation'>covariance = &sum;x<sub>i</sub>y<sub>i</sub> - (1/n)*&sum;x<sub>i</sub>&sum;y<sub>i</sub></div>
+				<div class='equation'>variance = &sum;x<sub>i</sub>x<sub>i</sub> - (1/n)*&sum;x<sub>i</sub>&sum;x<sub>i</sub></div>
+				<div class='equation'>&beta; = covariance / variance</div>
+				<div class='equation'>&alpha; = y<sub>ave</sub> - &beta;*x<sub>ave</sub></div>
 				
 				<h3>Iterative Filtering</h3>
 				<p>soon...</p>
+				<div class='equation'></div>
+				
+				<h3>Converting to axis angle and reference point</h3>
+				<p>For ease of use elsewhere in the program, the core axis position is converted to an angle relative to vertical (counter clockwise) 
+				and an offset relative to the center of the image.</p>
+				<div class='equation'>&beta; = &Delta;y/&Delta;x = &Delta;X/&Delta;Y</div>
+				<div class='equation'>&Theta; = (180/&pi;)*atan(&beta;)</div>
+				<div class='equation'>X<sub>axis at mid</sub> = &beta;*Y<sub>mid</sub> + &alpha;</div>
+				<div class='equation'>offset = X<sub>axis at mid</sub> - X<sub>mid</sub></div>
 				
 			</section>
 			
