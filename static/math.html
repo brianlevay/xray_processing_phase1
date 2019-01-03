@@ -37,6 +37,24 @@
 				<li>The relationship between the input grayscale and the output grayscale is the same for all images processed in the same batch</li>
 			</ul>
         </section>
+        
+        <section class='lvl1'>
+			<h1>Scale Bars</h1>
+			
+			<section class='lvl2'>
+				<h2>Summary</h2>
+				<ol>
+					<li>Coming soon...</li>
+				</ol>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Assumptions</h2>
+				<ul>
+					<li>Coming soon...</li>
+				</ul>
+			</section>
+		</section>
 
 		<section class='lvl1'>
 			<h1>Core Axis Determination</h1>
@@ -66,15 +84,15 @@
 				<p>Within each row, the edges of features are determined by identifying where pixel values go above and below a certain threshold 
 				(above means bright, or the absence of material, whereas below means dark, or the presence of material).</p>
 				<div class='conditional'>if (I<sub>j</sub> &gt; I<sub>thresh</sub>) and (I<sub>j+1</sub> &le; I<sub>thresh</sub>):</div>
-				<div class='equation'>left edge<sub>a</sub> = X<sub>j</sub></div>
+				<div class='equation'>left edge = X<sub>j</sub></div>
 				<div class='conditional'>if (I<sub>j</sub> &le; I<sub>thresh</sub>) and (I<sub>j+1</sub> &gt; I<sub>thresh</sub>):</div>
-				<div class='equation'>right edge<sub>b</sub> = X<sub>j+1</sub></div>
-				<div class='equation'>gap<sub>k</sub> = (right edge<sub>b</sub> - left edge<sub>a</sub>)</div>
+				<div class='equation'>right edge = X<sub>j+1</sub></div>
+				<div class='equation'>gap = (right edge - left edge)</div>
 				<p>The edges of the core are assumed to form the largest gap between a right and left edge pair in the row. 
 				The largest gap is only considered to represent the core if it falls within a certain size range relative to the projected core radius.</p>
 				<div class='conditional'>if (gap<sub>min</sub> &le; gap<sub>k</sub> &le; gap<sub>max</sub>) and (gap<sub>k</sub> &gt; gap<sub>largest</sub>):</div>
-				<div class='equation'>left edge<sub>i</sub> = left edge<sub>a</sub></div>
-				<div class='equation'>right edge<sub>i</sub> = right edge<sub>b</sub></div>
+				<div class='equation'>left edge<sub>i</sub> = left edge<sub>k</sub></div>
+				<div class='equation'>right edge<sub>i</sub> = right edge<sub>k</sub></div>
 			</section>
 			
 			<section class='lvl2'>
@@ -112,17 +130,24 @@
 				<div class='equation'>&alpha; = y<sub>ave</sub> - &beta;*x<sub>ave</sub></div>
 				
 				<h3>Iterative Filtering</h3>
-				<p>soon...</p>
-				<div class='equation'></div>
+				<p>The previous algorithms are fairly robust, but sometimes features can be categorized as part of the core when they aren't. In addition, 
+				features such as end caps and broken fragments (RCB cores) can lead to center points that are off-axis from the main part of the core. These 
+				errant and unrepresentative points can have strong impacts on the regression and need to be filtered. While there are "robust" 
+				regression techniques that can lessen the weight of such points, the simplest solution is to perform ordinary least squares regression, 
+				check for points with particularly high residuals, remove them, and repeat the regression. The degree of filtering depends 
+				on the residual threshold used for discarding points and on the number of iterations.</p>
+				<div class='equation'>residual<sub>i</sub> = X<sub>center, i</sub> - &beta;*Y<sub>center, i</sub> - &alpha;</div>
+				<div class='equation'>&sigma;<sub>residuals</sub> = &radic;(&sum;(residual<sub>i</sub>*residual<sub>i</sub>) - (1/n)*&sum;residual<sub>i</sub>*&sum;residual<sub>i</sub>)/(n-1)</div>
+				<div class='conditional'>if |residual<sub>i</sub>| > 2*&sigma;<sub>residuals</sub>:</div>
+				<div class='equation'>ignore (X<sub>center, i</sub>, Y<sub>center, i</sub>) in regression</div>
 				
 				<h3>Converting to axis angle and reference point</h3>
 				<p>For ease of use elsewhere in the program, the core axis position is converted to an angle relative to vertical (counter clockwise) 
 				and an offset relative to the center of the image.</p>
 				<div class='equation'>&beta; = &Delta;y/&Delta;x = &Delta;X/&Delta;Y</div>
 				<div class='equation'>&Theta; = (180/&pi;)*atan(&beta;)</div>
-				<div class='equation'>X<sub>axis at mid</sub> = &beta;*Y<sub>mid</sub> + &alpha;</div>
-				<div class='equation'>offset = X<sub>axis at mid</sub> - X<sub>mid</sub></div>
-				
+				<div class='equation'>X<sub>axis</sub> = &beta;*Y<sub>mid</sub> + &alpha;</div>
+				<div class='equation'>X<sub>offset</sub> = X<sub>axis</sub> - X<sub>mid</sub></div>
 			</section>
 			
 			<section class='lvl2'>
@@ -273,9 +298,12 @@
 				
 				<h3>Basic equation for monochromatic x-ray transmission</h3>
 				<div class='equation'>I<sub>trans</sub>(E) = I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup></div>
-				<div class='equation'>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</div>
 			
 				<h3>Approximated x-ray transmission for polychromatic source</h3>
+				<p>The total number of x-rays that pass through a material can be calculated by summing the number of x-rays 
+				that are transmitted in each energy band.</p>
+				<div class='equation'>&sum; I<sub>trans</sub>(E) = &sum; (I<sub>0</sub>(E) * e<sup>-&mu;(E)&rho;t</sup>)</div>
+				
 				<p>Based on numerical simulations, for a given material composition and source spectrum, a single effective 
 				mass attenuation coefficent can be used to approximate attenuation behavior for polychromatic x-rays.</p>
 				<div class='equation'>I<sub>trans</sub> = &sum; I<sub>trans</sub>(E)</div>
@@ -378,25 +406,6 @@
 			<section class='lvl2'>
 				<h2>Converting to pixel values and reversing greyscale</h2>
 				<div class='equation'>I<sub>proc</sub> = I<sub>max</sub> * (1 - Y)</div>
-			</section>
-			
-		</section>
-		
-		<section class='lvl1'>
-			<h1>Scale Bars</h1>
-			
-			<section class='lvl2'>
-				<h2>Summary</h2>
-				<ol>
-					<li>Coming soon...</li>
-				</ol>
-			</section>
-		
-			<section class='lvl2'>
-				<h2>Assumptions</h2>
-				<ul>
-					<li>Coming soon...</li>
-				</ul>
 			</section>
 			
 		</section>
