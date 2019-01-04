@@ -38,24 +38,6 @@
 			</ul>
         </section>
         
-        <section class='lvl1'>
-			<h1>Scale Bars</h1>
-			
-			<section class='lvl2'>
-				<h2>Summary</h2>
-				<ol>
-					<li>Coming soon...</li>
-				</ol>
-			</section>
-			
-			<section class='lvl2'>
-				<h2>Assumptions</h2>
-				<ul>
-					<li>Coming soon...</li>
-				</ul>
-			</section>
-		</section>
-
 		<section class='lvl1'>
 			<h1>Core Axis Determination</h1>
 			
@@ -140,7 +122,10 @@
 				<div class='equation'>&sigma;<sub>residuals</sub> = &radic;(&sum;(residual<sub>i</sub>*residual<sub>i</sub>) - (1/n)*&sum;residual<sub>i</sub>*&sum;residual<sub>i</sub>)/(n-1)</div>
 				<div class='conditional'>if |residual<sub>i</sub>| > 2*&sigma;<sub>residuals</sub>:</div>
 				<div class='equation'>ignore (X<sub>center, i</sub>, Y<sub>center, i</sub>) in regression</div>
-				
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Calculating the Axis Position in 3D</h2>
 				<h3>Converting to axis angle and reference point</h3>
 				<p>For ease of use elsewhere in the program, the core axis position is converted to an angle relative to vertical (counter clockwise) 
 				and an offset relative to the center of the image.</p>
@@ -148,10 +133,8 @@
 				<div class='equation'>&Theta; = (180/&pi;)*atan(&beta;)</div>
 				<div class='equation'>X<sub>axis</sub> = &beta;*Y<sub>mid</sub> + &alpha;</div>
 				<div class='equation'>X<sub>offset</sub> = X<sub>axis</sub> - X<sub>mid</sub></div>
-			</section>
-			
-			<section class='lvl2'>
-				<h2>Projecting the Axis to 3D Coordinates</h2>
+				
+				<h3>Adjusting projected reference point to actual position</h3>
 				<p>soon...</p>
 			</section>
 		</section>
@@ -409,5 +392,67 @@
 			</section>
 			
 		</section>
+		
+		<section class='lvl1'>
+			<h1>Scale Bars</h1>
+			
+			<section class='lvl2'>
+				<h2>Summary</h2>
+				<ol>
+					<li>Coming soon...</li>
+				</ol>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Assumptions</h2>
+				<ul>
+					<li>Coming soon...</li>
+				</ul>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Projected Scale Relationship</h2>
+				<p>By projecting an arbitrary line segment from one horizontal plane to another, regardless of segment orientation or position, 
+				we can show that the ratio of segment length is preserved throughout XY space. This allows us to construct a simple 
+				scale relationship between the actual core and the projection of the core onto the detector. This scale will be true 
+				throughout the image.</p>
+				
+				<h3>Parametric Equations of Two Rays from the Source</h3>
+				<div class='equation'>X<sub>p1</sub> = X<sub>s</sub> + u<sub>x1</sub>*t<sub>p1</sub></div>
+				<div class='equation'>Y<sub>p1</sub> = Y<sub>s</sub> + u<sub>y1</sub>*t<sub>p1</sub></div>
+				<div class='equation'>Z<sub>p1</sub> = Z<sub>s</sub> + u<sub>z1</sub>*t<sub>p1</sub></div>
+				<div class='equation'>X<sub>p2</sub> = X<sub>s</sub> + u<sub>x2</sub>*t<sub>p2</sub></div>
+				<div class='equation'>Y<sub>p2</sub> = Y<sub>s</sub> + u<sub>y2</sub>*t<sub>p2</sub></div>
+				<div class='equation'>Z<sub>p2</sub> = Z<sub>s</sub> + u<sub>z2</sub>*t<sub>p2</sub></div>
+				
+				<h3>Reference Points on Rays</h3>
+				<div class='equation'>(X<sub>s</sub>, Y<sub>s</sub>. Z<sub>s</sub>) = point location of source</div>
+				<div class='equation'>(X<sub>a1</sub>, Y<sub>a1</sub>. Z<sub>a</sub>) = point on horizontal plane "a" along ray 1</div>
+				<div class='equation'>(X<sub>b1</sub>, Y<sub>b1</sub>. Z<sub>b</sub>) = point on horizontal plane "b" along ray 1</div>
+				<div class='equation'>(X<sub>a2</sub>, Y<sub>a2</sub>. Z<sub>a</sub>) = point on horizontal plane "a" along ray 2</div>
+				<div class='equation'>(X<sub>b2</sub>, Y<sub>b2</sub>. Z<sub>b</sub>) = point on horizontal plane "b" along ray 2</div>
+			
+				<h3>Distance between the two points on each plane</h3>
+				<div class='equation'>D<sub>a</sub> = &radic;((X<sub>a2</sub> - X<sub>a1</sub>)<sup>2</sup> + (Y<sub>a2</sub> - Y<sub>a1</sub>)<sup>2</sup>)</div>
+				<div class='equation'>D<sub>b</sub> = &radic;((X<sub>b2</sub> - X<sub>b1</sub>)<sup>2</sup> + (Y<sub>b2</sub> - Y<sub>b1</sub>)<sup>2</sup>)</div>
+			
+				<h3>Test...</h3>
+				<div class='equation'>Z<sub>a</sub> = Z<sub>s</sub> + u<sub>z1</sub>*t<sub>a1</sub></div>
+				<div class='equation'>Z<sub>b</sub> = Z<sub>s</sub> + u<sub>z1</sub>*t<sub>b1</sub></div>
+				<div class='equation'>Z<sub>a</sub> = Z<sub>s</sub> + u<sub>z2</sub>*t<sub>a2</sub></div>
+				<div class='equation'>Z<sub>b</sub> = Z<sub>s</sub> + u<sub>z2</sub>*t<sub>b2</sub></div>
+				<div class='equation'>t<sub>b</sub>/t<sub>a</sub> = t<sub>b1</sub>/t<sub>a1</sub> = t<sub>b2</sub>/t<sub>a2</sub> = (Z<sub>b</sub> - Z<sub>s</sub>) / (Z<sub>a</sub> - Z<sub>s</sub>)</div>
+				
+				<h3>Test...</h3>
+				<div class='equation'>(X<sub>b1</sub> - X<sub>s</sub>) = (X<sub>a1</sub> - X<sub>s</sub>)*(t<sub>b</sub>/t<sub>a</sub>)</div>
+				
+				
+				<div class='equation'>(X<sub>b2</sub> - X<sub>b1</sub>) = (X<sub>a2</sub> - X<sub>a1</sub>)*(t<sub>b</sub>/t<sub>a</sub>)</div>
+				<div class='equation'>(Y<sub>b2</sub> - Y<sub>b1</sub>) = (Y<sub>a2</sub> - Y<sub>a1</sub>)*(t<sub>b</sub>/t<sub>a</sub>)</div>
+				<div class='equation'>D<sub>b</sub> = &radic;((t<sub>b</sub>/t<sub>a</sub>)<sup>2</sup>*((X<sub>a2</sub> - X<sub>a1</sub>)<sup>2</sup> + (Y<sub>a2</sub> - Y<sub>a1</sub>)<sup>2</sup>)</div>
+				<div class='equation'>D<sub>b</sub> / D<sub>a</sub> = </div>
+			</section>
+		</section>
+
 	</body>
 </html>
