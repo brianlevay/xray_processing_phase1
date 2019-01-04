@@ -131,11 +131,13 @@
 				and an offset relative to the center of the image.</p>
 				<div class='equation'>&beta; = &Delta;y/&Delta;x = &Delta;X/&Delta;Y</div>
 				<div class='equation'>&Theta; = (180/&pi;)*atan(&beta;)</div>
-				<div class='equation'>X<sub>axis</sub> = &beta;*Y<sub>mid</sub> + &alpha;</div>
-				<div class='equation'>X<sub>offset</sub> = X<sub>axis</sub> - X<sub>mid</sub></div>
+				<div class='equation'>X<sub>axis, proj</sub> = &beta;*Y<sub>mid</sub> + &alpha;</div>
+				<div class='equation'>X<sub>offset, proj</sub> = X<sub>axis, proj</sub> - X<sub>mid</sub></div>
 				
 				<h3>Adjusting projected reference point to actual position</h3>
-				<p>soon...</p>
+				<p>If we assume that the source is directly over the center of the image, then we can shift the apparent axis offset (projected) 
+				to the actual offset at the axis height based on the scale projection. Please see the "Scale" section for more details.</p>
+				<div class='equation'>X<sub>offset, true</sub> = X<sub>offset, proj</sub> * (cm<sub>true</sub>/cm<sub>proj</sub>)</div>
 			</section>
 		</section>
 		
@@ -399,21 +401,24 @@
 			<section class='lvl2'>
 				<h2>Summary</h2>
 				<ol>
-					<li>Coming soon...</li>
+					<li>Calculate the projection multiplier based on source height, core diameter, and core height</li>
+					<li>Convert the projected XY sizes of the scale features to pixel sizes</li>
+					<li>Draw the scale bars on a blank image</li>
+					<li>Overlay the scale bar image on each processed image</li>
 				</ol>
 			</section>
 			
 			<section class='lvl2'>
 				<h2>Assumptions</h2>
 				<ul>
-					<li>Coming soon...</li>
+					<li>The desired reference plane for the scale bar is the plane through the axis of the core.</li>
 				</ul>
 			</section>
 			
 			<section class='lvl2'>
 				<h2>Projected Scale Relationship</h2>
-				<p>By projecting an arbitrary line segment from one horizontal plane to another, regardless of segment orientation or position, 
-				we can show that the ratio of segment length is preserved throughout XY space. This allows us to construct a simple 
+				<p>By projecting an arbitrary line segment from one horizontal plane to another, 
+				we can show that the ratio of segment length is preserved regardless of XY position. This allows us to construct a simple 
 				scale relationship between the actual core and the projection of the core onto the detector. This scale will be true 
 				throughout the image.</p>
 				
@@ -436,21 +441,45 @@
 				<div class='equation'>D<sub>a</sub> = &radic;((X<sub>a2</sub> - X<sub>a1</sub>)<sup>2</sup> + (Y<sub>a2</sub> - Y<sub>a1</sub>)<sup>2</sup>)</div>
 				<div class='equation'>D<sub>b</sub> = &radic;((X<sub>b2</sub> - X<sub>b1</sub>)<sup>2</sup> + (Y<sub>b2</sub> - Y<sub>b1</sub>)<sup>2</sup>)</div>
 			
-				<h3>Test...</h3>
+				<h3>Ratio of Ray Path Lengths</h3>
+				<p>We can easily show that the ratios of path lengths from the source to point "a" and to point "b" along each ray are identical.</p>
 				<div class='equation'>Z<sub>a</sub> = Z<sub>s</sub> + u<sub>z1</sub>*t<sub>a1</sub></div>
 				<div class='equation'>Z<sub>b</sub> = Z<sub>s</sub> + u<sub>z1</sub>*t<sub>b1</sub></div>
 				<div class='equation'>Z<sub>a</sub> = Z<sub>s</sub> + u<sub>z2</sub>*t<sub>a2</sub></div>
 				<div class='equation'>Z<sub>b</sub> = Z<sub>s</sub> + u<sub>z2</sub>*t<sub>b2</sub></div>
+				<div class='equation'>u<sub>z1</sub> = (Z<sub>a</sub> - Z<sub>s</sub>)/t<sub>a1</sub> = (Z<sub>b</sub> - Z<sub>s</sub>)/t<sub>b1</sub></div>
+				<div class='equation'>u<sub>z2</sub> = (Z<sub>a</sub> - Z<sub>s</sub>)/t<sub>a2</sub> = (Z<sub>b</sub> - Z<sub>s</sub>)/t<sub>b2</sub></div>
 				<div class='equation'>t<sub>b</sub>/t<sub>a</sub> = t<sub>b1</sub>/t<sub>a1</sub> = t<sub>b2</sub>/t<sub>a2</sub> = (Z<sub>b</sub> - Z<sub>s</sub>) / (Z<sub>a</sub> - Z<sub>s</sub>)</div>
 				
-				<h3>Test...</h3>
+				<h3>Ratio of Segment Lengths</h3>
+				<p>First, let's rearrange the parametric equations to get the distance between the points on ray 1 and 2.</p>
 				<div class='equation'>(X<sub>b1</sub> - X<sub>s</sub>) = (X<sub>a1</sub> - X<sub>s</sub>)*(t<sub>b</sub>/t<sub>a</sub>)</div>
-				
-				
+				<div class='equation'>(X<sub>b2</sub> - X<sub>s</sub>) = (X<sub>a2</sub> - X<sub>s</sub>)*(t<sub>b</sub>/t<sub>a</sub>)</div>
+				<div class='equation'>(X<sub>b2</sub> - X<sub>b1</sub>) = ((X<sub>a2</sub> - X<sub>s</sub>)*(t<sub>b</sub>/t<sub>a</sub>) + X<sub>s</sub>) - ((X<sub>a1</sub> - X<sub>s</sub>)*(t<sub>b</sub>/t<sub>a</sub>) + X<sub>s</sub>)</div>
 				<div class='equation'>(X<sub>b2</sub> - X<sub>b1</sub>) = (X<sub>a2</sub> - X<sub>a1</sub>)*(t<sub>b</sub>/t<sub>a</sub>)</div>
-				<div class='equation'>(Y<sub>b2</sub> - Y<sub>b1</sub>) = (Y<sub>a2</sub> - Y<sub>a1</sub>)*(t<sub>b</sub>/t<sub>a</sub>)</div>
+				
+				<p>Using the same approach as above, we can solve for (Y<sub>b2</sub> - Y<sub>b1</sub>), and we can substitute the equations into 
+				the distance equation. From that, we can see that the length ratio of any pair of arbitrary horizontal segments is only a function of 
+				the relative Z values.</p>
 				<div class='equation'>D<sub>b</sub> = &radic;((t<sub>b</sub>/t<sub>a</sub>)<sup>2</sup>*((X<sub>a2</sub> - X<sub>a1</sub>)<sup>2</sup> + (Y<sub>a2</sub> - Y<sub>a1</sub>)<sup>2</sup>)</div>
-				<div class='equation'>D<sub>b</sub> / D<sub>a</sub> = </div>
+				<div class='equation'>D<sub>b</sub> = (t<sub>b</sub>/t<sub>a</sub>)*D<sub>a</sub></div>
+				<div class='equation'>D<sub>b</sub> / D<sub>a</sub> = (Z<sub>b</sub> - Z<sub>s</sub>) / (Z<sub>a</sub> - Z<sub>s</sub>)</div>
+			</section>
+			
+			<section class='lvl2'>
+				<h2>Drawing the Scale Bars</h2>
+				<h3>Projection multiplier</h3>
+				<p>The scale bars that are drawn on the image represent centimeter segments along the axis of the core (at the 
+				top of the half-round or middle of the whole-round). Because the core image is a projection of a 3D solid, a single scale 
+				will not accurately represent the sizes of features far away from the reference plane! Objects near the bottom of the core will appear 
+				too small and objects near the top of the core will appear too large.</p>
+				<div class='equation'>D<sub>det</sub> / D<sub>core</sub> = (Z<sub>det</sub> - Z<sub>src</sub>) / (Z<sub>axis</sub> - Z<sub>src</sub>)</div>
+				<div class='equation'>D<sub>det</sub> / D<sub>core</sub> = (0 - Z<sub>src</sub>) / (Z<sub>base</sub> + Z<sub>radius</sub> - Z<sub>src</sub>)</div>
+				<div class='equation'>D<sub>det</sub> / D<sub>core</sub> = Z<sub>src</sub> / (Z<sub>src</sub> - Z<sub>base</sub> - Z<sub>radius</sub>)</div>
+				
+				<h3>Creating the image</h3>
+				<p>The projection multiplier is calculated, the projected X and Y components are converted to pixels, and an image containing nothing but the scale bars is created. This image 
+				is then layered over each processed core image.</p>
 			</section>
 		</section>
 
