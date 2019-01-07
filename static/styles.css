@@ -1,19 +1,32 @@
+body {
+    font-family: Verdana, Geneva, sans-serif;
+}
+
 img {
-    border: 1px solid black;
-}
-
-input[type=text] {
     display: block;
 }
 
-input[type=number] {
+input[type=range] {
     display: block;
 }
 
-.lvl1 {
+input[type=number], input[type=text] {
+    display: block;
+    margin: 5px 0px 5px 0px;
+}
+
+h1 {
+    font-size: 2.0em;
+}
+
+header {
+    font-size: 1.5em;
+}
+
+nav, .lvl1 {
     margin: 15px 0px;
     padding: 5px;
-    border: 1px solid black;
+    border: 1px solid #888888;
     border-radius: 5px;
 }
 
@@ -30,7 +43,16 @@ input[type=number] {
     font-weight: bold;
 }
 
+.root, .dir {
+    cursor: default;
+}
+
 #fileList {
     margin: 5px;
 }
 
+#histogramCont {
+    display: block;
+    overflow: auto;
+    height: auto;
+}

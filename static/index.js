@@ -175,30 +175,32 @@ function updateHistogram(xhttp) {
         IlowFrac.style.width = histogramImg.width + 'px';
         IpeakFrac.style.width = histogramImg.width + 'px';
         IhighFrac.style.width = histogramImg.width + 'px';
+        histogramImg.style.border = "1px solid black";
     };
     histogramImg.src = 'data:image/png;base64,' + xhttp.response;
     return;
 }
 
 function setBoundsListeners() {
+    let step = 0.01;
     let IlowFrac = document.getElementById('IlowFrac');
     let IpeakFrac = document.getElementById('IpeakFrac');
     let IhighFrac = document.getElementById('IhighFrac');
     IlowFrac.addEventListener('input', function() {
         if (+IlowFrac.value > +IpeakFrac.value) {
-            IlowFrac.value = +IpeakFrac.value - 1;
+            IlowFrac.value = +IpeakFrac.value - step;
         }
     }, false);
     IpeakFrac.addEventListener('change', function() {
         if (+IpeakFrac.value < +IlowFrac.value) {
-            IpeakFrac.value = +IlowFrac.value + 1;
+            IpeakFrac.value = +IlowFrac.value + step;
         } else if (+IpeakFrac.value > +IhighFrac.value) {
-            IpeakFrac.value = +IhighFrac.value - 1;
+            IpeakFrac.value = +IhighFrac.value - step;
         }
     }, false);
     IhighFrac.addEventListener('change', function() {
         if (+IhighFrac.value < +IpeakFrac.value) {
-            IhighFrac.value = +IpeakFrac.value + 1;
+            IhighFrac.value = +IpeakFrac.value + step;
         }
     }, false);
     return;

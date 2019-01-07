@@ -6,8 +6,6 @@ This software is intended to allow scientists to process x-ray images acquired f
 *coming soon*
 
 ## Remaining Tasks for Version 1.0:
-* Finish documentation for Math
-* Style and improve UI
 * Test on Windows, run performance benchmarks
 * Test on MacOS
 
