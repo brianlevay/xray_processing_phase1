@@ -55,7 +55,7 @@ func (hset *HistogramSet) ProcessImage(root string, filename string) {
 			if (h_int >= 0) && (h_int < hset.Cfg.Nbins) {
 				hist.Cts[h_int] += 1
 			} else if h_int >= hset.Cfg.Nbins {
-				hist.Cts[h_int-1] += 1
+				hist.Cts[hset.Cfg.Nbins-1] += 1
 			}
 		}
 	}
