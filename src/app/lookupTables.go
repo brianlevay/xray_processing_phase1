@@ -6,7 +6,7 @@ import (
 
 func (proc *ImgProcessor) CalculateMassTable() {
 	var massBase float64
-	nvals := int(proc.ImaxInInt + 1)
+	nvals := int(proc.ImaxInInt) + 1
 	masses := make([]float64, nvals)
 	for k := 0; k < nvals; k++ {
 		massBase = float64(proc.ImaxInInt-uint16(k)) / float64(proc.ImaxInFlt)
@@ -35,7 +35,7 @@ func (proc *ImgProcessor) CalculateXYd() {
 }
 
 func (proc *ImgProcessor) CalculateMurhotTable() {
-	nvals := int(proc.ImaxInInt + 1)
+	nvals := int(proc.ImaxInInt) + 1
 	murhots := make([]float64, nvals)
 	for k := 0; k < nvals; k++ {
 		murhots[k] = math.Log(proc.ImaxInFlt+1.0) - math.Log(float64(k)+1.0)
