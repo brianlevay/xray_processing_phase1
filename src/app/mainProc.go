@@ -31,6 +31,13 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string) {
 		log.Println(errType)
 		return
 	}
+	// This is a stop-gap measure to prevent out-of-bounds errors if the user attempts to process an image of a different size
+	pxHeight := len(Iraw)
+	pxWidth := len(Iraw[0])
+	if (pxHeight != proc.Cfg.HeightPxDet) || (pxWidth != proc.Cfg.WidthPxDet) {
+		log.Println("Image dimensions don't match those specified in the configuration.", filename, "will not be processed.")
+		return
+	}
 
 	theta := proc.AxisAngle
 	offset := proc.AxisOffset

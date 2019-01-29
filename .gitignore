@@ -3,5 +3,4 @@ bin
 pkg
 src/golang.org
 xray_img
-xrayImgProcessing_linux
-xrayImgProcessing_windows.exe
+xrayImgProcessing*
