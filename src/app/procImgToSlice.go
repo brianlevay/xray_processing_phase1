@@ -5,11 +5,12 @@ import (
 	"image"
 )
 
-func Gray16ToUint16(img image.Image) ([][]uint16, error) {
+func Gray16ToUint16(img image.Image) ([][]uint16, uint16, error) {
 	var k int
+	var maxVal uint16
 	gray16, ok := img.(*image.Gray16)
 	if ok == false {
-		return [][]uint16{}, errors.New("Image not Gray16 format")
+		return [][]uint16{}, maxVal, errors.New("Image not Gray16 format")
 	}
 	// x_max and y_max aren't the maximum values, they're max+1 //
 	x_min := gray16.Rect.Min.X
@@ -25,9 +26,12 @@ func Gray16ToUint16(img image.Image) ([][]uint16, error) {
 		for j := 0; j < width; j++ {
 			k = (i-y_min)*gray16.Stride + (j-x_min)*2
 			slice[i][j] = uint16(gray16.Pix[k+0])<<8 | uint16(gray16.Pix[k+1])
+			if slice[i][j] > maxVal {
+				maxVal = slice[i][j]
+			}
 		}
 	}
-	return slice, nil
+	return slice, maxVal, nil
 }
 
 func Uint16ToGray16(slice [][]uint16) *image.Gray16 {

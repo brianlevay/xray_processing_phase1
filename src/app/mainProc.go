@@ -26,14 +26,17 @@ func (proc *ImgProcessor) ProcessImage(root string, filename string) {
 		log.Println(errOpen)
 		return
 	}
-	Iraw, errType := Gray16ToUint16(imgOrig)
+	Iraw, Imax, errType := Gray16ToUint16(imgOrig)
+	pxHeight := len(Iraw)
+	pxWidth := len(Iraw[0])
 	if errType != nil {
 		log.Println(errType)
 		return
 	}
-	// This is a stop-gap measure to prevent out-of-bounds errors if the user attempts to process an image of a different size
-	pxHeight := len(Iraw)
-	pxWidth := len(Iraw[0])
+	if Imax > proc.ImaxInInt {
+		log.Println("Maximum pixel value exceeds number of bits specified in the configuration.", filename, "will not be processed.")
+		return
+	}
 	if (pxHeight != proc.Cfg.HeightPxDet) || (pxWidth != proc.Cfg.WidthPxDet) {
 		log.Println("Image dimensions don't match those specified in the configuration.", filename, "will not be processed.")
 		return
