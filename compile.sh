@@ -1,13 +1,13 @@
 #!/bin/bash
 
-echo "BASH: Started building version $1 at: $(date)"
+echo "BASH: Started building at: $(date)"
 go install fileExplorer
 go install app
 
 export GOOS=linux
-go build -o xrayImgProcessing_linux_$1 app
+go build -o xrayImgProcessing_linux app
 
 export GOOS=windows
-go build -o xrayImgProcessing_windows_$1.exe app
+go build -o xrayImgProcessing_windows.exe app
 
-echo "BASH: Finished build version $1 at: $(date)"
+echo "BASH: Finished build at: $(date)"
