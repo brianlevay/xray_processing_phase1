@@ -119,7 +119,7 @@
 				check for points with particularly high residuals, remove them, and repeat the regression. The degree of filtering depends 
 				on the residual threshold used for discarding points and on the number of iterations.</p>
 				<div class='equation'>residual<sub>i</sub> = X<sub>center, i</sub> - &beta;*Y<sub>center, i</sub> - &alpha;</div>
-				<div class='equation'>&sigma;<sub>residuals</sub> = &radic;(&sum;(residual<sub>i</sub>*residual<sub>i</sub>) - (1/n)*&sum;residual<sub>i</sub>*&sum;residual<sub>i</sub>)/(n-1)</div>
+				<div class='equation'>&sigma;<sub>residuals</sub> = &radic;((&sum;(residual<sub>i</sub>*residual<sub>i</sub>) - (1/n)*&sum;residual<sub>i</sub>*&sum;residual<sub>i</sub>)/(n-1))</div>
 				<div class='conditional'>if |residual<sub>i</sub>| > 2*&sigma;<sub>residuals</sub>:</div>
 				<div class='equation'>ignore (X<sub>center, i</sub>, Y<sub>center, i</sub>) in regression</div>
 			</section>
