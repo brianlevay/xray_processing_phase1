@@ -7,3 +7,6 @@ This software is intended to allow scientists to process x-ray images acquired f
 2. If you have admin rights to your computer, copy the executable and the "static" folder to the directory of your choice
 3. If you don't have admin rights, copy the executable and "static" folder to the root of the directory where your raw images will be stored
 4. Run the executable, open your web browser, and navigate to localhost at the port specified in the terminal display
+
+## Library Dependencies Not in Repository
+* golang.org/x/image/tiff
