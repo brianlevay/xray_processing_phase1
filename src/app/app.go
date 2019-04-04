@@ -6,22 +6,24 @@ import (
 	"net"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	"path/filepath"
 )
 
 func main() {
-	cwd, errCwd := filepath.Abs("./")
-	if errCwd != nil {
-		log.Fatal(errCwd)
+	exec, errExec := os.Executable()
+	if errExec != nil {
+		log.Fatal(errExec)
 	}
+	cwd, _ := filepath.Split(exec)
 	contents := fe.NewExplorer(cwd, ".tif")
 
-	cfg, errCfg := readConfigFromFile("setup.cfg")
+	cfg, errCfg := readConfigFromFile(filepath.Join(cwd, "setup.cfg"))
 	if errCfg != nil {
 		log.Fatal(errCfg)
 	}
 
-	fs := http.FileServer(http.Dir("static"))
+	fs := http.FileServer(http.Dir(filepath.Join(cwd, "static")))
 	http.Handle("/", fs)
 	fileExplorerHandler(contents)
 	histogramHandler(contents, cfg)

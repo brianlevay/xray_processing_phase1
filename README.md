@@ -3,17 +3,7 @@
 This software is intended to allow scientists to process x-ray images acquired from cores. It's designed around the initial setup used on the JOIDES resolution during Phase 1 of the X-Ray Imager Project.
 
 ## Installing and Running the Software
-*coming soon*
-
-## Remaining Tasks for Version 1.0:
-* Test on Windows, run performance benchmarks
-* Test on MacOS
-
-## Future Changes if Time Allows:
-* Add flexibility to handle cores in non-vertical orientation
-* Add support for non-centered source
-* Investigate automatic histogram bounds determination
-* Investigate improved contrast enhancement algorithms
-* Investigate improved core detection algorithms
-* Overall performance improvements
-* Possible add back limited pool of goroutines (one per file led to terrible performance!)
+1. Compile the code for your target architecture (use the compile.sh script as a reference, if needed)
+2. If you have admin rights to your computer, copy the executable and the "static" folder to the directory of your choice
+3. If you don't have admin rights, copy the executable and "static" folder to the root of the directory where your raw images will be stored
+4. Run the executable, open your web browser, and navigate to localhost at the port specified in the terminal display

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./xrayImgProcessing_linux_*
+./xrayImgProcessing_linux*
